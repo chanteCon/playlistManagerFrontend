@@ -14,15 +14,16 @@ export function PasswordInput({ id }: { id: string }) {
             type={showPassword ? 'text' : 'password'}
             required={true}
         >
-            <Button
+            <button
                 type="button"
-                variant="ghost"
-                size="icon"
                 className="absolute right-1 top-1/2 -translate-y-1/2"
-                onClick={() => setShowPassword((v) => !v)}
+                onClick={() => setShowPassword(!showPassword)}
             >
-                {showPassword ? <EyeOff /> : <Eye />}
-            </Button>
+                <span className="relative flex size-5 items-center justify-center">
+                    <Eye className={`absolute size-4 ${showPassword ? 'hidden' : 'block'}`} />
+                    <EyeOff className={`absolute size-4 ${showPassword ? 'block' : 'hidden'}`} />
+                </span>
+            </button>
         </FormField>
     );
 }
