@@ -11,7 +11,7 @@ const schema = z
 export default function Verify() {
     return (
         <CodeInputLayout
-            title="Verification code"
+            title="Password reset code"
             instructions="Enter the 6-digit code sent to your email"
             schema={schema}
             onValidSubmit={() => alert('submitted')}
