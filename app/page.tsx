@@ -1,11 +1,11 @@
-import Image from 'next/image';
+import { AppBrand } from './components/AppBrand';
 
 export default function Home() {
     console.log('SERVER_URL:', process.env.SERVER_URL);
     return (
         <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-            <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-                <p>hello</p>
+            <main className="">
+                <AppBrand />
             </main>
         </div>
     );
