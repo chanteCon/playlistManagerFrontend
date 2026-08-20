@@ -1,0 +1,96 @@
+'use client';
+
+import { z } from 'zod';
+import { createContext, useContext, useState } from 'react';
+
+type FormContextValue = {
+    errors: Record<string, string>;
+    clearError: (field: string) => void;
+    requiredFields: Set<string>;
+};
+
+const FormContext = createContext<FormContextValue | null>(null);
+
+export function useFormContext() {
+    const context = useContext(FormContext);
+
+    if (!context) {
+        throw new Error('useFormContext must be used inside ValidatedForm');
+    }
+
+    return context;
+}
+
+type ValidatedFormProps<T extends z.ZodType> = {
+    schema: T;
+    onValidSubmit: (data: z.infer<T>) => void | Promise<void>;
+    children: React.ReactNode;
+    requiredFields: Set<string>;
+};
+
+export function ValidatedForm<T extends z.ZodType>({
+    schema,
+    onValidSubmit,
+    children,
+    requiredFields,
+}: ValidatedFormProps<T>) {
+    const [errors, setErrors] = useState<Record<string, string>>({});
+    function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+
+        const data = Object.fromEntries(formData.entries());
+
+        const fieldErrors: Record<string, string> = {};
+
+        for (const field of requiredFields) {
+            const value = data[field];
+
+            if (value === undefined || value === '') {
+                fieldErrors[field] = 'This field is required';
+            }
+        }
+
+        if (Object.keys(fieldErrors).length > 0) {
+            setErrors(fieldErrors);
+            return;
+        }
+
+        const result = schema.safeParse(data);
+
+        if (!result.success) {
+            const fieldErrors: Record<string, string> = {};
+
+            for (const issue of result.error.issues) {
+                console.log(issue);
+                const field = issue.path[0];
+
+                if (typeof field === 'string') {
+                    fieldErrors[field] = issue.message;
+                }
+            }
+
+            setErrors(fieldErrors);
+            return;
+        }
+
+        setErrors({});
+        onValidSubmit(result.data);
+    }
+
+    function clearError(field: string) {
+        setErrors((current) => {
+            const next = { ...current };
+            delete next[field];
+            return next;
+        });
+    }
+
+    return (
+        <FormContext.Provider value={{ errors, clearError, requiredFields }}>
+            <form onSubmit={onSubmit} noValidate className="space-y-5">
+                {children}
+            </form>
+        </FormContext.Provider>
+    );
+}
