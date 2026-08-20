@@ -5,9 +5,11 @@ import { AuthLayout } from '../components/AuthLayout';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { z } from 'zod';
 import { ValidatedForm } from './ValidatedForm';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { Button } from '@/components/ui/button';
 
 const codeInputBoxStyle = 'size-12 rounded-md border text-xl';
+const CODE_EXPIRY = 5 * 60;
 
 type CodeLayoutParams<T extends z.ZodType> = {
     schema: T;
@@ -24,6 +26,25 @@ export default function CodeInputLayout<T extends z.ZodType>({
 }: CodeLayoutParams<T>) {
     const formRef = useRef<HTMLFormElement>(null);
     const submitTimeout = useRef<NodeJS.Timeout | null>(null);
+
+    const [secondsLeft, setSecondsLeft] = useState(CODE_EXPIRY);
+
+    useEffect(() => {
+        if (secondsLeft <= 0) {
+            return;
+        }
+
+        const timer = setTimeout(() => {
+            setSecondsLeft((current) => current - 1);
+        }, 1000);
+
+        return () => clearTimeout(timer);
+    }, [secondsLeft]);
+    const minutes = Math.floor(secondsLeft / 60);
+    const seconds = secondsLeft % 60;
+
+    const formattedTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
     return (
         <AuthLayout>
             <AppBrand showTagline={false} />
@@ -66,8 +87,22 @@ export default function CodeInputLayout<T extends z.ZodType>({
                             </InputOTPGroup>
                         </InputOTP>
                     </div>
+                    <p
+                        className={`text-center text-sm ${
+                            secondsLeft > 0 && secondsLeft <= 30
+                                ? 'text-destructive'
+                                : 'text-muted-foreground'
+                        }`}
+                    >
+                        {secondsLeft === 0
+                            ? 'Code expired. Request new code to continue.'
+                            : `This code expires in ${formattedTime}`}
+                    </p>
                 </ValidatedForm>
             </AuthCard>
+            {secondsLeft <= 0 && (
+                <Button onClick={() => setSecondsLeft(CODE_EXPIRY)}>Send new code</Button>
+            )}
         </AuthLayout>
     );
 }

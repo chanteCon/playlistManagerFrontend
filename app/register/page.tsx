@@ -8,16 +8,44 @@ import { PasswordInput } from '../components/PasswordInput';
 import { Button } from '@/components/ui/button';
 import { AuthLayout } from '../components/AuthLayout';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useMutation } from '@tanstack/react-query';
+import { api } from '@/api/createClient';
+import { z } from 'zod';
 
 const requiredFields = new Set(['email', 'password', 'username']);
 export default function Register() {
+    const router = useRouter();
+    type RegisterInput = z.infer<typeof schemas.postApiauthregister_Body>;
+    const registerMutation = useMutation({
+        mutationFn: async (data: RegisterInput) => {
+            const response = await api.POST('/api/auth/register', {
+                body: data,
+            });
+
+            if (response.error) {
+                alert(response.error.message);
+                throw new Error(response.error.message);
+            }
+
+            return response.data;
+        },
+
+        onSuccess: () => {
+            router.push('/verify');
+        },
+
+        onError: (error) => {
+            console.error(error);
+        },
+    });
     return (
         <AuthLayout>
             <AppBrand />
             <AuthCard>
                 <ValidatedForm
                     schema={schemas.postApiauthregister_Body}
-                    onValidSubmit={(data) => console.log('validated')}
+                    onValidSubmit={(data) => registerMutation.mutate(data)}
                     requiredFields={requiredFields}
                 >
                     <FormField id="username" label="username" type="text" />
