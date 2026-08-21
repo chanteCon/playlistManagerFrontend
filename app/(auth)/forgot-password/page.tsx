@@ -1,11 +1,9 @@
 'use client';
-import { schemas } from '@/api/zod';
-import { AppBrand } from '../components/AppBrand';
-import { AuthCard } from '../components/AuthCard';
-import { ValidatedForm } from '../components/ValidatedForm';
-import { FormField } from '../components/FormField';
+import { AppBrand } from '../../components/AppBrand';
+import { AuthCard } from '../../components/AuthCard';
+import { ValidatedForm } from '../../components/ValidatedForm';
+import { FormField } from '../../components/FormField';
 import { Button } from '@/components/ui/button';
-import { AuthLayout } from '../components/AuthLayout';
 import Link from 'next/link';
 import { z } from 'zod';
 
@@ -15,7 +13,7 @@ const schema = z.object({
 const requiredFields = new Set(['email']);
 export default function ForgotPassword() {
     return (
-        <AuthLayout>
+        <>
             <AppBrand showTagline={false} />
             <div className="mb-6 text-center">
                 <p className="mt-2 text-md">
@@ -25,7 +23,7 @@ export default function ForgotPassword() {
             <AuthCard>
                 <ValidatedForm
                     schema={schema}
-                    onValidSubmit={(data) => alert('submitted')}
+                    onValidSubmit={() => alert('submitted')}
                     requiredFields={requiredFields}
                 >
                     <FormField id="email" label="Email" type="email" />
@@ -40,6 +38,6 @@ export default function ForgotPassword() {
                     Login
                 </Link>
             </p>
-        </AuthLayout>
+        </>
     );
 }

@@ -1,10 +1,9 @@
 'use client';
-import { AppBrand } from '../components/AppBrand';
-import { AuthCard } from '../components/AuthCard';
-import { AuthLayout } from '../components/AuthLayout';
+import { AppBrand } from '../../components/AppBrand';
+import { AuthCard } from '../../components/AuthCard';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { z } from 'zod';
-import { ValidatedForm } from './ValidatedForm';
+import { ValidatedForm } from '../../components/ValidatedForm';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 
@@ -18,7 +17,7 @@ type CodeLayoutParams<T extends z.ZodType> = {
     instructions?: string;
 };
 
-export default function CodeInputLayout<T extends z.ZodType>({
+export default function Layout<T extends z.ZodType>({
     schema,
     onValidSubmit,
     title,
@@ -46,7 +45,7 @@ export default function CodeInputLayout<T extends z.ZodType>({
     const formattedTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
 
     return (
-        <AuthLayout>
+        <>
             <AppBrand showTagline={false} />
 
             <AuthCard className="flex flex-col items-center">
@@ -103,6 +102,6 @@ export default function CodeInputLayout<T extends z.ZodType>({
             {secondsLeft <= 0 && (
                 <Button onClick={() => setSecondsLeft(CODE_EXPIRY)}>Send new code</Button>
             )}
-        </AuthLayout>
+        </>
     );
 }

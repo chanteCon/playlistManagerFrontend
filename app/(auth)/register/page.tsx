@@ -1,12 +1,11 @@
 'use client';
 import { schemas } from '@/api/zod';
-import { AppBrand } from '../components/AppBrand';
-import { AuthCard } from '../components/AuthCard';
-import { ValidatedForm } from '../components/ValidatedForm';
-import { FormField } from '../components/FormField';
-import { PasswordInput } from '../components/PasswordInput';
+import { AppBrand } from '../../components/AppBrand';
+import { AuthCard } from '../../components/AuthCard';
+import { ValidatedForm } from '../../components/ValidatedForm';
+import { FormField } from '../../components/FormField';
+import { PasswordInput } from '../../components/PasswordInput';
 import { Button } from '@/components/ui/button';
-import { AuthLayout } from '../components/AuthLayout';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
@@ -40,7 +39,7 @@ export default function Register() {
         },
     });
     return (
-        <AuthLayout>
+        <>
             <AppBrand />
             <AuthCard>
                 <ValidatedForm
@@ -62,6 +61,6 @@ export default function Register() {
                     Login
                 </Link>
             </p>
-        </AuthLayout>
+        </>
     );
 }

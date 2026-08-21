@@ -3,20 +3,19 @@
 import { schemas } from '@/api/zod';
 import { Button } from '@/components/ui/button';
 
-import { FormField } from '../components/FormField';
-import { PasswordInput } from '../components/PasswordInput';
-import { ValidatedForm } from '../components/ValidatedForm';
+import { FormField } from '../../components/FormField';
+import { PasswordInput } from '../../components/PasswordInput';
+import { ValidatedForm } from '../../components/ValidatedForm';
 
 import { handleSubmit } from './actions';
 const requiredFields = new Set(['email', 'password']);
-import { AuthCard } from '../components/AuthCard';
+import { AuthCard } from '../../components/AuthCard';
 import Link from 'next/link';
-import { AppBrand } from '../components/AppBrand';
-import { AuthLayout } from '../components/AuthLayout';
+import { AppBrand } from '../../components/AppBrand';
 
 export default function Login() {
     return (
-        <AuthLayout>
+        <>
             <AppBrand />
 
             <AuthCard>
@@ -50,6 +49,6 @@ export default function Login() {
                     Sign up
                 </Link>
             </p>
-        </AuthLayout>
+        </>
     );
 }

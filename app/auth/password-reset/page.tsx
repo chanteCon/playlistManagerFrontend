@@ -1,5 +1,5 @@
 'use client';
-import CodeInputLayout from '../components/CodeInputLayout';
+import CodeInputLayout from '../../(auth)/(code)/layout';
 import { z } from 'zod';
 
 const schema = z
