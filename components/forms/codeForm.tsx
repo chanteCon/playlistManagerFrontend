@@ -1,10 +1,11 @@
 'use client';
-import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
+import { InputOTP } from '@/components/ui/input-otp';
 import { z } from 'zod';
 import { ValidatedForm } from './ValidatedForm';
 import { useEffect, useRef, useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { AuthLayout } from '../../layouts/AuthLayout';
+import CodeInput from '../codeInput';
+import CodeExpiry from '../auth/CodeExpiry';
 
 const codeInputBoxStyle = 'size-12 rounded-md border text-xl';
 const CODE_EXPIRY = 5 * 60;
@@ -38,10 +39,6 @@ export default function CodeForm<T extends z.ZodType>({
 
         return () => clearTimeout(timer);
     }, [secondsLeft]);
-    const minutes = Math.floor(secondsLeft / 60);
-    const seconds = secondsLeft % 60;
-
-    const formattedTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
 
     return (
         <>
@@ -73,32 +70,13 @@ export default function CodeForm<T extends z.ZodType>({
                                 }
                             }}
                         >
-                            <InputOTPGroup className="gap-1">
-                                <InputOTPSlot index={0} className={codeInputBoxStyle} />
-                                <InputOTPSlot index={1} className={codeInputBoxStyle} />
-                                <InputOTPSlot index={2} className={codeInputBoxStyle} />
-                                <InputOTPSlot index={3} className={codeInputBoxStyle} />
-                                <InputOTPSlot index={4} className={codeInputBoxStyle} />
-                                <InputOTPSlot index={5} className={codeInputBoxStyle} />
-                            </InputOTPGroup>
+                            <CodeInput boxStyle={codeInputBoxStyle} />
                         </InputOTP>
+
+                        <CodeExpiry />
                     </div>
-                    <p
-                        className={`text-center text-sm ${
-                            secondsLeft > 0 && secondsLeft <= 30
-                                ? 'text-destructive'
-                                : 'text-muted-foreground'
-                        }`}
-                    >
-                        {secondsLeft === 0
-                            ? 'Code expired. Request new code to continue.'
-                            : `This code expires in ${formattedTime}`}
-                    </p>
                 </ValidatedForm>
             </AuthLayout>
-            {secondsLeft <= 0 && (
-                <Button onClick={() => setSecondsLeft(CODE_EXPIRY)}>Send new code</Button>
-            )}
         </>
     );
 }

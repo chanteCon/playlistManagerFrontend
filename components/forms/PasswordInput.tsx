@@ -1,27 +1,47 @@
-import { useState } from 'react';
-
 import { Eye, EyeOff } from 'lucide-react';
 import { FormField } from './FormField';
 
-export function PasswordInput({ id }: { id: string }) {
-    const [showPassword, setShowPassword] = useState(false);
-
+type PasswordInputProps = {
+    id: string;
+    label?: string;
+    value?: string;
+    onChange?: (value: string) => void;
+    error?: string;
+    showPassword?: boolean;
+    onToggleShowPassword?: () => void;
+};
+export function PasswordInput({
+    id,
+    label = 'Password',
+    value = '',
+    onChange,
+    error,
+    showPassword = false,
+    onToggleShowPassword,
+}: PasswordInputProps) {
     return (
         <FormField
             id={id}
-            label="Password"
+            label={label}
             type={showPassword ? 'text' : 'password'}
-            required={true}
+            required
+            value={value}
+            onChange={onChange}
+            error={error}
         >
             <button
                 type="button"
                 className="absolute right-1 top-1/2 -translate-y-1/2"
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={onToggleShowPassword}
             >
-                <span className="relative flex size-5 items-center justify-center">
-                    <Eye className={`absolute size-4 ${showPassword ? 'hidden' : 'block'}`} />
-                    <EyeOff className={`absolute size-4 ${showPassword ? 'block' : 'hidden'}`} />
-                </span>
+                {id === 'password' && (
+                    <span className="relative flex size-5 items-center justify-center">
+                        <Eye className={`absolute size-4 ${showPassword ? 'hidden' : 'block'}`} />
+                        <EyeOff
+                            className={`absolute size-4 ${showPassword ? 'block' : 'hidden'}`}
+                        />
+                    </span>
+                )}
             </button>
         </FormField>
     );
