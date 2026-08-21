@@ -9,33 +9,71 @@ import { ValidatedForm } from '@/components/forms/ValidatedForm';
 
 import Link from 'next/link';
 import { AuthLayout } from '../../../layouts/AuthLayout';
+import { useMutation } from '@tanstack/react-query';
+import { login } from '@/requests/authRequests';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 const requiredFields = new Set(['email', 'password']);
 
 export default function Login() {
+    const router = useRouter();
+
+    const loginMutation = useMutation({
+        mutationFn: login,
+        onSuccess: () => {
+            alert('success');
+        },
+
+        onError: (error) => {
+            console.error(error);
+            setRejected(true);
+        },
+    });
+
+    const [rejected, setRejected] = useState(false);
+
+    const requestNewCode = () => {
+        alert('New code requested');
+        router.push('/verify');
+    };
+
     return (
         <>
             <AuthLayout>
                 <ValidatedForm
                     schema={schemas.postApiauthlogin_Body}
-                    onValidSubmit={(data) => alert(data)}
+                    onValidSubmit={(data) => loginMutation.mutate(data)}
                     requiredFields={requiredFields}
                 >
                     <FormField id="email" label="Email" type="email" />
                     <PasswordInput id="password" />
+                    {rejected && (
+                        <div className="text-center text-sm">
+                            <p className="text-destructive">Invalid email or password.</p>
+
+                            <Button
+                                type="button"
+                                variant="link"
+                                className="text-link"
+                                onClick={requestNewCode}
+                            >
+                                Having trouble? Resend verification email
+                            </Button>
+                        </div>
+                    )}
                     <div className="flex justify-end">
-                        <Link
-                            href="/forgot-password"
-                            className="text-sm font-medium text-link hover:underline"
-                        >
+                        <Link href="/forgot-password" className=" text-link hover:underline">
                             Forgot password?
                         </Link>
                     </div>
+
                     <Button type="submit" className="w-full">
                         Login
                     </Button>
                 </ValidatedForm>
             </AuthLayout>
+
             <p className="text-sm text-muted-foreground">
                 Don&apos;t have an account?{' '}
                 <Link href="/register" className="font-medium text-link hover:underline">

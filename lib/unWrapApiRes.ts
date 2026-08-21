@@ -5,8 +5,8 @@ export default async function unwrapApiRes<T>(
     }>,
 ) {
     const response = await request;
-
     if (response.error) {
+        alert(response.error.message);
         throw new Error(response.error.message);
     }
 

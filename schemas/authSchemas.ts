@@ -5,3 +5,9 @@ export const codeSchema = z
         code: z.string().length(6),
     })
     .passthrough();
+
+export const emailSchema = z
+    .object({
+        email: z.string().email(),
+    })
+    .passthrough();

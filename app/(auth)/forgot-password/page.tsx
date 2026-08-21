@@ -5,12 +5,27 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { z } from 'zod';
 import { AuthLayout } from '../../../layouts/AuthLayout';
+import { useMutation } from '@tanstack/react-query';
+import { passwordResetCode } from '@/requests/authRequests';
+import { useRouter } from 'next/navigation';
 
 const schema = z.object({
     email: z.string().email(),
 });
 const requiredFields = new Set(['email']);
 export default function ForgotPassword() {
+    const router = useRouter();
+
+    const reqPasswordCodeMutation = useMutation({
+        mutationFn: passwordResetCode,
+        onSuccess: () => {
+            alert('Code requested');
+            router.push('/password-reset');
+        },
+        onError: (error) => {
+            alert(error);
+        },
+    });
     return (
         <>
             <AuthLayout showTagline={false}>
@@ -21,7 +36,7 @@ export default function ForgotPassword() {
                 </div>
                 <ValidatedForm
                     schema={schema}
-                    onValidSubmit={() => alert('submitted')}
+                    onValidSubmit={(data) => reqPasswordCodeMutation.mutate(data)}
                     requiredFields={requiredFields}
                 >
                     <FormField id="email" label="Email" type="email" />

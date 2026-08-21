@@ -2,13 +2,13 @@
 import { schemas } from '@/api/zod';
 import { ValidatedForm } from '../../../components/forms/ValidatedForm';
 import { FormField } from '@/components/forms/FormField';
-import { PasswordInput } from '@/components/forms/PasswordInput';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import { AuthLayout } from '../../../layouts/AuthLayout';
 import { register } from '@/requests/authRequests';
+import { PasswordFields } from '@/components/auth/PasswordFields';
 
 const requiredFields = new Set(['email', 'password', 'username']);
 export default function Register() {
@@ -21,7 +21,7 @@ export default function Register() {
         },
 
         onError: (error) => {
-            console.error(error);
+            alert(error);
         },
     });
     return (
@@ -29,12 +29,16 @@ export default function Register() {
             <AuthLayout>
                 <ValidatedForm
                     schema={schemas.postApiauthregister_Body}
-                    onValidSubmit={(data) => registerMutation.mutate(data)}
+                    onValidSubmit={(data) => {
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                        const { confirmPassword, ...requestData } = data;
+                        registerMutation.mutate(requestData);
+                    }}
                     requiredFields={requiredFields}
                 >
                     <FormField id="username" label="Username" type="text" />
                     <FormField id="email" label="Email" type="email" />
-                    <PasswordInput id="password" />
+                    <PasswordFields />
                     <Button type="submit" className="w-full">
                         Register
                     </Button>

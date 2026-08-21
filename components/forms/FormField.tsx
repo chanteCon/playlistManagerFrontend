@@ -7,16 +7,24 @@ type FormFieldProps = {
     children?: React.ReactNode;
     required?: boolean;
     type?: string;
+    error?: string;
+    onChange?: (value: string) => void;
+    value?: string;
 };
+
 export function FormField({
     id,
     label,
     type = 'text',
     children,
     required = false,
+    error: customError,
+    onChange,
+    value,
 }: FormFieldProps) {
     const { errors, clearError } = useFormContext();
-    const error = errors[id];
+
+    const error = customError ?? errors[id];
 
     return (
         <div className="space-y-2">
@@ -27,8 +35,12 @@ export function FormField({
                     id={id}
                     name={id}
                     type={type}
+                    value={value}
                     aria-invalid={!!error}
-                    onChange={() => clearError(id)}
+                    onChange={(event) => {
+                        clearError(id);
+                        onChange?.(event.target.value);
+                    }}
                     required={required}
                     className={children ? 'pr-10' : undefined}
                 />
