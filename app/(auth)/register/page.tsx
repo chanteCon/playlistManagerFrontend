@@ -7,27 +7,14 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
-import { api } from '@/api/createClient';
-import { z } from 'zod';
 import { AuthLayout } from '../../../layouts/AuthLayout';
+import { register } from '@/requests/authRequests';
 
 const requiredFields = new Set(['email', 'password', 'username']);
 export default function Register() {
     const router = useRouter();
-    type RegisterInput = z.infer<typeof schemas.postApiauthregister_Body>;
     const registerMutation = useMutation({
-        mutationFn: async (data: RegisterInput) => {
-            const response = await api.POST('/api/auth/register', {
-                body: data,
-            });
-
-            if (response.error) {
-                alert(response.error.message);
-                throw new Error(response.error.message);
-            }
-
-            return response.data;
-        },
+        mutationFn: register,
 
         onSuccess: () => {
             router.push('/verify');

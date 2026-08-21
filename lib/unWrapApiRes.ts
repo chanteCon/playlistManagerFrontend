@@ -1,4 +1,4 @@
-export default async function apiMutation<T>(
+export default async function unwrapApiRes<T>(
     request: Promise<{
         data?: T;
         error?: { message: string };
