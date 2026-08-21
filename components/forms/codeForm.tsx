@@ -1,28 +1,27 @@
 'use client';
-import { AppBrand } from '../../components/AppBrand';
-import { AuthCard } from '../../components/AuthCard';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { z } from 'zod';
-import { ValidatedForm } from '../../components/ValidatedForm';
+import { ValidatedForm } from './ValidatedForm';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { AuthLayout } from '../../layouts/AuthLayout';
 
 const codeInputBoxStyle = 'size-12 rounded-md border text-xl';
 const CODE_EXPIRY = 5 * 60;
 
-type CodeLayoutParams<T extends z.ZodType> = {
+type CodeFormParams<T extends z.ZodType> = {
     schema: T;
     onValidSubmit: (data: z.infer<T>) => void | Promise<void>;
     title: string;
     instructions?: string;
 };
 
-export default function Layout<T extends z.ZodType>({
+export default function CodeForm<T extends z.ZodType>({
     schema,
     onValidSubmit,
     title,
     instructions = 'Enter the 6-digit code sent to your email',
-}: CodeLayoutParams<T>) {
+}: CodeFormParams<T>) {
     const formRef = useRef<HTMLFormElement>(null);
     const submitTimeout = useRef<NodeJS.Timeout | null>(null);
 
@@ -46,9 +45,7 @@ export default function Layout<T extends z.ZodType>({
 
     return (
         <>
-            <AppBrand showTagline={false} />
-
-            <AuthCard className="flex flex-col items-center">
+            <AuthLayout showTagline={false}>
                 <div className="mb-6 text-center">
                     <h1 className="text-xl font-semibold">{title}</h1>
                     <p className="mt-2 text-sm text-muted-foreground">{instructions}</p>
@@ -98,7 +95,7 @@ export default function Layout<T extends z.ZodType>({
                             : `This code expires in ${formattedTime}`}
                     </p>
                 </ValidatedForm>
-            </AuthCard>
+            </AuthLayout>
             {secondsLeft <= 0 && (
                 <Button onClick={() => setSecondsLeft(CODE_EXPIRY)}>Send new code</Button>
             )}

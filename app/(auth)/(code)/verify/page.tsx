@@ -1,5 +1,5 @@
 'use client';
-import CodeInputLayout from '../layout';
+import CodeForm from '../../../../components/forms/codeForm';
 import { z } from 'zod';
 
 const schema = z
@@ -10,7 +10,7 @@ const schema = z
 
 export default function Verify() {
     return (
-        <CodeInputLayout
+        <CodeForm
             title="Verification code"
             instructions="Enter the 6-digit code sent to your email"
             schema={schema}

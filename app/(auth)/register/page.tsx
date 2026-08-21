@@ -1,16 +1,15 @@
 'use client';
 import { schemas } from '@/api/zod';
-import { AppBrand } from '../../components/AppBrand';
-import { AuthCard } from '../../components/AuthCard';
-import { ValidatedForm } from '../../components/ValidatedForm';
-import { FormField } from '../../components/FormField';
-import { PasswordInput } from '../../components/PasswordInput';
+import { ValidatedForm } from '../../../components/forms/ValidatedForm';
+import { FormField } from '@/components/forms/FormField';
+import { PasswordInput } from '@/components/forms/PasswordInput';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import { api } from '@/api/createClient';
 import { z } from 'zod';
+import { AuthLayout } from '../../../layouts/AuthLayout';
 
 const requiredFields = new Set(['email', 'password', 'username']);
 export default function Register() {
@@ -40,21 +39,20 @@ export default function Register() {
     });
     return (
         <>
-            <AppBrand />
-            <AuthCard>
+            <AuthLayout>
                 <ValidatedForm
                     schema={schemas.postApiauthregister_Body}
                     onValidSubmit={(data) => registerMutation.mutate(data)}
                     requiredFields={requiredFields}
                 >
-                    <FormField id="username" label="username" type="text" />
+                    <FormField id="username" label="Username" type="text" />
                     <FormField id="email" label="Email" type="email" />
-                    <PasswordInput id="password"></PasswordInput>
+                    <PasswordInput id="password" />
                     <Button type="submit" className="w-full">
                         Register
                     </Button>
                 </ValidatedForm>
-            </AuthCard>
+            </AuthLayout>
             <p className="text-sm text-muted-foreground">
                 Already have an account?{' '}
                 <Link href="/login" className="font-medium text-link hover:underline">

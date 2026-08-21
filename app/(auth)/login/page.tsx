@@ -3,31 +3,26 @@
 import { schemas } from '@/api/zod';
 import { Button } from '@/components/ui/button';
 
-import { FormField } from '../../components/FormField';
-import { PasswordInput } from '../../components/PasswordInput';
-import { ValidatedForm } from '../../components/ValidatedForm';
+import { FormField } from '@/components/forms/FormField';
+import { PasswordInput } from '@/components/forms/PasswordInput';
+import { ValidatedForm } from '@/components/forms/ValidatedForm';
 
-import { handleSubmit } from './actions';
-const requiredFields = new Set(['email', 'password']);
-import { AuthCard } from '../../components/AuthCard';
 import Link from 'next/link';
-import { AppBrand } from '../../components/AppBrand';
+import { AuthLayout } from '../../../layouts/AuthLayout';
+
+const requiredFields = new Set(['email', 'password']);
 
 export default function Login() {
     return (
         <>
-            <AppBrand />
-
-            <AuthCard>
+            <AuthLayout>
                 <ValidatedForm
                     schema={schemas.postApiauthlogin_Body}
-                    onValidSubmit={(data) => handleSubmit(data)}
+                    onValidSubmit={(data) => alert(data)}
                     requiredFields={requiredFields}
                 >
                     <FormField id="email" label="Email" type="email" />
-
                     <PasswordInput id="password" />
-
                     <div className="flex justify-end">
                         <Link
                             href="/forgot-password"
@@ -36,13 +31,11 @@ export default function Login() {
                             Forgot password?
                         </Link>
                     </div>
-
                     <Button type="submit" className="w-full">
                         Login
                     </Button>
                 </ValidatedForm>
-            </AuthCard>
-
+            </AuthLayout>
             <p className="text-sm text-muted-foreground">
                 Don&apos;t have an account?{' '}
                 <Link href="/register" className="font-medium text-link hover:underline">
