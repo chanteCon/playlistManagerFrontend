@@ -1,8 +1,9 @@
 'use client';
 
+import { registerAuthHandler } from '@/lib/apiRequest';
 import { initializeAuth } from '@/lib/utils';
 import { useMutation } from '@tanstack/react-query';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
 type AuthContextValue = {
     accessToken: string | null;
@@ -27,9 +28,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, [mutate]);
     const [accessToken, setAccessToken] = useState<string | null>(null);
 
-    function clearAccessToken() {
+    const clearAccessToken = useCallback(() => {
         setAccessToken(null);
-    }
+    }, []);
+    useEffect(() => {
+        registerAuthHandler(clearAccessToken);
+    }, [clearAccessToken]);
 
     return (
         <AuthContext.Provider
