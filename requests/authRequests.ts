@@ -24,7 +24,7 @@ export const login = (data: LoginInput) =>
 
 type CodeInput = z.infer<typeof codeSchema>;
 export const verify = (data: CodeInput) =>
-    unwrapApiRes(api.PATCH('/api/auth/verify', { body: data }));
+    unwrapApiRes(api.PATCH('/api/auth/verify', { body: data, credentials: 'include' }));
 
 type PasswordResetInput = CodeInput & {
     password: string;
@@ -33,10 +33,13 @@ export const passwordReset = (data: PasswordResetInput) =>
     unwrapApiRes(api.PATCH('/api/auth/password-reset', { body: data }));
 
 export const loginMFA = (data: CodeInput) =>
-    unwrapApiRes(api.POST('/api/auth/login/MFA', { body: data }));
+    unwrapApiRes(api.POST('/api/auth/login/MFA', { body: data, credentials: 'include' }));
 
 export const verificationCode = (data: Email) =>
     unwrapApiRes(api.POST('/api/auth/verification-code-request', { body: data }));
 
 export const passwordResetCode = (data: Email) =>
     unwrapApiRes(api.POST('/api/auth/password-reset-request', { body: data }));
+
+export const refresh = () =>
+    unwrapApiRes(api.POST('/api/auth/refresh', { credentials: 'include' }));

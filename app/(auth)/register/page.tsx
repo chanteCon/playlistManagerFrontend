@@ -9,8 +9,19 @@ import { useMutation } from '@tanstack/react-query';
 import { AuthLayout } from '../../../layouts/AuthLayout';
 import { register } from '@/requests/authRequests';
 import { PasswordFields } from '@/components/auth/PasswordFields';
+import z from 'zod';
 
 const requiredFields = new Set(['email', 'password', 'username']);
+
+const registerSchema = schemas.postApiauthregister_Body
+    .extend({
+        confirmPassword: z.string(),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+        message: 'Passwords do not match',
+        path: ['confirmPassword'],
+    });
+
 export default function Register() {
     const router = useRouter();
     const registerMutation = useMutation({
@@ -24,11 +35,12 @@ export default function Register() {
             alert(error);
         },
     });
+
     return (
         <>
             <AuthLayout>
                 <ValidatedForm
-                    schema={schemas.postApiauthregister_Body}
+                    schema={registerSchema}
                     onValidSubmit={(data) => {
                         // eslint-disable-next-line @typescript-eslint/no-unused-vars
                         const { confirmPassword, ...requestData } = data;

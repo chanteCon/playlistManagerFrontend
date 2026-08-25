@@ -12,6 +12,7 @@ import { AuthCard } from '@/components/auth/AuthCard';
 import { PasswordFields } from '@/components/auth/PasswordFields';
 import z from 'zod';
 import CodeExpiry from '@/components/auth/CodeExpiry';
+import Link from 'next/link';
 
 const codeInputBoxStyle = 'size-12 rounded-md border text-xl';
 
@@ -53,7 +54,7 @@ export default function Verify() {
                 <AuthCard className="space-y-5">
                     <div className="space-y-3 text-center">
                         <div>
-                            <p className="text-sm font-medium">Verification code</p>
+                            <h1 className="text-xl font-semibold">Reset your password</h1>
                             <p className="text-sm text-muted-foreground">
                                 Enter the 6-digit code we sent to your email.
                             </p>
@@ -64,6 +65,9 @@ export default function Verify() {
                             </InputOTP>
                         </div>
                         <CodeExpiry />
+                        <Link className="text-link" href="/forgot-password">
+                            Didn&apos;t receive the code? Try again
+                        </Link>
                     </div>
                 </AuthCard>
                 <AuthCard className="space-y-5">

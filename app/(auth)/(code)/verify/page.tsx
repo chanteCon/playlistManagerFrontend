@@ -3,13 +3,16 @@ import { codeSchema } from '@/schemas/authSchemas';
 import CodeForm from '../../../../components/forms/codeForm';
 import { useMutation } from '@tanstack/react-query';
 import { verify } from '@/requests/authRequests';
+import { useAuth } from '@/contexts/AuthContext';
+import { extractAccessToken } from '@/lib/utils';
 
 export default function Verify() {
+    const { setAccessToken } = useAuth();
     const verifyMutation = useMutation({
         mutationFn: verify,
 
-        onSuccess: () => {
-            alert('Verified and logged in');
+        onSuccess: (res) => {
+            setAccessToken(extractAccessToken(res));
         },
 
         onError: (error) => {
@@ -23,6 +26,7 @@ export default function Verify() {
             instructions="Enter the 6-digit code sent to your email"
             schema={codeSchema}
             onValidSubmit={(data) => verifyMutation.mutate(data)}
+            type="VERIFICATION"
         />
     );
 }

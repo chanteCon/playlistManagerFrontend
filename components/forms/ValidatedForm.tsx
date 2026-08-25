@@ -1,25 +1,8 @@
 'use client';
 
 import { z } from 'zod';
-import { createContext, useContext, useState } from 'react';
-
-type FormContextValue = {
-    errors: Record<string, string>;
-    clearError: (field: string) => void;
-    requiredFields: Set<string>;
-};
-
-const FormContext = createContext<FormContextValue | null>(null);
-
-export function useFormContext() {
-    const context = useContext(FormContext);
-
-    if (!context) {
-        throw new Error('useFormContext must be used inside ValidatedForm');
-    }
-
-    return context;
-}
+import { useState } from 'react';
+import { FormContext } from '@/contexts/ValidatedFormContext';
 
 type ValidatedFormProps<T extends z.ZodType> = {
     schema: T;

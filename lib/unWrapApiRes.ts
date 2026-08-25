@@ -10,5 +10,9 @@ export default async function unwrapApiRes<T>(
         throw new Error(response.error.message);
     }
 
+    if (!response.data) {
+        throw new Error('Malformed response');
+    }
+
     return response.data;
 }

@@ -21,8 +21,9 @@ export default function Login() {
 
     const loginMutation = useMutation({
         mutationFn: login,
-        onSuccess: () => {
-            alert('success');
+        onSuccess: (data) => {
+            alert(data);
+            router.push('/login-mfa');
         },
 
         onError: (error) => {
@@ -38,6 +39,9 @@ export default function Login() {
         router.push('/verify');
     };
 
+    const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+
     return (
         <>
             <AuthLayout>
@@ -47,7 +51,14 @@ export default function Login() {
                     requiredFields={requiredFields}
                 >
                     <FormField id="email" label="Email" type="email" />
-                    <PasswordInput id="password" />
+                    <PasswordInput
+                        id="password"
+                        label="password"
+                        value={password}
+                        onChange={setPassword}
+                        showPassword={showPassword}
+                        onToggleShowPassword={() => setShowPassword((current) => !current)}
+                    />
                     {rejected && (
                         <div className="text-center text-sm">
                             <p className="text-destructive">Invalid email or password.</p>

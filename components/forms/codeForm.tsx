@@ -2,19 +2,20 @@
 import { InputOTP } from '@/components/ui/input-otp';
 import { z } from 'zod';
 import { ValidatedForm } from './ValidatedForm';
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { AuthLayout } from '../../layouts/AuthLayout';
 import CodeInput from '../codeInput';
 import CodeExpiry from '../auth/CodeExpiry';
+import Link from 'next/link';
 
 const codeInputBoxStyle = 'size-12 rounded-md border text-xl';
-const CODE_EXPIRY = 5 * 60;
 
 type CodeFormParams<T extends z.ZodType> = {
     schema: T;
     onValidSubmit: (data: z.infer<T>) => void | Promise<void>;
     title: string;
     instructions?: string;
+    type: 'LOGIN' | 'VERIFICATION';
 };
 
 export default function CodeForm<T extends z.ZodType>({
@@ -22,23 +23,16 @@ export default function CodeForm<T extends z.ZodType>({
     onValidSubmit,
     title,
     instructions = 'Enter the 6-digit code sent to your email',
+    type,
 }: CodeFormParams<T>) {
     const formRef = useRef<HTMLFormElement>(null);
-    const submitTimeout = useRef<NodeJS.Timeout | null>(null);
 
-    const [secondsLeft, setSecondsLeft] = useState(CODE_EXPIRY);
+    const resendRoutes = {
+        VERIFICATION: '/request-verification',
+        LOGIN: '/login',
+    } as const;
 
-    useEffect(() => {
-        if (secondsLeft <= 0) {
-            return;
-        }
-
-        const timer = setTimeout(() => {
-            setSecondsLeft((current) => current - 1);
-        }, 1000);
-
-        return () => clearTimeout(timer);
-    }, [secondsLeft]);
+    const resendRoute = resendRoutes[type];
 
     return (
         <>
@@ -59,14 +53,8 @@ export default function CodeForm<T extends z.ZodType>({
                             name="code"
                             maxLength={6}
                             onChange={(value) => {
-                                if (submitTimeout.current) {
-                                    clearTimeout(submitTimeout.current);
-                                }
-
                                 if (value.length === 6) {
-                                    submitTimeout.current = setTimeout(() => {
-                                        formRef.current?.requestSubmit();
-                                    }, 400);
+                                    formRef.current?.requestSubmit();
                                 }
                             }}
                         >
@@ -74,6 +62,9 @@ export default function CodeForm<T extends z.ZodType>({
                         </InputOTP>
 
                         <CodeExpiry />
+                        <Link className="text-link" href={resendRoute}>
+                            Didn&apos;t receive the code? Try again
+                        </Link>
                     </div>
                 </ValidatedForm>
             </AuthLayout>

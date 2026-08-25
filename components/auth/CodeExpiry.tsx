@@ -35,12 +35,8 @@ export default function CodeExpiry() {
             >
                 {secondsLeft === 0
                     ? 'Code expired. Request new code to continue.'
-                    : `Code expires in ${formattedTime}`}
+                    : `Code expires in about ${formattedTime}`}
             </p>
-
-            {secondsLeft <= 0 && (
-                <Button onClick={() => setSecondsLeft(CODE_EXPIRY)}>Send new code</Button>
-            )}
         </>
     );
 }
