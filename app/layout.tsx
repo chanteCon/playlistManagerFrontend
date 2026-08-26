@@ -1,6 +1,10 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
+import { QueryProvider } from './queryProvider';
+import { AuthProvider } from '@/contexts/AuthContext';
+import { AppBrand } from '@/components/AppBrand';
+import Navbar from '@/components/Navbar';
 
 const inter = Inter({
     subsets: ['latin'],
@@ -14,7 +18,14 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<'/'>) {
     return (
         <html lang="en" className={`${inter.className} h-full antialiased`}>
-            <body className="min-h-full flex flex-col bg-muted/30">{children}</body>
+            <body className="min-h-full flex flex-col bg-muted/30">
+                <QueryProvider>
+                    <AuthProvider>
+                        <Navbar />
+                        {children}
+                    </AuthProvider>
+                </QueryProvider>
+            </body>
         </html>
     );
 }

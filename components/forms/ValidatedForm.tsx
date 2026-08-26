@@ -1,31 +1,15 @@
 'use client';
 
 import { z } from 'zod';
-import { createContext, useContext, useState } from 'react';
-
-type FormContextValue = {
-    errors: Record<string, string>;
-    clearError: (field: string) => void;
-    requiredFields: Set<string>;
-};
-
-const FormContext = createContext<FormContextValue | null>(null);
-
-export function useFormContext() {
-    const context = useContext(FormContext);
-
-    if (!context) {
-        throw new Error('useFormContext must be used inside ValidatedForm');
-    }
-
-    return context;
-}
+import { useState } from 'react';
+import { FormContext } from '@/contexts/ValidatedFormContext';
 
 type ValidatedFormProps<T extends z.ZodType> = {
     schema: T;
     onValidSubmit: (data: z.infer<T>) => void | Promise<void>;
     children: React.ReactNode;
     requiredFields: Set<string>;
+    formRef?: React.RefObject<HTMLFormElement | null>;
 };
 
 export function ValidatedForm<T extends z.ZodType>({
@@ -33,6 +17,7 @@ export function ValidatedForm<T extends z.ZodType>({
     onValidSubmit,
     children,
     requiredFields,
+    formRef,
 }: ValidatedFormProps<T>) {
     const [errors, setErrors] = useState<Record<string, string>>({});
     function onSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -88,7 +73,7 @@ export function ValidatedForm<T extends z.ZodType>({
 
     return (
         <FormContext.Provider value={{ errors, clearError, requiredFields }}>
-            <form onSubmit={onSubmit} noValidate className="space-y-5">
+            <form ref={formRef} onSubmit={onSubmit} noValidate className="space-y-5">
                 {children}
             </form>
         </FormContext.Provider>
