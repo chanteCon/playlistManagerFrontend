@@ -1,6 +1,6 @@
 'use client';
 import { useMutation } from '@tanstack/react-query';
-import { passwordReset } from '@/requests/authRequests';
+import { passwordReset } from '@/requests/publicRequests';
 import { useRouter } from 'next/navigation';
 import { schemas } from '@/api/zod';
 import { ValidatedForm } from '@/components/forms/ValidatedForm';

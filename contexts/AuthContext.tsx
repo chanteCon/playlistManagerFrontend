@@ -2,6 +2,7 @@
 
 import { registerAuthHandler } from '@/lib/apiRequest';
 import { initializeAuth } from '@/lib/utils';
+import { middlewareAuthHandler } from '@/requests/authMiddleware';
 import { useMutation } from '@tanstack/react-query';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
@@ -32,8 +33,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setAccessToken(null);
     }, []);
     useEffect(() => {
-        registerAuthHandler(clearAccessToken);
+        registerAuthHandler({ clearAccessToken, setAccessToken });
     }, [clearAccessToken]);
+
+    useEffect(() => {
+        middlewareAuthHandler({
+            accessToken,
+        });
+    }, [accessToken]);
 
     return (
         <AuthContext.Provider

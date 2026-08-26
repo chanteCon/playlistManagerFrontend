@@ -2,7 +2,7 @@
 import CodeForm from '@/components/forms/codeForm';
 import { useAuth } from '@/contexts/AuthContext';
 import { extractAccessToken } from '@/lib/utils';
-import { loginMFA } from '@/requests/authRequests';
+import { loginMFA } from '@/requests/publicRequests';
 import { codeSchema } from '@/schemas/authSchemas';
 import { useMutation } from '@tanstack/react-query';
 

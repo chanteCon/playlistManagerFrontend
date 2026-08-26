@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { z } from 'zod';
 import { useMutation } from '@tanstack/react-query';
-import { verificationCode } from '@/requests/authRequests';
+import { verificationCode } from '@/requests/publicRequests';
 import { useRouter } from 'next/navigation';
 import { EmailCodeForm } from '@/components/forms/EmailCodeForm';
 

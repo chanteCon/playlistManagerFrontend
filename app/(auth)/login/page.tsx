@@ -10,7 +10,7 @@ import { ValidatedForm } from '@/components/forms/ValidatedForm';
 import Link from 'next/link';
 import { AuthLayout } from '../../../layouts/AuthLayout';
 import { useMutation } from '@tanstack/react-query';
-import { login } from '@/requests/authRequests';
+import { login } from '@/requests/publicRequests';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -36,7 +36,7 @@ export default function Login() {
 
     const requestNewCode = () => {
         alert('New code requested');
-        router.push('/verify');
+        router.push('/request-verification');
     };
 
     const [password, setPassword] = useState('');

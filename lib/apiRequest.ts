@@ -1,11 +1,21 @@
 import { refreshOnce } from '@/lib/utils';
+type AuthHandlers = {
+    setAccessToken: (token: string) => void;
+    clearAccessToken: () => void;
+};
 
+let authHandlers: AuthHandlers | null = null;
+
+export const registerAuthHandler = (handlers: AuthHandlers) => {
+    authHandlers = handlers;
+};
 type ApiResponse<T> = {
     data?: T;
     error?: {
         message: string;
         status?: number;
     };
+    response: Response;
 };
 
 const parseResponse = <T>(response: ApiResponse<T>) => {
@@ -20,41 +30,33 @@ const parseResponse = <T>(response: ApiResponse<T>) => {
     return response.data;
 };
 
-export async function apiRequest<T>(
-    request: Promise<{
-        data?: T;
-        error?: {
-            message: string;
-            status?: number;
-        };
-    }>,
-) {
+export async function apiRequest<T>(request: Promise<ApiResponse<T>>) {
     const response = await request;
-
     return parseResponse(response);
 }
 
-let clearAccessToken: (() => void) | null = null;
-
-export const registerAuthHandler = (handler: () => void) => {
-    clearAccessToken = handler;
-};
-
 export async function authenticatedApiRequest<T>(request: () => Promise<ApiResponse<T>>) {
-    let response = await request();
+    console.log('AUTH REQUEST START');
 
-    if (response.error?.status === 401) {
+    let response;
+
+    response = await request();
+
+    console.log('AUTH REQUEST RESPONSE', response.response.status);
+
+    if (response.response?.status === 401) {
         try {
-            await refreshOnce();
+            const refreshResponse = await refreshOnce();
+            authHandlers?.setAccessToken(refreshResponse.data.accessToken);
         } catch (error) {
-            clearAccessToken?.();
+            authHandlers?.clearAccessToken?.();
             throw error;
         }
 
         response = await request();
 
         if (response.error?.status === 401) {
-            clearAccessToken?.();
+            authHandlers?.clearAccessToken?.();
         }
     }
 

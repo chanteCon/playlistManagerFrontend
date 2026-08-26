@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import { AuthLayout } from '../../../layouts/AuthLayout';
-import { register } from '@/requests/authRequests';
+import { register } from '@/requests/publicRequests';
 import { PasswordFields } from '@/components/auth/PasswordFields';
 import z from 'zod';
 

@@ -1,4 +1,4 @@
-import { refresh } from '@/requests/authRequests';
+import { refresh } from '@/requests/publicRequests';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
