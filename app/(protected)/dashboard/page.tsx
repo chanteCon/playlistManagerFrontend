@@ -1,7 +1,12 @@
 'use client';
 
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { createPlaylist, deletePlaylist, getPlaylists } from '@/requests/protectedRequests';
+import {
+    createPlaylist,
+    deletePlaylist,
+    editPlaylist,
+    getPlaylists,
+} from '@/requests/protectedRequests';
 
 import type { paths } from '@/api/schema';
 import { useAuth } from '@/contexts/AuthContext';
@@ -30,6 +35,7 @@ import {
     GraduationCap,
     Shapes,
 } from 'lucide-react';
+import { Playlist } from '@/types';
 
 const playlistIcons = [
     Music,
@@ -47,6 +53,7 @@ const playlistIcons = [
 type GetPlaylistsResponse =
     paths['/api/playlists/']['get']['responses'][200]['content']['application/json'];
 const createPlaylistSchema = schemas.postApiplaylists_Body;
+const editPlaylistSchema = schemas.patchApiplaylistsId_Body;
 
 export default function Dashboard() {
     const formRef = useRef<HTMLFormElement>(null);
@@ -54,6 +61,8 @@ export default function Dashboard() {
     const { isAuthPending } = useAuth();
     const [isAddPlaylistOpen, setIsAddPlaylistOpen] = useState(false);
     const [playlistToDelete, setPlaylistToDelete] = useState<string | null>(null);
+    const [playlistToEdit, setPlaylistToEdit] = useState<Playlist | null>(null);
+    const [isEditPlaylistOpen, setIsEditPlaylistOpen] = useState(false);
     const { data, isLoading, error } = useQuery({
         queryKey: ['playlists'],
         queryFn: getPlaylists,
@@ -103,6 +112,31 @@ export default function Dashboard() {
             });
         },
     });
+
+    const editPlaylistMutation = useMutation({
+        mutationFn: editPlaylist,
+
+        onError: (error) => {
+            alert(error);
+        },
+
+        onSuccess: (data, { playlistId }) => {
+            queryClient.setQueryData<GetPlaylistsResponse>(['playlists'], (current) => {
+                if (!current || !data) return current;
+
+                return {
+                    ...current,
+                    data: {
+                        ...current.data,
+                        playlists: current.data.playlists.map((playlist) =>
+                            playlist.id === playlistId ? data.data.playlist : playlist,
+                        ),
+                    },
+                };
+            });
+        },
+    });
+
     if (isAuthPending) {
         return <p>Checking authentication...</p>;
     }
@@ -146,7 +180,13 @@ export default function Dashboard() {
                                     </div>
 
                                     <AppDropDown>
-                                        <DropdownMenuItem className="cursor-pointer">
+                                        <DropdownMenuItem
+                                            className="cursor-pointer"
+                                            onClick={() => {
+                                                setPlaylistToEdit(playlist);
+                                                setIsEditPlaylistOpen(true);
+                                            }}
+                                        >
                                             Edit
                                         </DropdownMenuItem>
 
@@ -194,6 +234,51 @@ export default function Dashboard() {
 
                     <Button type="submit" className="w-full">
                         Add playlist
+                    </Button>
+                </ValidatedForm>
+            </AppDialogue>
+
+            <AppDialogue
+                isOpen={isEditPlaylistOpen}
+                onOpenChange={setIsEditPlaylistOpen}
+                title="Edit playlist"
+            >
+                <ValidatedForm
+                    key={playlistToEdit?.id}
+                    schema={editPlaylistSchema}
+                    onValidSubmit={(data) => {
+                        if (!playlistToEdit) return;
+
+                        const updates = Object.fromEntries(
+                            Object.entries(data).filter(([, value]) => value !== ''),
+                        );
+
+                        editPlaylistMutation.mutate({
+                            playlistId: playlistToEdit.id,
+                            ...updates,
+                        });
+
+                        setPlaylistToEdit(null);
+                        setIsEditPlaylistOpen(false);
+                    }}
+                    requiredFields={new Set([])}
+                    formRef={formRef}
+                >
+                    <FormField
+                        type="text"
+                        label="name"
+                        id="name"
+                        defaultValue={playlistToEdit?.name}
+                    />
+                    <FormField
+                        type="text"
+                        label="description"
+                        id="description"
+                        defaultValue={playlistToEdit?.description ?? ''}
+                    />
+
+                    <Button type="submit" className="w-full">
+                        Edit playlist
                     </Button>
                 </ValidatedForm>
             </AppDialogue>
