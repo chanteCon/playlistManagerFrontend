@@ -25,6 +25,9 @@ export default function Navbar() {
 
             {accessToken && (
                 <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-muted-foreground hover:bg-muted hover:text-destructive"
                     disabled={logoutMutation.isPending}
                     onClick={() => logoutMutation.mutate(accessToken)}
                 >

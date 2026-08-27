@@ -27,5 +27,6 @@ export const deletePlaylist = (playlistId: string) =>
                     id: playlistId,
                 },
             },
+            credentials: 'include',
         }),
     );
