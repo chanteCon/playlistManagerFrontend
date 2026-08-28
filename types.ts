@@ -12,3 +12,7 @@ export type Playlists =
     paths['/api/playlists/']['get']['responses'][200]['content']['application/json']['data']['playlists'];
 
 export type Playlist = Playlists[number];
+
+export type Videos =
+    paths['/api/playlists/{id}']['get']['responses']['200']['content']['application/json']['data']['playlist']['videos'];
+export type Video = Videos[number];

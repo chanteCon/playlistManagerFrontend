@@ -1,7 +1,5 @@
 import { Playlist } from '@/types';
 import { PlaylistCard } from './PlaylistCard';
-import { AppDropDown } from '@/components/AppDropdown';
-import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import {
     Music,
     Gamepad2,
@@ -14,6 +12,7 @@ import {
     GraduationCap,
     Shapes,
 } from 'lucide-react';
+import ActionsDropDown from '../ActionsDropDown';
 
 const playlistIcons = [
     Music,
@@ -57,22 +56,10 @@ export function PlaylistGrid({ playlists, onEdit, onDelete }: PlaylistGridProps)
                             PlaylistIcon={PlaylistIcon}
                             playlist={playlist}
                         >
-                            <AppDropDown>
-                                <DropdownMenuItem
-                                    className="cursor-pointer"
-                                    onClick={() => onEdit(playlist)}
-                                >
-                                    Edit
-                                </DropdownMenuItem>
-
-                                <DropdownMenuItem
-                                    className="cursor-pointer"
-                                    variant="destructive"
-                                    onClick={() => onDelete(playlist.id)}
-                                >
-                                    Delete
-                                </DropdownMenuItem>
-                            </AppDropDown>
+                            <ActionsDropDown
+                                onEdit={() => onEdit(playlist)}
+                                onDelete={() => onDelete(playlist.id)}
+                            />
                         </PlaylistCard>
                     );
                 })}

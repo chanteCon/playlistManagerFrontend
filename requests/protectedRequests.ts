@@ -2,12 +2,13 @@ import { authenticatedApiRequest } from '@/lib/apiRequest';
 import { protectedApi } from '@/api/createClient';
 import { schemas } from '@/api/zod';
 import { z } from 'zod';
+import { addVideoSchema } from '@/schemas/videoSchemas';
 
 type CreatePlaylistInput = z.infer<typeof schemas.postApiplaylists_Body>;
-type EditPlaylistInput = z.infer<typeof schemas.patchApiplaylistsId_Body>;
+type AddVideoInput = z.infer<typeof addVideoSchema> & { playlistId: string };
 
 export const getPlaylists = () =>
-    authenticatedApiRequest(() => protectedApi.GET('/api/playlists/', {}));
+    authenticatedApiRequest(() => protectedApi.GET('/api/playlists/', { credentials: 'include' }));
 
 export const logout = (accessToken: string) =>
     protectedApi.POST('/api/auth/logout', {
@@ -50,3 +51,28 @@ export const editPlaylist = (data: { playlistId: string; name?: string; descript
         }),
     );
 };
+
+export const getPlaylist = (playlistId: string) =>
+    authenticatedApiRequest(() =>
+        protectedApi.GET('/api/playlists/{id}', {
+            params: {
+                path: {
+                    id: playlistId,
+                },
+            },
+            credentials: 'include',
+        }),
+    );
+
+export const addVideoToPlaylist = (data: AddVideoInput) =>
+    authenticatedApiRequest(() =>
+        protectedApi.POST('/api/playlists/{id}/videos', {
+            body: { url: data.url },
+            params: {
+                path: {
+                    id: data.playlistId,
+                },
+            },
+            credentials: 'include',
+        }),
+    );
