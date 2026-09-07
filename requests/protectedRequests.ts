@@ -6,6 +6,7 @@ import { addVideoSchema } from '@/schemas/videoSchemas';
 
 type CreatePlaylistInput = z.infer<typeof schemas.postApiplaylists_Body>;
 type AddVideoInput = z.infer<typeof addVideoSchema> & { playlistId: string };
+type VideoIdentity = { playlistId: string; videoId: string };
 
 export const getPlaylists = () =>
     authenticatedApiRequest(() => protectedApi.GET('/api/playlists/', { credentials: 'include' }));
@@ -76,3 +77,41 @@ export const addVideoToPlaylist = (data: AddVideoInput) =>
             credentials: 'include',
         }),
     );
+
+export const deleteVideoFromPlaylist = ({ playlistId, videoId }: VideoIdentity) =>
+    authenticatedApiRequest(() =>
+        protectedApi.DELETE('/api/playlists/{id}/videos/{playlistVideoId}', {
+            params: {
+                path: {
+                    id: playlistId,
+                    playlistVideoId: videoId,
+                },
+            },
+            credentials: 'include',
+        }),
+    );
+
+export const patchVideo = (data: {
+    playlistId: string;
+    videoId: string;
+    title?: string;
+    description?: string;
+}) => {
+    const { title, playlistId, description } = data;
+
+    return authenticatedApiRequest(() =>
+        protectedApi.PATCH('/api/playlists/{id}/videos/{playlistVideoId}', {
+            body: {
+                title,
+                description,
+            },
+            params: {
+                path: {
+                    id: playlistId,
+                    playlistVideoId: data.videoId,
+                },
+            },
+            credentials: 'include',
+        }),
+    );
+};

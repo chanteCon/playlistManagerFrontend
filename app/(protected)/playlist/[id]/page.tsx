@@ -1,14 +1,17 @@
 'use client';
 
-import AddCard from '@/components/AddCard';
+import AddCard from '@/components/common/AddCard';
 import { Button } from '@/components/ui/button';
 import { usePlaylist } from '@/hooks/usePlaylist';
 import { addVideoSchema } from '@/schemas/videoSchemas';
 import { use, useState } from 'react';
 import z from 'zod';
-import VideoCard from '@/components/VideoCard';
-import AddVideoDialog from '@/components/AddVideoDialog';
-import ActionsDropDown from '@/components/ActionsDropDown';
+import VideoCard from '@/components/videos/VideoCard';
+import AddVideoDialog from '@/components/videos/AddVideoDialog';
+import ActionsDropDown from '@/components/common/ActionsDropDown';
+import { EditDialog } from '@/components/common/EditDialogue';
+import { Video } from '@/types';
+import { DeleteDialog } from '@/components/common/DeleteDialog';
 
 type PageProps = {
     params: Promise<{
@@ -19,8 +22,11 @@ type PageProps = {
 export default function Playlist({ params }: PageProps) {
     const { id } = use(params);
 
-    const { playlist, isLoading, error, addVideo } = usePlaylist(id);
+    const { playlist, isLoading, error, addVideo, editVideo, deleteVideo } = usePlaylist(id);
     const [isAddVideoOpen, setIsAddVideoOpen] = useState(false);
+    const [isEditVideoOpen, setIsEditVideoOpen] = useState(false);
+    const [videoToDelete, setVideoToDelete] = useState<Video | null>(null);
+    const [videoToEdit, setVideoToEdit] = useState<Video | null>(null);
 
     const onAddVideoSubmit = async (data: z.infer<typeof addVideoSchema>, playlistId: string) => {
         await addVideo.mutateAsync({ ...data, playlistId });
@@ -73,8 +79,13 @@ export default function Playlist({ params }: PageProps) {
                         <VideoCard key={video.id} video={video}>
                             <ActionsDropDown
                                 className="border border-white bg-black/40 text-white"
-                                onEdit={() => {}}
-                                onDelete={() => {}}
+                                onEdit={() => {
+                                    setVideoToEdit(video);
+                                    setIsEditVideoOpen(true);
+                                }}
+                                onDelete={() => {
+                                    setVideoToDelete(video);
+                                }}
                             />
                         </VideoCard>
                     ))}
@@ -89,6 +100,46 @@ export default function Playlist({ params }: PageProps) {
                     {addVideo.isPending ? 'Adding video...' : 'Add video'}
                 </Button>
             </AddVideoDialog>
+            {videoToEdit && (
+                <EditDialog
+                    isOpen={isEditVideoOpen}
+                    onOpenChange={setIsEditVideoOpen}
+                    title={videoToEdit.title}
+                    description={videoToEdit.description || ''}
+                    onSubmit={(data) => {
+                        if (!videoToEdit) return;
+                        const updates = Object.fromEntries(
+                            Object.entries(data).filter(([, value]) => value !== ''),
+                        );
+
+                        editVideo.mutate({
+                            playlistId: playlist.id,
+                            videoId: videoToEdit.id,
+                            ...updates,
+                        });
+
+                        setIsEditVideoOpen(false);
+                        setVideoToEdit(null);
+                    }}
+                    submitLabel="Save changes"
+                />
+            )}
+            {videoToDelete && (
+                <DeleteDialog
+                    itemId={videoToDelete.id}
+                    title="Delete Video?"
+                    message="Are you sure you want to delete this video?"
+                    onCancel={() => setVideoToDelete(null)}
+                    onConfirm={() => {
+                        if (!videoToDelete) return;
+                        deleteVideo.mutate({
+                            playlistId: playlist.id,
+                            videoId: videoToDelete.id,
+                        });
+                        setVideoToDelete(null);
+                    }}
+                />
+            )}
         </main>
     );
 }

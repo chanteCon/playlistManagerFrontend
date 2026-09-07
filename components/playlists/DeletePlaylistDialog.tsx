@@ -1,4 +1,4 @@
-import { ConfirmationDialog } from '../ConfirmationDialog';
+import { ConfirmationDialog } from '../common/ConfirmationDialog';
 
 type DeletePlaylistDialogProps = {
     playlistId: string | null;

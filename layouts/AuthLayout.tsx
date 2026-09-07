@@ -1,4 +1,4 @@
-import { AppBrand } from '../components/AppBrand';
+import { AppBrand } from '../components/common/AppBrand';
 import { AuthCard } from '../components/auth/AuthCard';
 
 type AuthLayoutProps = {

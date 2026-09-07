@@ -5,7 +5,7 @@ import { AppBrand } from './AppBrand';
 import { useMutation } from '@tanstack/react-query';
 import { logout } from '@/requests/protectedRequests';
 import { useRouter } from 'next/navigation';
-import { Button } from './ui/button';
+import { Button } from '../ui/button';
 
 export default function Navbar() {
     const { accessToken, clearAccessToken } = useAuth();

@@ -1,14 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus } from 'lucide-react';
-import { Playlist } from '@/types';
+import { EditInput, Playlist } from '@/types';
 import { CreatePlaylistDialog } from '@/components/playlists/CreatePlaylistDialog';
-import { EditPlaylistDialog } from '@/components/playlists/EditPlaylistDialog';
-import { DeletePlaylistDialog } from '@/components/playlists/DeletePlaylistDialog';
 import { PlaylistGrid } from '@/components/playlists/PlaylistGrid';
 import { usePlaylists } from '@/hooks/usePlaylists';
-import AddCard from '@/components/AddCard';
+import AddCard from '@/components/common/AddCard';
+import { EditDialog } from '@/components/common/EditDialogue';
+import { DeleteDialog } from '@/components/common/DeleteDialog';
 
 export default function Dashboard() {
     const {
@@ -25,6 +24,26 @@ export default function Dashboard() {
     const [playlistToDelete, setPlaylistToDelete] = useState<string | null>(null);
     const [playlistToEdit, setPlaylistToEdit] = useState<Playlist | null>(null);
     const [isEditPlaylistOpen, setIsEditPlaylistOpen] = useState(false);
+
+    const onEditPlaylistSubmit = (data: EditInput, playlistToEdit: Playlist | null) => {
+        if (!playlistToEdit) return;
+
+        const { title, description } = data;
+
+        const updates = Object.fromEntries(
+            Object.entries({
+                name: title,
+                description,
+            }).filter(([, value]) => value !== ''),
+        );
+        editPlaylist({
+            playlistId: playlistToEdit.id,
+            ...updates,
+        });
+
+        setPlaylistToEdit(null);
+        setIsEditPlaylistOpen(false);
+    };
 
     if (isAuthPending) {
         return <p>Checking authentication...</p>;
@@ -77,29 +96,21 @@ export default function Dashboard() {
                 }}
             />
 
-            <EditPlaylistDialog
-                playlist={playlistToEdit}
-                isOpen={isEditPlaylistOpen}
-                onOpenChange={setIsEditPlaylistOpen}
-                onSubmit={(data) => {
-                    if (!playlistToEdit) return;
+            {playlistToEdit && (
+                <EditDialog
+                    isOpen={isEditPlaylistOpen}
+                    onOpenChange={setIsEditPlaylistOpen}
+                    title={playlistToEdit.name}
+                    description={playlistToEdit.description ?? ''}
+                    submitLabel="Edit Playlist"
+                    onSubmit={(data) => onEditPlaylistSubmit(data, playlistToEdit)}
+                />
+            )}
 
-                    const updates = Object.fromEntries(
-                        Object.entries(data).filter(([, value]) => value !== ''),
-                    );
-
-                    editPlaylist({
-                        playlistId: playlistToEdit.id,
-                        ...updates,
-                    });
-
-                    setPlaylistToEdit(null);
-                    setIsEditPlaylistOpen(false);
-                }}
-            />
-
-            <DeletePlaylistDialog
-                playlistId={playlistToDelete}
+            <DeleteDialog
+                title="Delete Playlist?"
+                message="Are you sure you want to delete this playlist? This action cannot be undone."
+                itemId={playlistToDelete}
                 onCancel={() => setPlaylistToDelete(null)}
                 onConfirm={(playlistId) => {
                     deletePlaylist(playlistId, {

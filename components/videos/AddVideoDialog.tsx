@@ -1,7 +1,7 @@
 import { addVideoSchema } from '@/schemas/videoSchemas';
-import AppDialogue from './AppDialogue';
-import { FormField } from './forms/FormField';
-import { ValidatedForm } from './forms/ValidatedForm';
+import AppDialogue from '../common/AppDialogue';
+import { FormField } from '../forms/FormField';
+import { ValidatedForm } from '../forms/ValidatedForm';
 import z from 'zod';
 
 type AddVideoProps = {

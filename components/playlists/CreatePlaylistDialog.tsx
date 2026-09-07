@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 
 import { Button } from '@/components/ui/button';
-import AppDialogue from '@/components/AppDialogue';
+import AppDialogue from '@/components/common/AppDialogue';
 import { ValidatedForm } from '@/components/forms/ValidatedForm';
 import { FormField } from '@/components/forms/FormField';
 import { schemas } from '@/api/zod';

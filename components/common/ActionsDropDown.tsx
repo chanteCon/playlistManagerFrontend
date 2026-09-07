@@ -1,5 +1,5 @@
 import { AppDropDown } from './AppDropdown';
-import { DropdownMenuItem } from './ui/dropdown-menu';
+import { DropdownMenuItem } from '../ui/dropdown-menu';
 
 type ActionsDropDownProps = {
     onEdit: () => void;

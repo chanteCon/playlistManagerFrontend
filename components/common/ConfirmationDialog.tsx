@@ -1,5 +1,5 @@
 import AppDialogue from './AppDialogue';
-import { Button } from './ui/button';
+import { Button } from '../ui/button';
 
 type ConfirmationDialogProps = {
     title: string;

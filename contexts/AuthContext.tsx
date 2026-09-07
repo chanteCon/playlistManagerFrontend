@@ -28,7 +28,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 accessToken: res.data.accessToken,
             });
         },
-        onError: (error) => {
+        onError: () => {
             setIsAuthPending(false);
         },
     });

@@ -12,7 +12,7 @@ import {
     GraduationCap,
     Shapes,
 } from 'lucide-react';
-import ActionsDropDown from '../ActionsDropDown';
+import ActionsDropDown from '../common/ActionsDropDown';
 
 const playlistIcons = [
     Music,
