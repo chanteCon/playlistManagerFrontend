@@ -1,7 +1,8 @@
 'use client';
 
-import VideoCard from '@/components/videos/VideoCard';
+import VideoQueue from '@/components/videos/VideoQueue';
 import { usePlaylist } from '@/hooks/usePlaylist';
+import Link from 'next/link';
 import { use } from 'react';
 
 type PageProps = {
@@ -14,11 +15,7 @@ type PageProps = {
 export default function WatchVideoPage({ params }: PageProps) {
     const { id, videoId } = use(params);
 
-    const { playlist, isLoading, error } = usePlaylist(id);
-
-    if (isLoading) {
-        return <p>Loading...</p>;
-    }
+    const { playlist, error } = usePlaylist(id);
 
     if (error) {
         return (
@@ -50,17 +47,18 @@ export default function WatchVideoPage({ params }: PageProps) {
             </div>
         );
     }
-
     const video = videos[currentVideoIndex];
 
-    const previousVideos = videos.slice(0, currentVideoIndex);
-    const nextVideos = videos.slice(currentVideoIndex + 1);
-
     return (
-        <div className="w-full @container px-10">
-            <p className="mb-5">{playlist.name}</p>
-            <div className="flex w-full flex-col gap-5 items-center @[650px]:flex-row @[650px]:items-stretch @[650px]:gap-10">
-                <section className="flex-1 w-full">
+        <div className=" w-full max-w-[1350px] @container p-10 mx-auto @[850px]:mt-2">
+            <Link
+                href={`/playlist/${id}`}
+                className="shadow-[0_4px_4px_-4px_rgba(0,0,0,0.2)] sticky top-0 z-10 block w-full truncate bg-background pb-1 text-xl font-bold tracking-tight @[850px]:hidden hover:text-muted-foreground mb-4"
+            >
+                {playlist.name}
+            </Link>
+            <div className="flex w-full flex-col gap-5 items-center @[850px]:flex-row @[850px]:items-stretch justify-between ">
+                <section className="min-w-0 flex-[2] @[1000px]:max-w-[900px]">
                     {video.render === false || video.platform !== 'youtube' ? (
                         <div>
                             <p>This video cant be played inside Playlist Manager.</p>
@@ -76,51 +74,41 @@ export default function WatchVideoPage({ params }: PageProps) {
                                 title="YouTube video"
                                 allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
                                 allowFullScreen
-                                className="w-full aspect-video"
+                                className="w-full aspect-video rounded-lg border"
                             />
+                            <div className="flex flex-col gap-2 mt-4">
+                                <h1 className="text-xl font-semibold tracking-tight">
+                                    {video.title || 'Untitled video'}
+                                </h1>
 
-                            <p>
-                                Having trouble?{' '}
-                                <a href={video.url} target="_blank" rel="noopener noreferrer">
-                                    Watch on YouTube
-                                </a>
-                            </p>
+                                {video.description && (
+                                    <p className="rounded-lg bg-muted/90 p-4 text-sm leading-relaxed text-muted-foreground">
+                                        {video.description}
+                                    </p>
+                                )}
+
+                                <p className="text-sm text-muted-foreground">
+                                    Having trouble watching this video?{' '}
+                                    <a
+                                        href={video.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="font-medium text-link hover:underline"
+                                    >
+                                        Watch on YouTube
+                                    </a>
+                                </p>
+                            </div>
                         </div>
                     )}
                 </section>
 
-                <section className="flex flex-col gap-4 items-center @[650px]:overflow-y-auto @[650px]:h-[450px]">
-                    {previousVideos.length === 0 ? (
-                        <p>Nothing before this video.</p>
-                    ) : (
-                        previousVideos.map((video) => (
-                            <VideoCard
-                                key={video.id}
-                                playlistId={id}
-                                video={video}
-                                className="w-70 min-h-[230px] @[650px]:w-[220px] @[650px]:min-h-[200px]"
-                            />
-                        ))
-                    )}
-                    <VideoCard
-                        key={video.id}
-                        playlistId={id}
-                        video={video}
-                        className="w-72 min-h-[230px] @[650px]:w-[210px] @[650px]:min-h-[180px] border-2 border-primary ring-5 ring-primary/40 shadow-lg p-2"
-                    />
-                    {nextVideos.length === 0 ? (
-                        <p>No more videos in this playlist.</p>
-                    ) : (
-                        nextVideos.map((video) => (
-                            <VideoCard
-                                key={video.id}
-                                playlistId={id}
-                                video={video}
-                                className="w-70 min-h-[230px] @[650px]:w-[220px] @[650px]:min-h-[200px]"
-                            />
-                        ))
-                    )}
-                </section>
+                <VideoQueue
+                    id={playlist.id}
+                    videos={videos}
+                    currentVideoIndex={currentVideoIndex}
+                    playlistName={playlist.name}
+                />
             </div>
         </div>
     );

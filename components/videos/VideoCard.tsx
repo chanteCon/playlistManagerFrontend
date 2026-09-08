@@ -56,8 +56,8 @@ export default function VideoCard({ video, children, playlistId, className }: Vi
                         </div>
                     )}
                 </div>
-                {children}
             </Link>
+            {children}
         </div>
     );
 }
