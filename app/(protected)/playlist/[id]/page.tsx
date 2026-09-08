@@ -76,7 +76,7 @@ export default function Playlist({ params }: PageProps) {
                     />
 
                     {playlist?.videos?.map((video) => (
-                        <VideoCard key={video.id} video={video}>
+                        <VideoCard key={video.id} video={video} playlistId={playlist.id}>
                             <ActionsDropDown
                                 className="border border-white bg-black/40 text-white"
                                 onEdit={() => {
