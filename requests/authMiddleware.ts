@@ -1,5 +1,5 @@
 type AuthHandlers = {
-    accessToken: string | null;
+    getAccessToken: () => string | null;
 };
 
 let authHandlers: AuthHandlers | null = null;
@@ -10,11 +10,10 @@ export const middlewareAuthHandler = (handlers: AuthHandlers) => {
 
 export const authMiddleware = {
     onRequest({ request }: { request: Request }) {
-        const accessToken = authHandlers?.accessToken;
-
-        if (!accessToken) {
+        const accessToken = authHandlers?.getAccessToken();
+        if (accessToken) {
+            request.headers.set('Authorization', `Bearer ${accessToken}`);
         }
-        request.headers.set('Authorization', `Bearer ${accessToken}`);
 
         return request;
     },

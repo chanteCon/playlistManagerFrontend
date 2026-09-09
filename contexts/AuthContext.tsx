@@ -3,7 +3,7 @@
 import { registerAuthHandler } from '@/lib/apiRequest';
 import { initializeAuth } from '@/lib/utils';
 import { middlewareAuthHandler } from '@/requests/authMiddleware';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
 type AuthContextValue = {
@@ -16,6 +16,7 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+    const queryClient = useQueryClient();
     const [isAuthPending, setIsAuthPending] = useState(true);
     const { mutate } = useMutation({
         mutationFn: initializeAuth,
@@ -23,10 +24,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         onSuccess: (res) => {
             setAccessToken(res.data.accessToken);
             setIsAuthPending(false);
-            registerAuthHandler({ clearAccessToken, setAccessToken });
-            middlewareAuthHandler({
-                accessToken: res.data.accessToken,
-            });
         },
         onError: () => {
             setIsAuthPending(false);
@@ -40,11 +37,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const clearAccessToken = useCallback(() => {
         setAccessToken(null);
-    }, []);
+        queryClient.clear();
+    }, [queryClient]);
+
+    useEffect(() => {
+        registerAuthHandler({
+            clearAccessToken,
+            setAccessToken,
+        });
+
+        middlewareAuthHandler({
+            getAccessToken: () => accessToken,
+        });
+    }, [accessToken, clearAccessToken]);
 
     return (
         <AuthContext.Provider
-            value={{ accessToken, setAccessToken, clearAccessToken, isAuthPending }}
+            value={{
+                accessToken,
+                setAccessToken,
+                clearAccessToken,
+                isAuthPending,
+            }}
         >
             {children}
         </AuthContext.Provider>

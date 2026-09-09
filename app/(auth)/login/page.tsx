@@ -21,8 +21,7 @@ export default function Login() {
 
     const loginMutation = useMutation({
         mutationFn: login,
-        onSuccess: (data) => {
-            alert(data);
+        onSuccess: () => {
             router.push('/login-mfa');
         },
 
