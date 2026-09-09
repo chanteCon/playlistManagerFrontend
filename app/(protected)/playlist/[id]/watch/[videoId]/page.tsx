@@ -60,11 +60,21 @@ export default function WatchVideoPage({ params }: PageProps) {
             <div className="flex w-full flex-col gap-5 items-center @[850px]:flex-row @[850px]:items-stretch justify-between ">
                 <section className="min-w-0 flex-[2] @[1000px]:max-w-[900px]">
                     {video.render === false || video.platform !== 'youtube' ? (
-                        <div>
-                            <p>This video cant be played inside Playlist Manager.</p>
+                        <div className="flex flex-col items-center justify-center gap-3 rounded-lg border bg-muted/30 px-6 py-10 text-center">
+                            <div className="space-y-1">
+                                <p className="font-medium">This video can’t be played here</p>
+                                <p className="text-sm text-muted-foreground">
+                                    This content needs to be viewed on its original platform.
+                                </p>
+                            </div>
 
-                            <a href={video.url} target="_blank" rel="noopener noreferrer">
-                                Watch on YouTube
+                            <a
+                                href={video.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+                            >
+                                View video on the original platform →
                             </a>
                         </div>
                     ) : (
@@ -77,16 +87,6 @@ export default function WatchVideoPage({ params }: PageProps) {
                                 className="w-full aspect-video rounded-lg border"
                             />
                             <div className="flex flex-col gap-2 mt-4">
-                                <h1 className="text-xl font-semibold tracking-tight">
-                                    {video.title || 'Untitled video'}
-                                </h1>
-
-                                {video.description && (
-                                    <p className="rounded-lg bg-muted/90 p-4 text-sm leading-relaxed text-muted-foreground">
-                                        {video.description}
-                                    </p>
-                                )}
-
                                 <p className="text-sm text-muted-foreground">
                                     Having trouble watching this video?{' '}
                                     <a
@@ -101,6 +101,17 @@ export default function WatchVideoPage({ params }: PageProps) {
                             </div>
                         </div>
                     )}
+                    <div className="flex flex-col gap-2 mt-4">
+                        <h1 className="text-xl font-semibold tracking-tight">
+                            {video.title || 'Untitled video'}
+                        </h1>
+
+                        {video.description && (
+                            <p className="rounded-lg bg-muted/90 p-4 text-sm leading-relaxed text-muted-foreground">
+                                {video.description}
+                            </p>
+                        )}
+                    </div>
                 </section>
 
                 <VideoQueue
