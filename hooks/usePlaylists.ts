@@ -24,6 +24,7 @@ export function usePlaylists() {
         queryFn: getPlaylists,
         enabled: isAuthPending === false,
         retry: false,
+        staleTime: 5 * 60 * 1000,
     });
 
     const createPlaylistMutation = useMutation({

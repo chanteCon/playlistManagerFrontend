@@ -22,6 +22,7 @@ export function usePlaylist(id: string) {
         queryFn: () => getPlaylist(id),
         enabled: isAuthPending === false,
         retry: false,
+        staleTime: 5 * 60 * 1000,
     });
 
     const addVideo = useMutation({

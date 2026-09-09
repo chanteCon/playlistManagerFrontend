@@ -62,9 +62,9 @@ export default function WatchVideoPage({ params }: PageProps) {
                     {video.render === false || video.platform !== 'youtube' ? (
                         <div className="flex flex-col items-center justify-center gap-3 rounded-lg border bg-muted/30 px-6 py-10 text-center">
                             <div className="space-y-1">
-                                <p className="font-medium">This video can’t be played here</p>
+                                <p className="font-medium">This content can’t be played here</p>
                                 <p className="text-sm text-muted-foreground">
-                                    This content needs to be viewed on its original platform.
+                                    This needs to be viewed on its original platform.
                                 </p>
                             </div>
 
@@ -74,7 +74,7 @@ export default function WatchVideoPage({ params }: PageProps) {
                                 rel="noopener noreferrer"
                                 className="text-sm font-medium text-primary underline-offset-4 hover:underline"
                             >
-                                View video on the original platform →
+                                View on the original platform →
                             </a>
                         </div>
                     ) : (
