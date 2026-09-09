@@ -7,11 +7,11 @@ import { codeSchema } from '@/schemas/authSchemas';
 import { useMutation } from '@tanstack/react-query';
 
 export default function LoginMfa() {
-    const { setAccessToken } = useAuth();
+    const { updateAccessToken } = useAuth();
     const loginMFAMutation = useMutation({
         mutationFn: loginMFA,
         onSuccess: (res) => {
-            setAccessToken(extractAccessToken(res));
+            updateAccessToken(extractAccessToken(res));
         },
 
         onError: (error) => {

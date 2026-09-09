@@ -34,7 +34,6 @@ export default function Login() {
     const [rejected, setRejected] = useState(false);
 
     const requestNewCode = () => {
-        alert('New code requested');
         router.push('/request-verification');
     };
 

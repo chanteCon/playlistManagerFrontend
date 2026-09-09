@@ -15,7 +15,6 @@ export default function RequestCode() {
     const reqCodeMutation = useMutation({
         mutationFn: verificationCode,
         onSuccess: () => {
-            alert('Code requested');
             router.push('/verify');
         },
         onError: (error) => {

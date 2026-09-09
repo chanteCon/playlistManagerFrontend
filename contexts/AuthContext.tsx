@@ -4,11 +4,11 @@ import { registerAuthHandler } from '@/lib/apiRequest';
 import { initializeAuth } from '@/lib/utils';
 import { middlewareAuthHandler } from '@/requests/authMiddleware';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 type AuthContextValue = {
     accessToken: string | null;
-    setAccessToken: (token: string) => void;
+    updateAccessToken: (token: string) => void;
     clearAccessToken: () => void;
     isAuthPending: boolean;
 };
@@ -16,13 +16,14 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+    const accessTokenRef = useRef<string | null>(null);
     const queryClient = useQueryClient();
     const [isAuthPending, setIsAuthPending] = useState(true);
     const { mutate } = useMutation({
         mutationFn: initializeAuth,
 
         onSuccess: (res) => {
-            setAccessToken(res.data.accessToken);
+            updateAccessToken(res.data.accessToken);
             setIsAuthPending(false);
         },
         onError: () => {
@@ -35,27 +36,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, [mutate]);
     const [accessToken, setAccessToken] = useState<string | null>(null);
 
+    const updateAccessToken = useCallback((token: string | null) => {
+        accessTokenRef.current = token;
+        setAccessToken(token);
+    }, []);
+
     const clearAccessToken = useCallback(() => {
-        setAccessToken(null);
+        updateAccessToken(null);
         queryClient.clear();
-    }, [queryClient]);
+    }, [queryClient, updateAccessToken]);
 
     useEffect(() => {
         registerAuthHandler({
             clearAccessToken,
-            setAccessToken,
+            updateAccessToken,
         });
 
         middlewareAuthHandler({
-            getAccessToken: () => accessToken,
+            getAccessToken: () => accessTokenRef.current,
         });
-    }, [accessToken, clearAccessToken]);
-
+    }, [updateAccessToken, clearAccessToken]);
     return (
         <AuthContext.Provider
             value={{
                 accessToken,
-                setAccessToken,
+                updateAccessToken,
                 clearAccessToken,
                 isAuthPending,
             }}
