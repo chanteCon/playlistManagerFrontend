@@ -36,13 +36,9 @@ export async function apiRequest<T>(request: Promise<ApiResponse<T>>) {
 }
 
 export async function authenticatedApiRequest<T>(request: () => Promise<ApiResponse<T>>) {
-    console.log('AUTH REQUEST START');
-
     let response;
 
     response = await request();
-
-    console.log('AUTH REQUEST RESPONSE', response.response.status);
 
     if (response.response?.status === 401) {
         try {
@@ -59,6 +55,8 @@ export async function authenticatedApiRequest<T>(request: () => Promise<ApiRespo
             authHandlers?.clearAccessToken?.();
         }
     }
-
+    if (response.response.status === 204) {
+        return undefined;
+    }
     return parseResponse(response);
 }

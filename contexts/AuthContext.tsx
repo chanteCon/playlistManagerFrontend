@@ -16,11 +16,20 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const { mutate, isPending } = useMutation({
+    const [isAuthPending, setIsAuthPending] = useState(true);
+    const { mutate } = useMutation({
         mutationFn: initializeAuth,
 
         onSuccess: (res) => {
             setAccessToken(res.data.accessToken);
+            setIsAuthPending(false);
+            registerAuthHandler({ clearAccessToken, setAccessToken });
+            middlewareAuthHandler({
+                accessToken: res.data.accessToken,
+            });
+        },
+        onError: () => {
+            setIsAuthPending(false);
         },
     });
 
@@ -32,19 +41,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const clearAccessToken = useCallback(() => {
         setAccessToken(null);
     }, []);
-    useEffect(() => {
-        registerAuthHandler({ clearAccessToken, setAccessToken });
-    }, [clearAccessToken]);
-
-    useEffect(() => {
-        middlewareAuthHandler({
-            accessToken,
-        });
-    }, [accessToken]);
 
     return (
         <AuthContext.Provider
-            value={{ accessToken, setAccessToken, clearAccessToken, isAuthPending: isPending }}
+            value={{ accessToken, setAccessToken, clearAccessToken, isAuthPending }}
         >
             {children}
         </AuthContext.Provider>

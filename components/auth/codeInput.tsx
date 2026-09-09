@@ -1,4 +1,4 @@
-import { InputOTPGroup, InputOTPSlot } from './ui/input-otp';
+import { InputOTPGroup, InputOTPSlot } from '../ui/input-otp';
 
 export default function CodeInput({ boxStyle }: { boxStyle: string }) {
     return (

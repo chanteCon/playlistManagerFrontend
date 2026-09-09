@@ -10,6 +10,7 @@ type FormFieldProps = {
     error?: string;
     onChange?: (value: string) => void;
     value?: string;
+    defaultValue?: string;
 };
 
 export function FormField({
@@ -21,6 +22,7 @@ export function FormField({
     error: customError,
     onChange,
     value,
+    defaultValue,
 }: FormFieldProps) {
     const { errors, clearError } = useFormContext();
 
@@ -36,6 +38,7 @@ export function FormField({
                     name={id}
                     type={type}
                     value={value}
+                    defaultValue={defaultValue}
                     aria-invalid={!!error}
                     onChange={(event) => {
                         clearError(id);

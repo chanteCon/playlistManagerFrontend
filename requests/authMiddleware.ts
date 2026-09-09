@@ -13,9 +13,7 @@ export const authMiddleware = {
         const accessToken = authHandlers?.accessToken;
 
         if (!accessToken) {
-            throw new Error('No access token');
         }
-
         request.headers.set('Authorization', `Bearer ${accessToken}`);
 
         return request;

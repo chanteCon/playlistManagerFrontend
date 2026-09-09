@@ -20,7 +20,7 @@ export function ValidatedForm<T extends z.ZodType>({
     formRef,
 }: ValidatedFormProps<T>) {
     const [errors, setErrors] = useState<Record<string, string>>({});
-    function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
 

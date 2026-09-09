@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { ValidatedForm } from './ValidatedForm';
 import { useRef } from 'react';
 import { AuthLayout } from '../../layouts/AuthLayout';
-import CodeInput from '../codeInput';
+import CodeInput from '../auth/codeInput';
 import CodeExpiry from '../auth/CodeExpiry';
 import Link from 'next/link';
 
