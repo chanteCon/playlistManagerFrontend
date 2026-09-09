@@ -1,6 +1,6 @@
 import { refreshOnce } from '@/lib/utils';
 type AuthHandlers = {
-    setAccessToken: (token: string) => void;
+    updateAccessToken: (token: string) => void;
     clearAccessToken: () => void;
 };
 
@@ -43,7 +43,7 @@ export async function authenticatedApiRequest<T>(request: () => Promise<ApiRespo
     if (response.response?.status === 401) {
         try {
             const refreshResponse = await refreshOnce();
-            authHandlers?.setAccessToken(refreshResponse.data.accessToken);
+            authHandlers?.updateAccessToken(refreshResponse.data.accessToken);
         } catch (error) {
             authHandlers?.clearAccessToken?.();
             throw error;
@@ -51,7 +51,7 @@ export async function authenticatedApiRequest<T>(request: () => Promise<ApiRespo
 
         response = await request();
 
-        if (response.error?.status === 401) {
+        if (response.response?.status === 401) {
             authHandlers?.clearAccessToken?.();
         }
     }

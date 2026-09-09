@@ -37,12 +37,14 @@ export default function VideoQueue({
         <section className="flex w-full flex-col h-[700px] @[850px]:h-[500px] @[850px]:w-[320px] @[850px]:shrink-0">
             <p className=" block w-full pb-1 text-md font-bold @[850px]:hidden ">Videos</p>
             <hr className=" block @[850px]:hidden mb-5 " />
-
-            <div className="min-h-0 flex-1 rounded-lg bg-muted/90 p-2 @[850px]:border @[850px]:bg-muted/20 @[850px]:p-5">
-                <div ref={queueRef} className="h-full overflow-y-auto">
+            <div className="min-h-0 flex-1  ">
+                <div
+                    ref={queueRef}
+                    className="h-full overflow-y-auto bg-muted/90 @[850px]:bg-muted/20 rounded-lg  @[850px]:border p-5"
+                >
                     <Link
                         href={`/playlist/${id}`}
-                        className="sticky top-0 z-10 mb-3 hidden truncate bg-background pb-3 pt-1 text-md font-semibold hover:text-muted-foreground @[850px]:block"
+                        className="sticky top-[-20] z-10 hidden truncate bg-background pb-3 pt-1 text-md font-semibold hover:text-muted-foreground @[850px]:block"
                     >
                         {playlistName}
                     </Link>
@@ -55,7 +57,7 @@ export default function VideoQueue({
                                         key={video.id}
                                         playlistId={id}
                                         video={video}
-                                        className="w-full max-w-[300px] @[850px]:w-[250px] @[850px]:h-[172px]"
+                                        className="w-full h-auto max-h-full @[850px]:w-[250px] @[850px]:h-[172px]"
                                     />
                                 ))}
                             </div>
@@ -69,7 +71,7 @@ export default function VideoQueue({
                                 key={videos[currentVideoIndex].id}
                                 playlistId={id}
                                 video={videos[currentVideoIndex]}
-                                className="w-full max-w-[300px] @[850px]:w-[250px] @[850px]:h-[172px]"
+                                className="w-full h-auto max-h-full @[850px]:w-[250px] @[850px]:h-[165x]"
                             />
                         </div>
 
@@ -80,7 +82,7 @@ export default function VideoQueue({
                                         key={video.id}
                                         playlistId={id}
                                         video={video}
-                                        className="w-full max-w-[300px] @[850px]:w-[250px] @[850px]:h-[172px]"
+                                        className="w-full h-auto max-h-full @[850px]:w-[250px] @[850px]:h-[172px]"
                                     />
                                 ))}
                             </div>

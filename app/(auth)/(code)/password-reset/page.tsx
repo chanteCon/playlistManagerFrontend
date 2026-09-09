@@ -31,7 +31,6 @@ export default function Verify() {
     const passwordResetMutation = useMutation({
         mutationFn: passwordReset,
         onSuccess: () => {
-            alert('success');
             router.push('/login');
         },
         onError: (error) => {

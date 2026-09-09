@@ -3,12 +3,12 @@
 import { registerAuthHandler } from '@/lib/apiRequest';
 import { initializeAuth } from '@/lib/utils';
 import { middlewareAuthHandler } from '@/requests/authMiddleware';
-import { useMutation } from '@tanstack/react-query';
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 type AuthContextValue = {
     accessToken: string | null;
-    setAccessToken: (token: string) => void;
+    updateAccessToken: (token: string) => void;
     clearAccessToken: () => void;
     isAuthPending: boolean;
 };
@@ -16,17 +16,15 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+    const accessTokenRef = useRef<string | null>(null);
+    const queryClient = useQueryClient();
     const [isAuthPending, setIsAuthPending] = useState(true);
     const { mutate } = useMutation({
         mutationFn: initializeAuth,
 
         onSuccess: (res) => {
-            setAccessToken(res.data.accessToken);
+            updateAccessToken(res.data.accessToken);
             setIsAuthPending(false);
-            registerAuthHandler({ clearAccessToken, setAccessToken });
-            middlewareAuthHandler({
-                accessToken: res.data.accessToken,
-            });
         },
         onError: () => {
             setIsAuthPending(false);
@@ -38,13 +36,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, [mutate]);
     const [accessToken, setAccessToken] = useState<string | null>(null);
 
-    const clearAccessToken = useCallback(() => {
-        setAccessToken(null);
+    const updateAccessToken = useCallback((token: string | null) => {
+        accessTokenRef.current = token;
+        setAccessToken(token);
     }, []);
 
+    const clearAccessToken = useCallback(() => {
+        updateAccessToken(null);
+        queryClient.clear();
+    }, [queryClient, updateAccessToken]);
+
+    useEffect(() => {
+        registerAuthHandler({
+            clearAccessToken,
+            updateAccessToken,
+        });
+
+        middlewareAuthHandler({
+            getAccessToken: () => accessTokenRef.current,
+        });
+    }, [updateAccessToken, clearAccessToken]);
     return (
         <AuthContext.Provider
-            value={{ accessToken, setAccessToken, clearAccessToken, isAuthPending }}
+            value={{
+                accessToken,
+                updateAccessToken,
+                clearAccessToken,
+                isAuthPending,
+            }}
         >
             {children}
         </AuthContext.Provider>

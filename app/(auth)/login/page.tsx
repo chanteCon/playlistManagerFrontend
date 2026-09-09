@@ -21,8 +21,7 @@ export default function Login() {
 
     const loginMutation = useMutation({
         mutationFn: login,
-        onSuccess: (data) => {
-            alert(data);
+        onSuccess: () => {
             router.push('/login-mfa');
         },
 
@@ -35,7 +34,6 @@ export default function Login() {
     const [rejected, setRejected] = useState(false);
 
     const requestNewCode = () => {
-        alert('New code requested');
         router.push('/request-verification');
     };
 

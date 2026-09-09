@@ -7,12 +7,12 @@ import { useAuth } from '@/contexts/AuthContext';
 import { extractAccessToken } from '@/lib/utils';
 
 export default function Verify() {
-    const { setAccessToken } = useAuth();
+    const { updateAccessToken } = useAuth();
     const verifyMutation = useMutation({
         mutationFn: verify,
 
         onSuccess: (res) => {
-            setAccessToken(extractAccessToken(res));
+            updateAccessToken(extractAccessToken(res));
         },
 
         onError: (error) => {

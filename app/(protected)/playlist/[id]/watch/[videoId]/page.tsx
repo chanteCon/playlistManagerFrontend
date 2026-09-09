@@ -78,7 +78,7 @@ export default function WatchVideoPage({ params }: PageProps) {
                             </a>
                         </div>
                     ) : (
-                        <div>
+                        <div className="w-full">
                             <iframe
                                 src={`https://www.youtube.com/embed/${video.platformId}`}
                                 title="YouTube video"
