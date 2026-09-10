@@ -11,6 +11,7 @@ import {
 
 import type { paths } from '@/api/schema';
 import { useAuth } from '@/contexts/AuthContext';
+import { hasErrorStatus } from '@/lib/utils';
 
 type GetPlaylistsResponse =
     paths['/api/playlists/']['get']['responses'][200]['content']['application/json'];
@@ -72,8 +73,6 @@ export function usePlaylists() {
     const editPlaylistMutation = useMutation({
         mutationFn: editPlaylist,
 
-        onError: (error) => alert(error),
-
         onSuccess: (data, { playlistId }) => {
             queryClient.setQueryData<GetPlaylistsResponse>(['playlists'], (current) => {
                 if (!current || !data) return current;
@@ -88,6 +87,24 @@ export function usePlaylists() {
                     },
                 };
             });
+        },
+
+        onError: (error, { playlistId }) => {
+            if (hasErrorStatus(error, 404)) {
+                queryClient.setQueryData<GetPlaylistsResponse>(['playlists'], (current) => {
+                    if (!current) return current;
+
+                    return {
+                        ...current,
+                        data: {
+                            ...current.data,
+                            playlists: current.data.playlists.filter(
+                                (playlist) => playlist.id !== playlistId,
+                            ),
+                        },
+                    };
+                });
+            }
         },
     });
 

@@ -8,6 +8,9 @@ import { usePlaylists } from '@/hooks/usePlaylists';
 import AddCard from '@/components/common/AddCard';
 import { EditDialog } from '@/components/common/EditDialogue';
 import { DeleteDialog } from '@/components/common/DeleteDialog';
+import { hasErrorStatus } from '@/lib/utils';
+import { useServerErrors } from '@/hooks/useServerErrors';
+import { NotFoundDialog } from '@/components/common/ResourceNotFounds';
 
 export default function Dashboard() {
     const {
@@ -24,7 +27,12 @@ export default function Dashboard() {
     const [playlistToDelete, setPlaylistToDelete] = useState<string | null>(null);
     const [playlistToEdit, setPlaylistToEdit] = useState<Playlist | null>(null);
     const [isEditPlaylistOpen, setIsEditPlaylistOpen] = useState(false);
-
+    const [notFoundOpen, setNotFoundOpen] = useState(false);
+    const {
+        errors: serverErrors,
+        setErrors: setServerErrors,
+        clearError: clearServerErrors,
+    } = useServerErrors();
     const onEditPlaylistSubmit = (data: EditInput, playlistToEdit: Playlist | null) => {
         if (!playlistToEdit) return;
 
@@ -36,13 +44,31 @@ export default function Dashboard() {
                 description,
             }).filter(([, value]) => value !== ''),
         );
-        editPlaylist({
-            playlistId: playlistToEdit.id,
-            ...updates,
-        });
-
-        setPlaylistToEdit(null);
-        setIsEditPlaylistOpen(false);
+        editPlaylist(
+            {
+                playlistId: playlistToEdit.id,
+                ...updates,
+            },
+            {
+                onError: (error) => {
+                    if (hasErrorStatus(error, 409)) {
+                        setServerErrors({ title: error.fieldErrors.name });
+                    }
+                    if (hasErrorStatus(error, 400)) {
+                        setServerErrors(error.fieldErrors);
+                    }
+                    if (hasErrorStatus(error, 404)) {
+                        setNotFoundOpen(true);
+                        setPlaylistToEdit(null);
+                        setIsEditPlaylistOpen(false);
+                    }
+                },
+                onSuccess() {
+                    setPlaylistToEdit(null);
+                    setIsEditPlaylistOpen(false);
+                },
+            },
+        );
     };
 
     if (isAuthPending) {
@@ -70,6 +96,7 @@ export default function Dashboard() {
                     <PlaylistGrid
                         playlists={playlists}
                         onEdit={(playlist) => {
+                            setServerErrors({});
                             setPlaylistToEdit(playlist);
                             setIsEditPlaylistOpen(true);
                         }}
@@ -104,8 +131,19 @@ export default function Dashboard() {
                     description={playlistToEdit.description ?? ''}
                     submitLabel="Edit Playlist"
                     onSubmit={(data) => onEditPlaylistSubmit(data, playlistToEdit)}
+                    serverErrorState={{
+                        errors: serverErrors,
+                        clearError: clearServerErrors,
+                    }}
                 />
             )}
+
+            <NotFoundDialog
+                title="Playlist not found"
+                message="This playlist no longer exists"
+                isOpen={notFoundOpen}
+                onOpenChange={setNotFoundOpen}
+            />
 
             <DeleteDialog
                 title="Delete Playlist?"

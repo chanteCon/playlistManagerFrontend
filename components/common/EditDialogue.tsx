@@ -5,6 +5,11 @@ import { FormField } from '@/components/forms/FormField';
 import { EditInput } from '@/types';
 import { editSchema } from '@/schemas/common';
 
+type ServerErrorState = {
+    errors: Record<string, string>;
+    clearError: (field: string) => void;
+};
+
 type EditDialogProps = {
     isOpen: boolean;
     onOpenChange: (open: boolean) => void;
@@ -15,6 +20,7 @@ type EditDialogProps = {
     onSubmit: (data: EditInput) => void;
 
     submitLabel: string;
+    serverErrorState?: ServerErrorState;
 };
 
 export function EditDialog({
@@ -24,6 +30,7 @@ export function EditDialog({
     description,
     onSubmit,
     submitLabel,
+    serverErrorState,
 }: EditDialogProps) {
     return (
         <AppDialogue isOpen={isOpen} onOpenChange={onOpenChange} title="Edit">
@@ -31,6 +38,8 @@ export function EditDialog({
                 schema={editSchema}
                 onValidSubmit={onSubmit}
                 requiredFields={new Set([])}
+                serverErrors={serverErrorState?.errors}
+                onClearServerError={serverErrorState?.clearError}
             >
                 <FormField type="text" label="title" id="title" defaultValue={title} />
 
