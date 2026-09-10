@@ -20,3 +20,8 @@ export type Videos =
 export type Video = Videos[number];
 
 export type EditInput = z.infer<typeof editSchema>;
+
+export type ServerErrorState = {
+    errors: Record<string, string>;
+    clearError: (field: string) => void;
+};

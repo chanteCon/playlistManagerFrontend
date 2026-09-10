@@ -8,9 +8,10 @@ import { usePlaylists } from '@/hooks/usePlaylists';
 import AddCard from '@/components/common/AddCard';
 import { EditDialog } from '@/components/common/EditDialogue';
 import { DeleteDialog } from '@/components/common/DeleteDialog';
-import { hasErrorStatus } from '@/lib/utils';
+import { hasErrorStatus, isHandledError } from '@/lib/utils';
 import { useServerErrors } from '@/hooks/useServerErrors';
-import { NotFoundDialog } from '@/components/common/ResourceNotFounds';
+import { ErrorDialog } from '@/components/common/ErrorDialog';
+import { uuidSchema } from '@/schemas/common';
 
 export default function Dashboard() {
     const {
@@ -27,7 +28,30 @@ export default function Dashboard() {
     const [playlistToDelete, setPlaylistToDelete] = useState<string | null>(null);
     const [playlistToEdit, setPlaylistToEdit] = useState<Playlist | null>(null);
     const [isEditPlaylistOpen, setIsEditPlaylistOpen] = useState(false);
-    const [notFoundOpen, setNotFoundOpen] = useState(false);
+    type ErrorDialogState = {
+        isOpen: boolean;
+        title: string;
+        message: string;
+    };
+
+    const mapPlaylistFieldErrors = (
+        fieldErrors: Record<string, string>,
+    ): Record<string, string> => {
+        const errors = { ...fieldErrors };
+
+        if (errors.name) {
+            errors.title = errors.name;
+            delete errors.name;
+        }
+
+        return errors;
+    };
+
+    const [errorDialog, setErrorDialog] = useState<ErrorDialogState>({
+        isOpen: false,
+        title: '',
+        message: '',
+    });
     const {
         errors: serverErrors,
         setErrors: setServerErrors,
@@ -35,7 +59,14 @@ export default function Dashboard() {
     } = useServerErrors();
     const onEditPlaylistSubmit = (data: EditInput, playlistToEdit: Playlist | null) => {
         if (!playlistToEdit) return;
-
+        if (!uuidSchema.safeParse(playlistToEdit.id).success) {
+            setErrorDialog({
+                isOpen: true,
+                title: 'Invalid playlist',
+                message: 'Playlist id must be a uuid',
+            });
+            return;
+        }
         const { title, description } = data;
 
         const updates = Object.fromEntries(
@@ -51,14 +82,15 @@ export default function Dashboard() {
             },
             {
                 onError: (error) => {
-                    if (hasErrorStatus(error, 409)) {
-                        setServerErrors({ title: error.fieldErrors.name });
-                    }
-                    if (hasErrorStatus(error, 400)) {
-                        setServerErrors(error.fieldErrors);
+                    if (isHandledError(error, [400, 409])) {
+                        setServerErrors(mapPlaylistFieldErrors(error.fieldErrors));
                     }
                     if (hasErrorStatus(error, 404)) {
-                        setNotFoundOpen(true);
+                        setErrorDialog({
+                            isOpen: true,
+                            title: 'Playlist not found',
+                            message: 'This playlist no longer exists.',
+                        });
                         setPlaylistToEdit(null);
                         setIsEditPlaylistOpen(false);
                     }
@@ -87,7 +119,10 @@ export default function Dashboard() {
             <section className="mb-10">
                 <h2 className="mb-4 text-lg font-semibold">Create a playlist</h2>
                 <AddCard
-                    setDialogOpen={() => setIsAddPlaylistOpen(true)}
+                    setDialogOpen={() => {
+                        setIsAddPlaylistOpen(true);
+                        setServerErrors({});
+                    }}
                     message={'New Playlist'}
                 />
             </section>
@@ -114,10 +149,19 @@ export default function Dashboard() {
             <CreatePlaylistDialog
                 isOpen={isAddPlaylistOpen}
                 onOpenChange={setIsAddPlaylistOpen}
+                serverErrorState={{
+                    errors: serverErrors,
+                    clearError: clearServerErrors,
+                }}
                 onSubmit={(data) => {
                     createPlaylist(data, {
                         onSuccess: () => {
                             setIsAddPlaylistOpen(false);
+                        },
+                        onError: (error) => {
+                            if (isHandledError(error, [400, 409])) {
+                                setServerErrors(error.fieldErrors);
+                            }
                         },
                     });
                 }}
@@ -138,11 +182,16 @@ export default function Dashboard() {
                 />
             )}
 
-            <NotFoundDialog
-                title="Playlist not found"
-                message="This playlist no longer exists"
-                isOpen={notFoundOpen}
-                onOpenChange={setNotFoundOpen}
+            <ErrorDialog
+                title={errorDialog.title}
+                message={errorDialog.message}
+                isOpen={errorDialog.isOpen}
+                onOpenChange={(isOpen) =>
+                    setErrorDialog((current) => ({
+                        ...current,
+                        isOpen,
+                    }))
+                }
             />
 
             <DeleteDialog
@@ -151,6 +200,14 @@ export default function Dashboard() {
                 itemId={playlistToDelete}
                 onCancel={() => setPlaylistToDelete(null)}
                 onConfirm={(playlistId) => {
+                    if (!uuidSchema.safeParse(playlistId).success) {
+                        setErrorDialog({
+                            isOpen: true,
+                            title: 'Invalid playlist',
+                            message: 'Unable to delete this playlist',
+                        });
+                        return;
+                    }
                     deletePlaylist(playlistId, {
                         onSuccess: () => {
                             setPlaylistToDelete(null);

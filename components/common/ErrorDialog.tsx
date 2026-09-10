@@ -1,13 +1,13 @@
 import AppDialogue from '@/components/common/AppDialogue';
 import { Button } from '../ui/button';
-type NotFoundDialogProps = {
+type ErrorDialogProps = {
     isOpen: boolean;
     onOpenChange: (open: boolean) => void;
     title: string;
     message: string;
 };
 
-export function NotFoundDialog({ isOpen, onOpenChange, title, message }: NotFoundDialogProps) {
+export function ErrorDialog({ isOpen, onOpenChange, title, message }: ErrorDialogProps) {
     return (
         <AppDialogue isOpen={isOpen} onOpenChange={onOpenChange} title={title}>
             <div className="flex flex-col gap-6">

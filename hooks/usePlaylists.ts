@@ -20,6 +20,22 @@ export function usePlaylists() {
     const queryClient = useQueryClient();
     const { isAuthPending } = useAuth();
 
+    const removePlaylistFromCache = (playlistId: string) => {
+        queryClient.setQueryData<GetPlaylistsResponse>(['playlists'], (current) => {
+            if (!current) return current;
+
+            return {
+                ...current,
+                data: {
+                    ...current.data,
+                    playlists: current.data.playlists.filter(
+                        (playlist) => playlist.id !== playlistId,
+                    ),
+                },
+            };
+        });
+    };
+
     const { data, isLoading, error } = useQuery({
         queryKey: ['playlists'],
         queryFn: getPlaylists,
@@ -30,8 +46,6 @@ export function usePlaylists() {
 
     const createPlaylistMutation = useMutation({
         mutationFn: createPlaylist,
-
-        onError: (error) => alert(error),
 
         onSuccess: (data) => {
             queryClient.setQueryData<GetPlaylistsResponse>(['playlists'], (current) => {
@@ -51,22 +65,14 @@ export function usePlaylists() {
     const deletePlaylistMutation = useMutation({
         mutationFn: deletePlaylist,
 
-        onError: (error) => alert(error),
+        onError: (error, playlistId) => {
+            if (hasErrorStatus(error, 404)) {
+                removePlaylistFromCache(playlistId);
+            }
+        },
 
         onSuccess: (_, playlistId) => {
-            queryClient.setQueryData<GetPlaylistsResponse>(['playlists'], (current) => {
-                if (!current) return current;
-
-                return {
-                    ...current,
-                    data: {
-                        ...current.data,
-                        playlists: current.data.playlists.filter(
-                            (playlist) => playlist.id !== playlistId,
-                        ),
-                    },
-                };
-            });
+            removePlaylistFromCache(playlistId);
         },
     });
 
@@ -91,19 +97,7 @@ export function usePlaylists() {
 
         onError: (error, { playlistId }) => {
             if (hasErrorStatus(error, 404)) {
-                queryClient.setQueryData<GetPlaylistsResponse>(['playlists'], (current) => {
-                    if (!current) return current;
-
-                    return {
-                        ...current,
-                        data: {
-                            ...current.data,
-                            playlists: current.data.playlists.filter(
-                                (playlist) => playlist.id !== playlistId,
-                            ),
-                        },
-                    };
-                });
+                removePlaylistFromCache(playlistId);
             }
         },
     });
