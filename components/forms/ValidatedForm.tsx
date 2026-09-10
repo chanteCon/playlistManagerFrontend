@@ -10,6 +10,8 @@ type ValidatedFormProps<T extends z.ZodType> = {
     children: React.ReactNode;
     requiredFields: Set<string>;
     formRef?: React.RefObject<HTMLFormElement | null>;
+    serverErrors?: Record<string, string>;
+    onClearServerError?: (field: string) => void;
 };
 
 export function ValidatedForm<T extends z.ZodType>({
@@ -18,6 +20,8 @@ export function ValidatedForm<T extends z.ZodType>({
     children,
     requiredFields,
     formRef,
+    serverErrors,
+    onClearServerError,
 }: ValidatedFormProps<T>) {
     const [errors, setErrors] = useState<Record<string, string>>({});
     async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -47,7 +51,6 @@ export function ValidatedForm<T extends z.ZodType>({
             const fieldErrors: Record<string, string> = {};
 
             for (const issue of result.error.issues) {
-                console.log(issue);
                 const field = issue.path[0];
 
                 if (typeof field === 'string') {
@@ -69,10 +72,20 @@ export function ValidatedForm<T extends z.ZodType>({
             delete next[field];
             return next;
         });
+        onClearServerError?.(field);
     }
 
     return (
-        <FormContext.Provider value={{ errors, clearError, requiredFields }}>
+        <FormContext.Provider
+            value={{
+                errors: {
+                    ...errors,
+                    ...serverErrors,
+                },
+                clearError,
+                requiredFields,
+            }}
+        >
             <form ref={formRef} onSubmit={onSubmit} noValidate className="space-y-5">
                 {children}
             </form>

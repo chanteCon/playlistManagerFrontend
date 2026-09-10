@@ -5,21 +5,33 @@ import { useMutation } from '@tanstack/react-query';
 import { passwordResetCode } from '@/requests/publicRequests';
 import { useRouter } from 'next/navigation';
 import { EmailCodeForm } from '@/components/forms/EmailCodeForm';
+import { hasErrorStatus, isHandledError } from '@/lib/utils';
+import { useServerErrors } from '@/hooks/useServerErrors';
 
 const schema = z.object({
     email: z.string().email(),
 });
 export default function ForgotPassword() {
     const router = useRouter();
+    const {
+        errors: serverErrors,
+        setErrors: setServerErrors,
+        clearError: clearServerError,
+    } = useServerErrors();
 
     const reqPasswordCodeMutation = useMutation({
         mutationFn: passwordResetCode,
         onSuccess: () => {
-            alert('Code requested');
             router.push('/password-reset');
         },
-        onError: (error) => {
-            alert(error);
+        onError: (error: unknown) => {
+            if (hasErrorStatus(error, 400)) {
+                setServerErrors(error.fieldErrors);
+            }
+        },
+
+        throwOnError: (error: unknown) => {
+            return !isHandledError(error, [400]);
         },
     });
 
@@ -33,9 +45,11 @@ export default function ForgotPassword() {
     );
     return (
         <EmailCodeForm
+            serverErrors={serverErrors}
             schema={schema}
             onSubmit={(data) => reqPasswordCodeMutation.mutate(data)}
             footer={footer}
+            onClearServerError={clearServerError}
         />
     );
 }

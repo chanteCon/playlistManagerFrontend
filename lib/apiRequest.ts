@@ -14,13 +14,32 @@ type ApiResponse<T> = {
     error?: {
         message: string;
         status?: number;
+        errors?: Record<string, string[]>;
     };
     response: Response;
 };
 
+export class RequestError extends Error {
+    status: number;
+    fieldErrors: Record<string, string>;
+
+    constructor(message: string, status: number, errors: Record<string, string> = {}) {
+        super(message);
+        this.name = 'ApiError';
+        this.status = status;
+        this.fieldErrors = errors;
+    }
+}
+
 const parseResponse = <T>(response: ApiResponse<T>) => {
     if (response.error) {
-        throw new Error(response.error.message);
+        const errors = Object.fromEntries(
+            Object.entries(response.error.errors ?? {}).map(([field, reasons]) => [
+                field,
+                reasons[0],
+            ]),
+        );
+        throw new RequestError(response.error.message, response.response.status, errors);
     }
 
     if (!response.data) {

@@ -16,6 +16,8 @@ type CodeFormParams<T extends z.ZodType> = {
     title: string;
     instructions?: string;
     type: 'LOGIN' | 'VERIFICATION';
+    serverErrors?: Record<string, string>;
+    clearServerErrors?: (field: string) => void;
 };
 
 export default function CodeForm<T extends z.ZodType>({
@@ -24,6 +26,8 @@ export default function CodeForm<T extends z.ZodType>({
     title,
     instructions = 'Enter the 6-digit code sent to your email',
     type,
+    serverErrors,
+    clearServerErrors,
 }: CodeFormParams<T>) {
     const formRef = useRef<HTMLFormElement>(null);
 
@@ -47,6 +51,8 @@ export default function CodeForm<T extends z.ZodType>({
                     schema={schema}
                     onValidSubmit={onValidSubmit}
                     requiredFields={new Set(['code'])}
+                    serverErrors={serverErrors}
+                    onClearServerError={clearServerErrors}
                 >
                     <div className="flex flex-col items-center gap-6">
                         <InputOTP

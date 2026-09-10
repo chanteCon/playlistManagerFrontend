@@ -1,6 +1,7 @@
 import { refresh } from '@/requests/publicRequests';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { RequestError } from './apiRequest';
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -41,4 +42,16 @@ export const initializeAuth = () => {
     }
 
     return authInitPromise;
+};
+
+export const isRequestError = (error: unknown): error is RequestError => {
+    return error instanceof RequestError;
+};
+
+export const isHandledError = (error: unknown, statuses: number[]): error is RequestError => {
+    return isRequestError(error) && statuses.includes(error.status);
+};
+
+export const hasErrorStatus = (error: unknown, status: number): error is RequestError => {
+    return isRequestError(error) && error.status === status;
 };

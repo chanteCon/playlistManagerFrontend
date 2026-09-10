@@ -4,10 +4,17 @@ import CodeForm from '../../../../components/forms/codeForm';
 import { useMutation } from '@tanstack/react-query';
 import { verify } from '@/requests/publicRequests';
 import { useAuth } from '@/contexts/AuthContext';
-import { extractAccessToken } from '@/lib/utils';
+import { extractAccessToken, isHandledError } from '@/lib/utils';
+import { useServerErrors } from '@/hooks/useServerErrors';
 
 export default function Verify() {
     const { updateAccessToken } = useAuth();
+    const {
+        errors: serverErrors,
+        setErrors: setServerErrors,
+        clearError: clearServerError,
+    } = useServerErrors();
+
     const verifyMutation = useMutation({
         mutationFn: verify,
 
@@ -15,8 +22,14 @@ export default function Verify() {
             updateAccessToken(extractAccessToken(res));
         },
 
-        onError: (error) => {
-            console.error(error);
+        onError: (error: unknown) => {
+            if (isHandledError(error, [400, 401])) {
+                setServerErrors(error.fieldErrors);
+            }
+        },
+
+        throwOnError: (error: unknown) => {
+            return !isHandledError(error, [400, 401]);
         },
     });
 
@@ -27,6 +40,8 @@ export default function Verify() {
             schema={codeSchema}
             onValidSubmit={(data) => verifyMutation.mutate(data)}
             type="VERIFICATION"
+            serverErrors={serverErrors}
+            clearServerErrors={clearServerError}
         />
     );
 }

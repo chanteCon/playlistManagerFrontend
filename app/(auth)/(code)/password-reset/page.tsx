@@ -13,11 +13,24 @@ import { PasswordFields } from '@/components/auth/PasswordFields';
 import z from 'zod';
 import CodeExpiry from '@/components/auth/CodeExpiry';
 import Link from 'next/link';
+import { useServerErrors } from '@/hooks/useServerErrors';
+import { isHandledError } from '@/lib/utils';
 
 const codeInputBoxStyle = 'size-12 rounded-md border text-xl';
+const PASSWORD_ERROR =
+    'Password must contain an uppercase letter, lowercase letter, number, and special character';
 
 const passwordResetFormSchema = schemas.patchApiauthpasswordReset_Body
+    .omit({ password: true })
     .extend({
+        password: z
+            .string()
+            .min(6, 'Password must be at least 6 characters')
+            .max(128, 'Password must be at most 128 characters')
+            .regex(
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?])[a-zA-Z0-9!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]{6,}$/,
+                PASSWORD_ERROR,
+            ),
         confirmPassword: z.string(),
     })
     .refine((data) => data.password === data.confirmPassword, {
@@ -26,6 +39,11 @@ const passwordResetFormSchema = schemas.patchApiauthpasswordReset_Body
     });
 
 export default function Verify() {
+    const {
+        errors: serverErrors,
+        setErrors: setServerErrors,
+        clearError: clearServerError,
+    } = useServerErrors();
     const router = useRouter();
 
     const passwordResetMutation = useMutation({
@@ -33,8 +51,14 @@ export default function Verify() {
         onSuccess: () => {
             router.push('/login');
         },
-        onError: (error) => {
-            alert(error);
+        onError: (error: unknown) => {
+            if (isHandledError(error, [400, 401])) {
+                setServerErrors(error.fieldErrors);
+            }
+        },
+
+        throwOnError: (error: unknown) => {
+            return !isHandledError(error, [400, 401]);
         },
     });
 
@@ -49,6 +73,8 @@ export default function Verify() {
                     passwordResetMutation.mutate(requestData);
                 }}
                 requiredFields={new Set(['code', 'password'])}
+                serverErrors={serverErrors}
+                onClearServerError={clearServerError}
             >
                 <AuthCard className="space-y-5">
                     <div className="space-y-3 text-center">
@@ -58,11 +84,9 @@ export default function Verify() {
                                 Enter the 6-digit code we sent to your email.
                             </p>
                         </div>
-                        <div className="flex justify-center">
-                            <InputOTP name="code" maxLength={6}>
-                                <CodeInput boxStyle={codeInputBoxStyle} />
-                            </InputOTP>
-                        </div>
+                        <InputOTP name="code" maxLength={6}>
+                            <CodeInput boxStyle={codeInputBoxStyle} />
+                        </InputOTP>
                         <CodeExpiry />
                         <Link className="text-link" href="/forgot-password">
                             Didn&apos;t receive the code? Try again
@@ -71,6 +95,7 @@ export default function Verify() {
                 </AuthCard>
                 <AuthCard className="space-y-5">
                     <PasswordFields />
+
                     <Button className="w-full" type="submit">
                         Reset password
                     </Button>
