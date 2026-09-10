@@ -13,10 +13,17 @@ import { useMutation } from '@tanstack/react-query';
 import { login } from '@/requests/publicRequests';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useServerErrors } from '@/hooks/useServerErrors';
+import { hasErrorStatus, isHandledError } from '@/lib/utils';
 
 const requiredFields = new Set(['email', 'password']);
 
 export default function Login() {
+    const {
+        errors: serverErrors,
+        setErrors: setServerErrors,
+        clearError: clearServerError,
+    } = useServerErrors();
     const router = useRouter();
 
     const loginMutation = useMutation({
@@ -26,12 +33,18 @@ export default function Login() {
         },
 
         onError: (error) => {
-            console.error(error);
-            setRejected(true);
+            setRejectedReq(true);
+            if (hasErrorStatus(error, 400)) {
+                setServerErrors(error.fieldErrors);
+            }
+            if (hasErrorStatus(error, 401)) {
+                setServerErrors({ email: error.message, password: error.message });
+            }
+        },
+        throwOnError: (error) => {
+            return !isHandledError(error, [400, 401]);
         },
     });
-
-    const [rejected, setRejected] = useState(false);
 
     const requestNewCode = () => {
         router.push('/request-verification');
@@ -39,6 +52,7 @@ export default function Login() {
 
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [rejectedReq, setRejectedReq] = useState(false);
 
     return (
         <>
@@ -47,6 +61,8 @@ export default function Login() {
                     schema={schemas.postApiauthlogin_Body}
                     onValidSubmit={(data) => loginMutation.mutate(data)}
                     requiredFields={requiredFields}
+                    serverErrors={serverErrors}
+                    onClearServerError={clearServerError}
                 >
                     <FormField id="email" label="Email" type="email" />
                     <PasswordInput
@@ -57,10 +73,8 @@ export default function Login() {
                         showPassword={showPassword}
                         onToggleShowPassword={() => setShowPassword((current) => !current)}
                     />
-                    {rejected && (
+                    {rejectedReq && (
                         <div className="text-center text-sm">
-                            <p className="text-destructive">Invalid email or password.</p>
-
                             <Button
                                 type="button"
                                 variant="link"
