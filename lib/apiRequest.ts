@@ -14,7 +14,7 @@ type ApiResponse<T> = {
     error?: {
         message: string;
         status?: number;
-        errors?: Record<string, string[]>;
+        errors?: Record<string, string[]> | null;
     };
     response: Response;
 };

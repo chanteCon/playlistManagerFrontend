@@ -2,7 +2,9 @@
 
 import VideoQueue from '@/components/videos/VideoQueue';
 import { usePlaylist } from '@/hooks/usePlaylist';
+import { uuidSchema } from '@/schemas/common';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { use } from 'react';
 
 type PageProps = {
@@ -14,6 +16,10 @@ type PageProps = {
 
 export default function WatchVideoPage({ params }: PageProps) {
     const { id, videoId } = use(params);
+
+    if (!uuidSchema.safeParse(id).success || !uuidSchema.safeParse(videoId).success) {
+        notFound();
+    }
 
     const { playlist, error } = usePlaylist(id);
 

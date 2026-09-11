@@ -2,13 +2,8 @@ import { Button } from '@/components/ui/button';
 import AppDialogue from '@/components/common/AppDialogue';
 import { ValidatedForm } from '@/components/forms/ValidatedForm';
 import { FormField } from '@/components/forms/FormField';
-import { EditInput } from '@/types';
+import { EditInput, ServerErrorState } from '@/types';
 import { editSchema } from '@/schemas/common';
-
-type ServerErrorState = {
-    errors: Record<string, string>;
-    clearError: (field: string) => void;
-};
 
 type EditDialogProps = {
     isOpen: boolean;

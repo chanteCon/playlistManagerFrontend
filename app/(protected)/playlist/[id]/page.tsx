@@ -16,6 +16,7 @@ import { useServerErrors } from '@/hooks/useServerErrors';
 import { hasErrorStatus, isHandledError } from '@/lib/utils';
 import { notFound } from 'next/navigation';
 import { uuidSchema } from '@/schemas/common';
+import { ErrorDialog } from '@/components/common/ErrorDialog';
 
 type PageProps = {
     params: Promise<{
@@ -36,6 +37,7 @@ export default function Playlist({ params }: PageProps) {
     const [isEditVideoOpen, setIsEditVideoOpen] = useState(false);
     const [videoToDelete, setVideoToDelete] = useState<Video | null>(null);
     const [videoToEdit, setVideoToEdit] = useState<Video | null>(null);
+    const [videoNotFound, setVideoNotFound] = useState(false);
 
     const serverErrorState = useServerErrors();
 
@@ -106,6 +108,7 @@ export default function Playlist({ params }: PageProps) {
                             <ActionsDropDown
                                 className="border border-white bg-black/40 text-white"
                                 onEdit={() => {
+                                    serverErrorState.setErrors({});
                                     setVideoToEdit(video);
                                     setIsEditVideoOpen(true);
                                 }}
@@ -129,6 +132,7 @@ export default function Playlist({ params }: PageProps) {
             </AddVideoDialog>
             {videoToEdit && (
                 <EditDialog
+                    serverErrorState={serverErrorState}
                     isOpen={isEditVideoOpen}
                     onOpenChange={setIsEditVideoOpen}
                     title={videoToEdit.title}
@@ -139,14 +143,32 @@ export default function Playlist({ params }: PageProps) {
                             Object.entries(data).filter(([, value]) => value !== ''),
                         );
 
-                        editVideo.mutate({
-                            playlistId: playlist.id,
-                            videoId: videoToEdit.id,
-                            ...updates,
-                        });
-
-                        setIsEditVideoOpen(false);
-                        setVideoToEdit(null);
+                        editVideo(
+                            {
+                                playlistId: playlist.id,
+                                videoId: videoToEdit.id,
+                                ...updates,
+                            },
+                            {
+                                onSuccess: () => {
+                                    setIsEditVideoOpen(false);
+                                    setVideoToEdit(null);
+                                },
+                                onError: (error) => {
+                                    if (hasErrorStatus(error, 400)) {
+                                        serverErrorState.setErrors(error.fieldErrors);
+                                    }
+                                    if (
+                                        hasErrorStatus(error, 404) &&
+                                        !!error.fieldErrors['video']
+                                    ) {
+                                        setVideoNotFound(true);
+                                        setIsEditVideoOpen(false);
+                                        setVideoToEdit(null);
+                                    }
+                                },
+                            },
+                        );
                     }}
                     submitLabel="Save changes"
                 />
@@ -159,14 +181,35 @@ export default function Playlist({ params }: PageProps) {
                     onCancel={() => setVideoToDelete(null)}
                     onConfirm={() => {
                         if (!videoToDelete) return;
-                        deleteVideo.mutate({
-                            playlistId: playlist.id,
-                            videoId: videoToDelete.id,
-                        });
-                        setVideoToDelete(null);
+                        deleteVideo(
+                            {
+                                playlistId: playlist.id,
+                                videoId: videoToDelete.id,
+                            },
+                            {
+                                onError: (error) => {
+                                    if (
+                                        hasErrorStatus(error, 404) &&
+                                        !!error.fieldErrors['video']
+                                    ) {
+                                        setVideoToDelete(null);
+                                    }
+                                },
+                                onSuccess: () => {
+                                    setVideoToDelete(null);
+                                },
+                            },
+                        );
                     }}
                 />
             )}
+
+            <ErrorDialog
+                isOpen={videoNotFound}
+                onOpenChange={setVideoNotFound}
+                title="Video not found"
+                message="This video no longer exists in this playlist"
+            />
         </main>
     );
 }

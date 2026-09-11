@@ -11,7 +11,7 @@ import {
 
 import type { paths } from '@/api/schema';
 import { useAuth } from '@/contexts/AuthContext';
-import { hasErrorStatus } from '@/lib/utils';
+import { hasErrorStatus, removePlaylistFromCache } from '@/lib/utils';
 
 type GetPlaylistsResponse =
     paths['/api/playlists/']['get']['responses'][200]['content']['application/json'];
@@ -19,22 +19,6 @@ type GetPlaylistsResponse =
 export function usePlaylists() {
     const queryClient = useQueryClient();
     const { isAuthPending } = useAuth();
-
-    const removePlaylistFromCache = (playlistId: string) => {
-        queryClient.setQueryData<GetPlaylistsResponse>(['playlists'], (current) => {
-            if (!current) return current;
-
-            return {
-                ...current,
-                data: {
-                    ...current.data,
-                    playlists: current.data.playlists.filter(
-                        (playlist) => playlist.id !== playlistId,
-                    ),
-                },
-            };
-        });
-    };
 
     const { data, isLoading, error } = useQuery({
         queryKey: ['playlists'],
@@ -67,12 +51,12 @@ export function usePlaylists() {
 
         onError: (error, playlistId) => {
             if (hasErrorStatus(error, 404)) {
-                removePlaylistFromCache(playlistId);
+                removePlaylistFromCache(queryClient, playlistId);
             }
         },
 
         onSuccess: (_, playlistId) => {
-            removePlaylistFromCache(playlistId);
+            removePlaylistFromCache(queryClient, playlistId);
         },
     });
 
@@ -97,7 +81,7 @@ export function usePlaylists() {
 
         onError: (error, { playlistId }) => {
             if (hasErrorStatus(error, 404)) {
-                removePlaylistFromCache(playlistId);
+                removePlaylistFromCache(queryClient, playlistId);
             }
         },
     });
