@@ -12,6 +12,10 @@ import ActionsDropDown from '@/components/common/ActionsDropDown';
 import { EditDialog } from '@/components/common/EditDialogue';
 import { Video } from '@/types';
 import { DeleteDialog } from '@/components/common/DeleteDialog';
+import { useServerErrors } from '@/hooks/useServerErrors';
+import { hasErrorStatus, isHandledError } from '@/lib/utils';
+import { notFound } from 'next/navigation';
+import { uuidSchema } from '@/schemas/common';
 
 type PageProps = {
     params: Promise<{
@@ -22,15 +26,37 @@ type PageProps = {
 export default function Playlist({ params }: PageProps) {
     const { id } = use(params);
 
-    const { playlist, isLoading, error, addVideo, editVideo, deleteVideo } = usePlaylist(id);
+    if (!uuidSchema.safeParse(id).success) {
+        notFound();
+    }
+
+    const { playlist, isLoading, addVideo, editVideo, deleteVideo, isAddVideoPending } =
+        usePlaylist(id);
     const [isAddVideoOpen, setIsAddVideoOpen] = useState(false);
     const [isEditVideoOpen, setIsEditVideoOpen] = useState(false);
     const [videoToDelete, setVideoToDelete] = useState<Video | null>(null);
     const [videoToEdit, setVideoToEdit] = useState<Video | null>(null);
 
+    const serverErrorState = useServerErrors();
+
     const onAddVideoSubmit = async (data: z.infer<typeof addVideoSchema>, playlistId: string) => {
-        await addVideo.mutateAsync({ ...data, playlistId });
-        setIsAddVideoOpen(false);
+        addVideo(
+            { ...data, playlistId },
+            {
+                onSuccess: () => {
+                    setIsAddVideoOpen(false);
+                    serverErrorState.setErrors({});
+                },
+                onError: (error) => {
+                    if (isHandledError(error, [400, 409])) {
+                        serverErrorState.setErrors(error.fieldErrors);
+                    }
+                    if (hasErrorStatus(error, 502)) {
+                        serverErrorState.setErrors({ url: error.message });
+                    }
+                },
+            },
+        );
     };
 
     if (isLoading) {
@@ -41,10 +67,10 @@ export default function Playlist({ params }: PageProps) {
         );
     }
 
-    if (error || !playlist) {
+    if (!playlist) {
         return (
             <div className="mx-auto w-full max-w-5xl px-6 py-10">
-                <p className="text-muted-foreground">Something went wrong.</p>
+                <p className="text-muted-foreground">Something went wrong</p>
             </div>
         );
     }
@@ -95,9 +121,10 @@ export default function Playlist({ params }: PageProps) {
                 isOpen={isAddVideoOpen}
                 onSubmit={(data) => onAddVideoSubmit(data, playlist.id)}
                 onOpenChange={setIsAddVideoOpen}
+                serverErrorState={serverErrorState}
             >
-                <Button disabled={addVideo.isPending} className="w-full" type="submit">
-                    {addVideo.isPending ? 'Adding video...' : 'Add video'}
+                <Button disabled={isAddVideoPending} className="w-full" type="submit">
+                    {isAddVideoPending ? 'Adding video...' : 'Add video'}
                 </Button>
             </AddVideoDialog>
             {videoToEdit && (
