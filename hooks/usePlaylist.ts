@@ -1,5 +1,4 @@
 'use client';
-import { paths } from '@/api/schema';
 import { useAuth } from '@/contexts/AuthContext';
 import { hasErrorStatus, isHandledError, removePlaylistFromCache } from '@/lib/utils';
 import {
@@ -8,10 +7,8 @@ import {
     getPlaylist,
     patchVideo,
 } from '@/requests/protectedRequests';
+import { GetPlaylistResponse } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-
-type GetPlaylistResponse =
-    paths['/api/playlists/{id}']['get']['responses'][200]['content']['application/json'];
 
 export function usePlaylist(id: string) {
     const queryClient = useQueryClient();
@@ -158,11 +155,9 @@ export function usePlaylist(id: string) {
         isLoading,
         error,
         isAuthPending,
-        addVideo: addVideoMutation.mutate,
-        editVideo: editVideoMutation.mutate,
-        editVideoPending: editVideoMutation.isPending,
-        deleteVideo: deleteVideoMutation.mutate,
-        deleteVideoPending: deleteVideoMutation.isPending,
+        addVideoMutation,
+        editVideoMutation,
+        deleteVideoMutation,
         isAddVideoPending: addVideoMutation.isPending,
     };
 }

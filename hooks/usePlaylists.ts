@@ -90,12 +90,8 @@ export function usePlaylists() {
         playlists: data?.data.playlists ?? [],
         isLoading,
         error,
-        isAuthPending,
-        createPlaylist: createPlaylistMutation.mutate,
-        createPlaylistPending: createPlaylistMutation.isPending,
-        deletePlaylist: deletePlaylistMutation.mutate,
-        deletePlaylistPending: deletePlaylistMutation.isPending,
-        editPlaylist: editPlaylistMutation.mutate,
-        editPlaylistPending: editPlaylistMutation.isPending,
+        createPlaylistMutation,
+        deletePlaylistMutation,
+        editPlaylistMutation,
     };
 }

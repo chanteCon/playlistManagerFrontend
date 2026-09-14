@@ -6,7 +6,6 @@ import { ValidatedForm } from '@/components/forms/ValidatedForm';
 import { FormField } from '@/components/forms/FormField';
 import { schemas } from '@/api/zod';
 import { ServerErrorState } from '@/types';
-import { cn } from '@/lib/utils';
 
 type CreatePlaylistDialogProps = {
     isOpen: boolean;

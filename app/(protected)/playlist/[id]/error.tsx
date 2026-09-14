@@ -7,7 +7,7 @@ type ErrorPageProps = {
     reset: () => void;
 };
 
-export default function ErrorPage({ error, reset }: ErrorPageProps) {
+export default function ErrorPage({ error }: ErrorPageProps) {
     const isNotFound = hasErrorStatus(error, 404);
 
     return (

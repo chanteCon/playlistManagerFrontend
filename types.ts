@@ -13,7 +13,7 @@ export type ApiResponse<T> = {
 export type Playlists =
     paths['/api/playlists/']['get']['responses'][200]['content']['application/json']['data']['playlists'];
 
-export type Playlist = Playlists[number];
+export type PlaylistSummary = Playlists[number];
 
 export type Videos =
     paths['/api/playlists/{id}']['get']['responses']['200']['content']['application/json']['data']['playlist']['videos'];
@@ -25,3 +25,9 @@ export type ServerErrorState = {
     errors: Record<string, string>;
     clearError: (field: string) => void;
 };
+
+export type GetPlaylistResponse =
+    paths['/api/playlists/{id}']['get']['responses'][200]['content']['application/json'];
+
+export type Playlist =
+    paths['/api/playlists/{id}']['get']['responses'][200]['content']['application/json']['data']['playlist'];
