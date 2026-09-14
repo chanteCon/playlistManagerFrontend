@@ -26,11 +26,16 @@ export function ConfirmationDialog({
                 <p className="text-sm text-muted-foreground">{message}</p>
 
                 <div className="flex justify-end gap-2">
-                    <Button type="button" variant="outline" onClick={onCancel}>
+                    <Button type="button" variant="outline" onClick={onCancel} disabled={isPending}>
                         Cancel
                     </Button>
 
-                    <Button type="button" variant="destructive" onClick={onConfirm}>
+                    <Button
+                        type="button"
+                        variant="destructive"
+                        onClick={onConfirm}
+                        disabled={isPending}
+                    >
                         {isPending ? 'Deleting...' : 'Delete'}
                     </Button>
                 </div>

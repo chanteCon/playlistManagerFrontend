@@ -47,7 +47,7 @@ export function EditDialog({
                     defaultValue={description}
                 />
 
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full" disabled={isPending}>
                     {isPending ? 'Saving...' : 'Save'}
                 </Button>
             </ValidatedForm>
