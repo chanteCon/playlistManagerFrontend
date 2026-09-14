@@ -1,17 +1,21 @@
 'use client';
 
-import AddCard from '@/components/common/AddCard';
 import { Button } from '@/components/ui/button';
 import { usePlaylist } from '@/hooks/usePlaylist';
 import { addVideoSchema } from '@/schemas/videoSchemas';
 import { use, useState } from 'react';
 import z from 'zod';
-import VideoCard from '@/components/videos/VideoCard';
 import AddVideoDialog from '@/components/videos/AddVideoDialog';
-import ActionsDropDown from '@/components/common/ActionsDropDown';
 import { EditDialog } from '@/components/common/EditDialogue';
-import { Video } from '@/types';
+import { EditInput, Video } from '@/types';
 import { DeleteDialog } from '@/components/common/DeleteDialog';
+import { useServerErrors } from '@/hooks/useServerErrors';
+import { hasErrorStatus, isHandledError } from '@/lib/utils';
+import { notFound } from 'next/navigation';
+import { uuidSchema } from '@/schemas/common';
+import { ErrorDialog } from '@/components/common/ErrorDialog';
+import PlaylistHeader from '@/components/videos/PlaylistHeader';
+import VideoGrid from '@/components/videos/VideoGrid';
 
 type PageProps = {
     params: Promise<{
@@ -22,124 +26,152 @@ type PageProps = {
 export default function Playlist({ params }: PageProps) {
     const { id } = use(params);
 
-    const { playlist, isLoading, error, addVideo, editVideo, deleteVideo } = usePlaylist(id);
+    if (!uuidSchema.safeParse(id).success) {
+        notFound();
+    }
+
+    const { playlist, isLoading, addVideoMutation, editVideoMutation, deleteVideoMutation } =
+        usePlaylist(id);
     const [isAddVideoOpen, setIsAddVideoOpen] = useState(false);
-    const [isEditVideoOpen, setIsEditVideoOpen] = useState(false);
-    const [videoToDelete, setVideoToDelete] = useState<Video | null>(null);
+    const [videoToDelete, setVideoToDelete] = useState<string | null>(null);
     const [videoToEdit, setVideoToEdit] = useState<Video | null>(null);
+    const [videoNotFound, setVideoNotFound] = useState(false);
+
+    const serverErrorState = useServerErrors();
 
     const onAddVideoSubmit = async (data: z.infer<typeof addVideoSchema>, playlistId: string) => {
-        await addVideo.mutateAsync({ ...data, playlistId });
-        setIsAddVideoOpen(false);
+        addVideoMutation.mutate(
+            { ...data, playlistId },
+            {
+                onSuccess: () => {
+                    setIsAddVideoOpen(false);
+                    serverErrorState.setErrors({});
+                },
+                onError: (error) => {
+                    if (isHandledError(error, [400, 409])) {
+                        serverErrorState.setErrors(error.fieldErrors);
+                    }
+                    if (hasErrorStatus(error, 502)) {
+                        serverErrorState.setErrors({ url: error.message });
+                    }
+                },
+            },
+        );
     };
 
-    if (isLoading) {
-        return (
-            <div className="mx-auto w-full max-w-5xl px-6 py-10">
-                <p className="text-muted-foreground">Loading playlist...</p>
-            </div>
-        );
-    }
+    const handleEditVideo = (data: EditInput) => {
+        if (!playlist || !videoToEdit) return;
 
-    if (error || !playlist) {
-        return (
-            <div className="mx-auto w-full max-w-5xl px-6 py-10">
-                <p className="text-muted-foreground">Something went wrong.</p>
-            </div>
+        const updates = Object.fromEntries(
+            Object.entries(data).filter(([, value]) => value !== ''),
         );
-    }
+
+        editVideoMutation.mutate(
+            {
+                playlistId: playlist.id,
+                videoId: videoToEdit.id,
+                ...updates,
+            },
+            {
+                onSuccess: () => {
+                    setVideoToEdit(null);
+                },
+                onError: (error) => {
+                    if (hasErrorStatus(error, 400)) {
+                        serverErrorState.setErrors(error.fieldErrors);
+                    }
+
+                    if (hasErrorStatus(error, 404) && !!error.fieldErrors['video']) {
+                        setVideoNotFound(true);
+                        setVideoToEdit(null);
+                    }
+                },
+            },
+        );
+    };
+
+    const handleDeleteVideo = () => {
+        if (!playlist || !videoToDelete) return;
+
+        deleteVideoMutation.mutate(
+            {
+                playlistId: playlist.id,
+                videoId: videoToDelete,
+            },
+            {
+                onError: (error) => {
+                    if (hasErrorStatus(error, 404) && !!error.fieldErrors['video']) {
+                        setVideoToDelete(null);
+                    }
+                },
+                onSuccess: () => {
+                    setVideoToDelete(null);
+                },
+            },
+        );
+    };
 
     return (
         <main className="mx-auto w-full max-w-5xl px-6 py-10">
-            <section className="border-b pb-8 flex justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">{playlist.name}</h1>
+            <PlaylistHeader isLoading={isLoading} playlist={playlist} />
 
-                    <p className="mt-3 max-w-2xl text-muted-foreground">
-                        {playlist.description || 'No description'}
-                    </p>
-                </div>
-            </section>
             <section className="py-8 flex flex-col gap-5">
                 <h2 className="text-lg font-semibold">Videos</h2>
-                {!playlist?.videos ||
-                    (playlist.videos.length === 0 && (
-                        <p className="mt-2 text-sm text-muted-foreground">
-                            No videos in this playlist yet.
-                        </p>
-                    ))}
-                <div className="grid w-fit max-w-full grid-cols-[repeat(auto-fill,220px)] justify-start gap-6">
-                    <AddCard
-                        className="h-[200px] w-[220px] rounded-sm border"
-                        setDialogOpen={() => setIsAddVideoOpen(true)}
-                        message="Add video"
-                    />
-
-                    {playlist?.videos?.map((video) => (
-                        <VideoCard key={video.id} video={video} playlistId={playlist.id}>
-                            <ActionsDropDown
-                                className="border border-white bg-black/40 text-white"
-                                onEdit={() => {
-                                    setVideoToEdit(video);
-                                    setIsEditVideoOpen(true);
-                                }}
-                                onDelete={() => {
-                                    setVideoToDelete(video);
-                                }}
-                            />
-                        </VideoCard>
-                    ))}
-                </div>
+                <VideoGrid
+                    isLoading={isLoading}
+                    playlist={playlist}
+                    onEdit={(video) => {
+                        serverErrorState.setErrors({});
+                        setVideoToEdit(video);
+                    }}
+                    onDelete={(video) => {
+                        setVideoToDelete(video.id);
+                    }}
+                    setIsAddVideoOpen={setIsAddVideoOpen}
+                />
             </section>
             <AddVideoDialog
                 isOpen={isAddVideoOpen}
-                onSubmit={(data) => onAddVideoSubmit(data, playlist.id)}
+                onSubmit={(data) => onAddVideoSubmit(data, playlist!.id)}
                 onOpenChange={setIsAddVideoOpen}
+                serverErrorState={serverErrorState}
             >
-                <Button disabled={addVideo.isPending} className="w-full" type="submit">
-                    {addVideo.isPending ? 'Adding video...' : 'Add video'}
+                <Button disabled={addVideoMutation.isPending} className="w-full" type="submit">
+                    {addVideoMutation.isPending ? 'Adding video...' : 'Add video'}
                 </Button>
             </AddVideoDialog>
+
             {videoToEdit && (
                 <EditDialog
-                    isOpen={isEditVideoOpen}
-                    onOpenChange={setIsEditVideoOpen}
+                    isPending={editVideoMutation.isPending}
+                    serverErrorState={serverErrorState}
+                    isOpen={!!videoToEdit}
+                    onOpenChange={(isOpen) => {
+                        if (!isOpen) {
+                            setVideoToEdit(null);
+                        }
+                    }}
                     title={videoToEdit.title}
                     description={videoToEdit.description || ''}
-                    onSubmit={(data) => {
-                        if (!videoToEdit) return;
-                        const updates = Object.fromEntries(
-                            Object.entries(data).filter(([, value]) => value !== ''),
-                        );
-
-                        editVideo.mutate({
-                            playlistId: playlist.id,
-                            videoId: videoToEdit.id,
-                            ...updates,
-                        });
-
-                        setIsEditVideoOpen(false);
-                        setVideoToEdit(null);
-                    }}
-                    submitLabel="Save changes"
+                    onSubmit={handleEditVideo}
                 />
             )}
-            {videoToDelete && (
-                <DeleteDialog
-                    itemId={videoToDelete.id}
-                    title="Delete Video?"
-                    message="Are you sure you want to delete this video?"
-                    onCancel={() => setVideoToDelete(null)}
-                    onConfirm={() => {
-                        if (!videoToDelete) return;
-                        deleteVideo.mutate({
-                            playlistId: playlist.id,
-                            videoId: videoToDelete.id,
-                        });
-                        setVideoToDelete(null);
-                    }}
-                />
-            )}
+
+            <DeleteDialog
+                isPending={deleteVideoMutation.isPending}
+                itemId={videoToDelete}
+                title="Delete Video?"
+                message="Are you sure you want to delete this video?"
+                onCancel={() => setVideoToDelete(null)}
+                onConfirm={handleDeleteVideo}
+            />
+
+            <ErrorDialog
+                isOpen={videoNotFound}
+                onOpenChange={setVideoNotFound}
+                title="Video not found"
+                message="This video no longer exists in this playlist"
+            />
         </main>
     );
 }

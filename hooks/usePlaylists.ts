@@ -11,6 +11,7 @@ import {
 
 import type { paths } from '@/api/schema';
 import { useAuth } from '@/contexts/AuthContext';
+import { hasErrorStatus, removePlaylistFromCache } from '@/lib/utils';
 
 type GetPlaylistsResponse =
     paths['/api/playlists/']['get']['responses'][200]['content']['application/json'];
@@ -30,8 +31,6 @@ export function usePlaylists() {
     const createPlaylistMutation = useMutation({
         mutationFn: createPlaylist,
 
-        onError: (error) => alert(error),
-
         onSuccess: (data) => {
             queryClient.setQueryData<GetPlaylistsResponse>(['playlists'], (current) => {
                 if (!current || !data) return current;
@@ -50,29 +49,19 @@ export function usePlaylists() {
     const deletePlaylistMutation = useMutation({
         mutationFn: deletePlaylist,
 
-        onError: (error) => alert(error),
+        onError: (error, playlistId) => {
+            if (hasErrorStatus(error, 404)) {
+                removePlaylistFromCache(queryClient, playlistId);
+            }
+        },
 
         onSuccess: (_, playlistId) => {
-            queryClient.setQueryData<GetPlaylistsResponse>(['playlists'], (current) => {
-                if (!current) return current;
-
-                return {
-                    ...current,
-                    data: {
-                        ...current.data,
-                        playlists: current.data.playlists.filter(
-                            (playlist) => playlist.id !== playlistId,
-                        ),
-                    },
-                };
-            });
+            removePlaylistFromCache(queryClient, playlistId);
         },
     });
 
     const editPlaylistMutation = useMutation({
         mutationFn: editPlaylist,
-
-        onError: (error) => alert(error),
 
         onSuccess: (data, { playlistId }) => {
             queryClient.setQueryData<GetPlaylistsResponse>(['playlists'], (current) => {
@@ -89,16 +78,20 @@ export function usePlaylists() {
                 };
             });
         },
+
+        onError: (error, { playlistId }) => {
+            if (hasErrorStatus(error, 404)) {
+                removePlaylistFromCache(queryClient, playlistId);
+            }
+        },
     });
 
     return {
         playlists: data?.data.playlists ?? [],
         isLoading,
         error,
-        isAuthPending,
-
-        createPlaylist: createPlaylistMutation.mutate,
-        deletePlaylist: deletePlaylistMutation.mutate,
-        editPlaylist: editPlaylistMutation.mutate,
+        createPlaylistMutation,
+        deletePlaylistMutation,
+        editPlaylistMutation,
     };
 }

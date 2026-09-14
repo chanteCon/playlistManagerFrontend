@@ -1,5 +1,6 @@
 'use client';
 
+import AppLoading from '@/components/skeletons/AppLoading';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -14,7 +15,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     }, [accessToken, router, isAuthPending]);
 
     if (isAuthPending || accessToken) {
-        return null;
+        return <AppLoading />;
     }
 
     return (

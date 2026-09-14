@@ -1,4 +1,4 @@
-import { Playlist } from '@/types';
+import { PlaylistSummary } from '@/types';
 import { PlaylistCard } from './PlaylistCard';
 import {
     Music,
@@ -28,8 +28,8 @@ const playlistIcons = [
 ];
 
 type PlaylistGridProps = {
-    playlists: Playlist[];
-    onEdit: (playlist: Playlist) => void;
+    playlists: PlaylistSummary[];
+    onEdit: (playlist: PlaylistSummary) => void;
     onDelete: (playlistId: string) => void;
 };
 

@@ -10,6 +10,8 @@ import { AuthLayout } from '../../../layouts/AuthLayout';
 import { register } from '@/requests/publicRequests';
 import { PasswordFields } from '@/components/auth/PasswordFields';
 import z from 'zod';
+import { isHandledError } from '@/lib/utils';
+import { useServerErrors } from '@/hooks/useServerErrors';
 
 const requiredFields = new Set(['email', 'password', 'username']);
 
@@ -23,6 +25,11 @@ const registerSchema = schemas.postApiauthregister_Body
     });
 
 export default function Register() {
+    const {
+        setErrors: setServerErrors,
+        clearError: clearServerErrors,
+        errors: serverErrors,
+    } = useServerErrors();
     const router = useRouter();
     const registerMutation = useMutation({
         mutationFn: register,
@@ -32,7 +39,12 @@ export default function Register() {
         },
 
         onError: (error) => {
-            alert(error);
+            if (isHandledError(error, [400, 409])) {
+                setServerErrors(error.fieldErrors);
+            }
+        },
+        throwOnError: (error: unknown) => {
+            return !isHandledError(error, [400, 409]);
         },
     });
 
@@ -47,12 +59,14 @@ export default function Register() {
                         registerMutation.mutate(requestData);
                     }}
                     requiredFields={requiredFields}
+                    onClearServerError={clearServerErrors}
+                    serverErrors={serverErrors}
                 >
                     <FormField id="username" label="Username" type="text" />
                     <FormField id="email" label="Email" type="email" />
                     <PasswordFields />
-                    <Button type="submit" className="w-full">
-                        Register
+                    <Button type="submit" className="w-full" disabled={registerMutation.isPending}>
+                        {registerMutation.isPending ? 'Signing up...' : 'Register'}
                     </Button>
                 </ValidatedForm>
             </AuthLayout>

@@ -10,22 +10,34 @@ type EmailCodeFormProps<T extends z.ZodType> = {
     schema: T;
     onSubmit: (data: z.infer<T>) => void;
     footer?: React.ReactNode;
+    serverErrors?: Record<string, string>;
+    onClearServerError?: (field: string) => void;
+    isPending?: boolean;
 };
 
 export function EmailCodeForm<T extends z.ZodType>({
     schema,
     onSubmit,
     footer,
+    serverErrors,
+    onClearServerError,
+    isPending,
 }: EmailCodeFormProps<T>) {
     return (
         <>
-            <ValidatedForm schema={schema} onValidSubmit={onSubmit} requiredFields={requiredFields}>
+            <ValidatedForm
+                serverErrors={serverErrors}
+                schema={schema}
+                onValidSubmit={onSubmit}
+                requiredFields={requiredFields}
+                onClearServerError={onClearServerError}
+            >
                 <FormField id="email" label="Email" type="email" />
-                <Button type="submit" className="w-full">
-                    Get code
+                <Button type="submit" className="w-full" disabled={isPending}>
+                    {isPending ? 'Getting code...' : 'Get code'}
                 </Button>
             </ValidatedForm>
-            <p className="text-sm text-muted-foreground">{footer}</p>
+            {footer}
         </>
     );
 }

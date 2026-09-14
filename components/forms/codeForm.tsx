@@ -16,6 +16,9 @@ type CodeFormParams<T extends z.ZodType> = {
     title: string;
     instructions?: string;
     type: 'LOGIN' | 'VERIFICATION';
+    serverErrors?: Record<string, string>;
+    clearServerErrors?: (field: string) => void;
+    isPending?: boolean;
 };
 
 export default function CodeForm<T extends z.ZodType>({
@@ -24,6 +27,9 @@ export default function CodeForm<T extends z.ZodType>({
     title,
     instructions = 'Enter the 6-digit code sent to your email',
     type,
+    serverErrors,
+    clearServerErrors,
+    isPending,
 }: CodeFormParams<T>) {
     const formRef = useRef<HTMLFormElement>(null);
 
@@ -47,9 +53,16 @@ export default function CodeForm<T extends z.ZodType>({
                     schema={schema}
                     onValidSubmit={onValidSubmit}
                     requiredFields={new Set(['code'])}
+                    serverErrors={serverErrors}
+                    onClearServerError={clearServerErrors}
                 >
-                    <div className="flex flex-col items-center gap-6">
+                    <div
+                        className={`flex flex-col items-center gap-6 ${
+                            isPending ? 'animate-pulse ' : ''
+                        }`}
+                    >
                         <InputOTP
+                            disabled={isPending}
                             name="code"
                             maxLength={6}
                             onChange={(value) => {
@@ -60,7 +73,9 @@ export default function CodeForm<T extends z.ZodType>({
                         >
                             <CodeInput boxStyle={codeInputBoxStyle} />
                         </InputOTP>
-
+                        {isPending && (
+                            <p className="text-sm text-muted-foreground">Verifying code...</p>
+                        )}
                         <CodeExpiry />
                         <Link className="text-link" href={resendRoute}>
                             Didn&apos;t receive the code? Try again

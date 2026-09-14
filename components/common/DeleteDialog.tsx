@@ -6,9 +6,17 @@ type DeleteDialogProps = {
     onConfirm: (itemId: string) => void;
     title: string;
     message: string;
+    isPending?: boolean;
 };
 
-export function DeleteDialog({ itemId, onCancel, onConfirm, title, message }: DeleteDialogProps) {
+export function DeleteDialog({
+    itemId,
+    onCancel,
+    onConfirm,
+    title,
+    message,
+    isPending,
+}: DeleteDialogProps) {
     return (
         <ConfirmationDialog
             title={title}
@@ -25,6 +33,7 @@ export function DeleteDialog({ itemId, onCancel, onConfirm, title, message }: De
 
                 onConfirm(itemId);
             }}
+            isPending={isPending}
         />
     );
 }

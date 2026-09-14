@@ -5,11 +5,14 @@ import AppDialogue from '@/components/common/AppDialogue';
 import { ValidatedForm } from '@/components/forms/ValidatedForm';
 import { FormField } from '@/components/forms/FormField';
 import { schemas } from '@/api/zod';
+import { ServerErrorState } from '@/types';
 
 type CreatePlaylistDialogProps = {
     isOpen: boolean;
     onOpenChange: (open: boolean) => void;
     onSubmit: (data: { name: string; description?: string }) => void;
+    serverErrorState?: ServerErrorState;
+    isPending?: boolean;
 };
 
 const createPlaylistSchema = schemas.postApiplaylists_Body;
@@ -18,6 +21,8 @@ export function CreatePlaylistDialog({
     isOpen,
     onOpenChange,
     onSubmit,
+    serverErrorState,
+    isPending,
 }: CreatePlaylistDialogProps) {
     const formRef = useRef<HTMLFormElement>(null);
 
@@ -27,16 +32,17 @@ export function CreatePlaylistDialog({
                 schema={createPlaylistSchema}
                 onValidSubmit={(data) => {
                     onSubmit(data);
-                    formRef.current?.reset();
                 }}
                 requiredFields={new Set(['name', 'description'])}
                 formRef={formRef}
+                serverErrors={serverErrorState?.errors}
+                onClearServerError={serverErrorState?.clearError}
             >
                 <FormField type="text" label="name" id="name" />
                 <FormField type="text" label="description" id="description" />
 
-                <Button type="submit" className="w-full">
-                    Add playlist
+                <Button type="submit" className="w-full" disabled={isPending}>
+                    {isPending ? 'Adding...' : 'Add playlist'}
                 </Button>
             </ValidatedForm>
         </AppDialogue>
