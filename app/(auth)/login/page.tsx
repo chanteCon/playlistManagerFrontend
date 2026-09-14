@@ -91,8 +91,8 @@ export default function Login() {
                         </Link>
                     </div>
 
-                    <Button type="submit" className="w-full">
-                        Login
+                    <Button type="submit" className="w-full" disabled={loginMutation.isPending}>
+                        {loginMutation.isPending ? 'Logging in...' : 'Login'}
                     </Button>
                 </ValidatedForm>
             </AuthLayout>

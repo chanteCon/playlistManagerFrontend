@@ -160,7 +160,9 @@ export function usePlaylist(id: string) {
         isAuthPending,
         addVideo: addVideoMutation.mutate,
         editVideo: editVideoMutation.mutate,
+        editVideoPending: editVideoMutation.isPending,
         deleteVideo: deleteVideoMutation.mutate,
+        deleteVideoPending: deleteVideoMutation.isPending,
         isAddVideoPending: addVideoMutation.isPending,
     };
 }

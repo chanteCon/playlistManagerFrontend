@@ -6,6 +6,7 @@ import { EditInput, ServerErrorState } from '@/types';
 import { editSchema } from '@/schemas/common';
 
 type EditDialogProps = {
+    message?: string;
     isOpen: boolean;
     onOpenChange: (open: boolean) => void;
     title: string;
@@ -14,8 +15,8 @@ type EditDialogProps = {
 
     onSubmit: (data: EditInput) => void;
 
-    submitLabel: string;
     serverErrorState?: ServerErrorState;
+    isPending?: boolean;
 };
 
 export function EditDialog({
@@ -24,11 +25,12 @@ export function EditDialog({
     title,
     description,
     onSubmit,
-    submitLabel,
     serverErrorState,
+    message,
+    isPending,
 }: EditDialogProps) {
     return (
-        <AppDialogue isOpen={isOpen} onOpenChange={onOpenChange} title="Edit">
+        <AppDialogue isOpen={isOpen} onOpenChange={onOpenChange} title={message ? message : 'Edit'}>
             <ValidatedForm
                 schema={editSchema}
                 onValidSubmit={onSubmit}
@@ -46,7 +48,7 @@ export function EditDialog({
                 />
 
                 <Button type="submit" className="w-full">
-                    {submitLabel}
+                    {isPending ? 'Saving...' : 'Save'}
                 </Button>
             </ValidatedForm>
         </AppDialogue>

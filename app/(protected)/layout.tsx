@@ -1,5 +1,6 @@
 'use client';
 
+import AppLoading from '@/components/skeletons/AppLoading';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -15,7 +16,7 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
     }, [accessToken, router, isAuthPending]);
 
     if (isAuthPending || !accessToken) {
-        return null;
+        return <AppLoading />;
     }
 
     return children;

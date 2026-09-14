@@ -65,8 +65,8 @@ export default function Register() {
                     <FormField id="username" label="Username" type="text" />
                     <FormField id="email" label="Email" type="email" />
                     <PasswordFields />
-                    <Button type="submit" className="w-full">
-                        Register
+                    <Button type="submit" className="w-full" disabled={registerMutation.isPending}>
+                        {registerMutation.isPending ? 'Signing up...' : 'Register'}
                     </Button>
                 </ValidatedForm>
             </AuthLayout>

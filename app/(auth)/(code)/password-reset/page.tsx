@@ -96,8 +96,14 @@ export default function Verify() {
                 <AuthCard className="space-y-5">
                     <PasswordFields />
 
-                    <Button className="w-full" type="submit">
-                        Reset password
+                    <Button
+                        className="w-full"
+                        type="submit"
+                        disabled={passwordResetMutation.isPending}
+                    >
+                        {passwordResetMutation.isPending
+                            ? 'Resetting password...'
+                            : 'Reset password'}
                     </Button>
                 </AuthCard>
             </ValidatedForm>

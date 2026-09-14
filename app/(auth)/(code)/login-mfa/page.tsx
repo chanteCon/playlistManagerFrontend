@@ -40,6 +40,7 @@ export default function LoginMfa() {
             type="LOGIN"
             serverErrors={serverErrors}
             clearServerErrors={clearServerError}
+            isPending={loginMFAMutation.isPending}
         />
     );
 }

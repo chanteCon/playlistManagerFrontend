@@ -50,6 +50,7 @@ export default function ForgotPassword() {
             onSubmit={(data) => reqPasswordCodeMutation.mutate(data)}
             footer={footer}
             onClearServerError={clearServerError}
+            isPending={reqPasswordCodeMutation.isPending}
         />
     );
 }

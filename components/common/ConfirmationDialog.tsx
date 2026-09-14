@@ -8,6 +8,7 @@ type ConfirmationDialogProps = {
     onOpenChange: (open: boolean) => void;
     onCancel: () => void;
     onConfirm: () => void;
+    isPending?: boolean;
 };
 
 export function ConfirmationDialog({
@@ -17,6 +18,7 @@ export function ConfirmationDialog({
     onOpenChange,
     onCancel,
     onConfirm,
+    isPending,
 }: ConfirmationDialogProps) {
     return (
         <AppDialogue isOpen={isOpen} onOpenChange={onOpenChange} title={title}>
@@ -29,7 +31,7 @@ export function ConfirmationDialog({
                     </Button>
 
                     <Button type="button" variant="destructive" onClick={onConfirm}>
-                        Delete
+                        {isPending ? 'Deleting...' : 'Delete'}
                     </Button>
                 </div>
             </div>

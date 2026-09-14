@@ -12,6 +12,7 @@ type EmailCodeFormProps<T extends z.ZodType> = {
     footer?: React.ReactNode;
     serverErrors?: Record<string, string>;
     onClearServerError?: (field: string) => void;
+    isPending?: boolean;
 };
 
 export function EmailCodeForm<T extends z.ZodType>({
@@ -20,6 +21,7 @@ export function EmailCodeForm<T extends z.ZodType>({
     footer,
     serverErrors,
     onClearServerError,
+    isPending,
 }: EmailCodeFormProps<T>) {
     return (
         <>
@@ -31,8 +33,8 @@ export function EmailCodeForm<T extends z.ZodType>({
                 onClearServerError={onClearServerError}
             >
                 <FormField id="email" label="Email" type="email" />
-                <Button type="submit" className="w-full">
-                    Get code
+                <Button type="submit" className="w-full" disabled={isPending}>
+                    {isPending ? 'Getting code...' : 'Get code'}
                 </Button>
             </ValidatedForm>
             {footer}

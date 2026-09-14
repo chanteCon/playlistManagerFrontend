@@ -12,16 +12,19 @@ import { hasErrorStatus, isHandledError } from '@/lib/utils';
 import { useServerErrors } from '@/hooks/useServerErrors';
 import { ErrorDialog } from '@/components/common/ErrorDialog';
 import { uuidSchema } from '@/schemas/common';
+import { PlaylistGridSkeleton } from '@/components/skeletons/PlaylistGridSkeleton';
 
 export default function Dashboard() {
     const {
         playlists,
         isLoading,
         error,
-        isAuthPending,
         createPlaylist,
+        createPlaylistPending,
         deletePlaylist,
         editPlaylist,
+        editPlaylistPending,
+        deletePlaylistPending,
     } = usePlaylists();
 
     const [isAddPlaylistOpen, setIsAddPlaylistOpen] = useState(false);
@@ -103,14 +106,6 @@ export default function Dashboard() {
         );
     };
 
-    if (isAuthPending) {
-        return <p>Checking authentication...</p>;
-    }
-
-    if (isLoading) {
-        return <p>Loading...</p>;
-    }
-
     if (error) {
         return <p>Something went wrong.</p>;
     }
@@ -126,20 +121,20 @@ export default function Dashboard() {
                     message={'New Playlist'}
                 />
             </section>
-            {playlists.length > 0 ? (
-                <section className="w-full max-w-[960px]">
-                    <PlaylistGrid
-                        playlists={playlists}
-                        onEdit={(playlist) => {
-                            setServerErrors({});
-                            setPlaylistToEdit(playlist);
-                            setIsEditPlaylistOpen(true);
-                        }}
-                        onDelete={(playlistId) => {
-                            setPlaylistToDelete(playlistId);
-                        }}
-                    />
-                </section>
+            {isLoading ? (
+                <PlaylistGridSkeleton />
+            ) : playlists.length > 0 ? (
+                <PlaylistGrid
+                    playlists={playlists}
+                    onEdit={(playlist) => {
+                        setServerErrors({});
+                        setPlaylistToEdit(playlist);
+                        setIsEditPlaylistOpen(true);
+                    }}
+                    onDelete={(playlistId) => {
+                        setPlaylistToDelete(playlistId);
+                    }}
+                />
             ) : (
                 <p className="text-muted-foreground">
                     No playlists yet. Create a playlist to start adding videos.
@@ -153,6 +148,7 @@ export default function Dashboard() {
                     errors: serverErrors,
                     clearError: clearServerErrors,
                 }}
+                isPending={createPlaylistPending}
                 onSubmit={(data) => {
                     createPlaylist(data, {
                         onSuccess: () => {
@@ -169,16 +165,17 @@ export default function Dashboard() {
 
             {playlistToEdit && (
                 <EditDialog
+                    message={'Edit playlist'}
                     isOpen={isEditPlaylistOpen}
                     onOpenChange={setIsEditPlaylistOpen}
                     title={playlistToEdit.name}
                     description={playlistToEdit.description ?? ''}
-                    submitLabel="Edit Playlist"
                     onSubmit={(data) => onEditPlaylistSubmit(data, playlistToEdit)}
                     serverErrorState={{
                         errors: serverErrors,
                         clearError: clearServerErrors,
                     }}
+                    isPending={editPlaylistPending}
                 />
             )}
 
@@ -195,6 +192,7 @@ export default function Dashboard() {
             />
 
             <DeleteDialog
+                isPending={deletePlaylistPending}
                 title="Delete Playlist?"
                 message="Are you sure you want to delete this playlist? This action cannot be undone."
                 itemId={playlistToDelete}

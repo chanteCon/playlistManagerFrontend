@@ -34,9 +34,12 @@ export const deletePlaylist = (playlistId: string) =>
         }),
     );
 
-export const editPlaylist = (data: { playlistId: string; name?: string; description?: string }) => {
+export const editPlaylist = async (data: {
+    playlistId: string;
+    name?: string;
+    description?: string;
+}) => {
     const { name, playlistId, description } = data;
-
     return authenticatedApiRequest(() =>
         protectedApi.PATCH('/api/playlists/{id}', {
             body: {

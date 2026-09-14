@@ -42,6 +42,7 @@ export default function Verify() {
             type="VERIFICATION"
             serverErrors={serverErrors}
             clearServerErrors={clearServerError}
+            isPending={verifyMutation.isPending}
         />
     );
 }
