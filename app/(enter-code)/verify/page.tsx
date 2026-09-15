@@ -1,16 +1,26 @@
 'use client';
 import { codeSchema } from '@/schemas/authSchemas';
-import CodeForm from '../../components/forms/codeForm';
+import CodeForm from '../../../components/forms/codeForm';
 import { useMutation } from '@tanstack/react-query';
 import { verify } from '@/requests/publicRequests';
 import { useAuth } from '@/contexts/AuthContext';
 import { extractAccessToken, isHandledError } from '@/lib/utils';
 import { useServerErrors } from '@/hooks/useServerErrors';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function Verify() {
-    const { updateAccessToken } = useAuth();
+    const { updateAccessToken, clearAccessToken } = useAuth();
     const router = useRouter();
+
+    const searchParams = useSearchParams();
+
+    useEffect(() => {
+        if (searchParams.get('logout') === 'true') {
+            clearAccessToken();
+            router.replace('/verify');
+        }
+    }, [searchParams, clearAccessToken, router]);
 
     const {
         errors: serverErrors,

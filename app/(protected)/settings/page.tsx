@@ -18,7 +18,7 @@ import { userNameSchema } from '@/schemas/common';
 import { emailSchema } from '@/schemas/authSchemas';
 
 import { useServerErrors } from '@/hooks/useServerErrors';
-import { isHandledError } from '@/lib/utils';
+import { hasErrorStatus, isHandledError } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { ConfirmationDialog } from '@/components/common/ConfirmationDialog';
 import { useRouter } from 'next/navigation';
@@ -55,13 +55,20 @@ const SettingsButton = ({
 };
 
 export default function Settings() {
-    const { user, updateUserMutation, updateUserEmailMutation, logoutMutation } = useProfile();
-    const { accessToken, clearAccessToken } = useAuth();
+    const {
+        user,
+        updateUserMutation,
+        updateUserEmailMutation,
+        logoutMutation,
+        reqPasswordCodeMutation,
+    } = useProfile();
+    const { accessToken } = useAuth();
     const [changedName, setChangedName] = useState(false);
     const [changedEmail, setChangedEmail] = useState(false);
+    const [email, setEmail] = useState(user?.email || '');
     const [nameSaved, setNameSaved] = useState(false);
     const [changingEmail, setChangingEmail] = useState(false);
-    const [email, setEmail] = useState(user?.email || '');
+    const [resettingPassword, setResettingPassword] = useState(false);
 
     const router = useRouter();
 
@@ -96,12 +103,28 @@ export default function Settings() {
                 setChangingEmail(false);
                 logoutMutation.mutate(accessToken!, {
                     onSettled: () => {
-                        router.push('/verify');
-                        clearAccessToken();
+                        router.replace('/verify?logout=true');
                     },
                 });
-                await logoutMutation.mutateAsync(accessToken!);
-                router.push('/verify');
+            },
+        });
+    };
+
+    const handleUpdatePasswordRequest = (data: { email: string }) => {
+        reqPasswordCodeMutation.mutate(data, {
+            onSuccess: () => {
+                setResettingPassword(false);
+                logoutMutation.mutate(accessToken!, {
+                    onSettled: () => {
+                        router.replace('/password-reset?logout=true');
+                    },
+                });
+            },
+            onError: (error: unknown) => {
+                setResettingPassword(false);
+                if (hasErrorStatus(error, 400)) {
+                    alert('Invalid email');
+                }
             },
         });
     };
@@ -199,8 +222,8 @@ export default function Settings() {
                                                 required
                                                 className="flex-1"
                                                 onChange={(value) => {
-                                                    setChangedEmail(value !== user.email);
                                                     setEmail(value);
+                                                    setChangedEmail(value !== user.email);
                                                 }}
                                             />
 
@@ -241,7 +264,12 @@ export default function Settings() {
                                         </p>
                                     </div>
 
-                                    <Button variant="outline">Reset password</Button>
+                                    <Button
+                                        onClick={() => setResettingPassword(true)}
+                                        variant="outline"
+                                    >
+                                        Reset password
+                                    </Button>
                                 </div>
                             </div>
                         </div>
@@ -251,7 +279,7 @@ export default function Settings() {
 
             <ConfirmationDialog
                 title={'Update email'}
-                message="Confirm to proceed with email udpate. This will log you out and require you to verify the email address before you can log back in"
+                message="Changing your email address will log you out. You will be emailed a code to verify your new email address before you can log back in."
                 isOpen={changingEmail}
                 onOpenChange={(open) => {
                     if (!open) {
@@ -262,13 +290,35 @@ export default function Settings() {
                 confirmButton={
                     <Button
                         type="button"
-                        variant="destructive"
                         onClick={() => {
                             handleUpdateEmail({ email });
                         }}
                         disabled={updateUserEmailMutation.isPending}
                     >
                         {updateUserEmailMutation.isPending ? 'Updating...' : 'Update'}
+                    </Button>
+                }
+            />
+
+            <ConfirmationDialog
+                title={'Reset password'}
+                message="This will log you out. You will be emailed a code to reset your password "
+                isOpen={resettingPassword}
+                onOpenChange={(open) => {
+                    if (!open) {
+                        setResettingPassword(false);
+                    }
+                }}
+                onCancel={() => setResettingPassword(false)}
+                confirmButton={
+                    <Button
+                        type="button"
+                        onClick={() => {
+                            handleUpdatePasswordRequest({ email: user.email });
+                        }}
+                        disabled={reqPasswordCodeMutation.isPending}
+                    >
+                        {reqPasswordCodeMutation.isPending ? 'Requesting...' : 'Request reset code'}
                     </Button>
                 }
             />

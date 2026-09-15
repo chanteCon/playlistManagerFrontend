@@ -1,17 +1,17 @@
 'use client';
 import Link from 'next/link';
 import { z } from 'zod';
-import { useMutation } from '@tanstack/react-query';
-import { passwordResetCode } from '@/requests/publicRequests';
 import { useRouter } from 'next/navigation';
 import { EmailCodeForm } from '@/components/forms/EmailCodeForm';
-import { hasErrorStatus, isHandledError } from '@/lib/utils';
+import { hasErrorStatus } from '@/lib/utils';
 import { useServerErrors } from '@/hooks/useServerErrors';
+import { useProfile } from '@/hooks/useProfile';
 
 const schema = z.object({
     email: z.string().email(),
 });
 export default function ForgotPassword() {
+    const { reqPasswordCodeMutation } = useProfile();
     const router = useRouter();
     const {
         errors: serverErrors,
@@ -19,21 +19,21 @@ export default function ForgotPassword() {
         clearError: clearServerError,
     } = useServerErrors();
 
-    const reqPasswordCodeMutation = useMutation({
-        mutationFn: passwordResetCode,
-        onSuccess: () => {
-            router.push('/password-reset');
-        },
-        onError: (error: unknown) => {
-            if (hasErrorStatus(error, 400)) {
-                setServerErrors(error.fieldErrors);
-            }
-        },
-
-        throwOnError: (error: unknown) => {
-            return !isHandledError(error, [400]);
-        },
-    });
+    const handlePasswordResetReq = ({ email }: { email: string }) => {
+        reqPasswordCodeMutation.mutate(
+            { email },
+            {
+                onSuccess: () => {
+                    router.push('/password-reset');
+                },
+                onError: (error: unknown) => {
+                    if (hasErrorStatus(error, 400)) {
+                        setServerErrors(error.fieldErrors);
+                    }
+                },
+            },
+        );
+    };
 
     const footer = (
         <p className="text-sm text-muted-foreground">
@@ -47,7 +47,7 @@ export default function ForgotPassword() {
         <EmailCodeForm
             serverErrors={serverErrors}
             schema={schema}
-            onSubmit={(data) => reqPasswordCodeMutation.mutate(data)}
+            onSubmit={(data) => handlePasswordResetReq(data)}
             footer={footer}
             onClearServerError={clearServerError}
             isPending={reqPasswordCodeMutation.isPending}

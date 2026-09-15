@@ -1,6 +1,8 @@
 import { paths } from '@/api/schema';
 import { useAuth } from '@/contexts/AuthContext';
+import { isHandledError } from '@/lib/utils';
 import { getUser, logout, patchUser, patchUserEmail } from '@/requests/protectedRequests';
+import { passwordResetCode } from '@/requests/publicRequests';
 import { User } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -58,10 +60,18 @@ export function useProfile() {
         mutationFn: patchUserEmail,
     });
 
+    const reqPasswordCodeMutation = useMutation({
+        mutationFn: passwordResetCode,
+        throwOnError: (error: unknown) => {
+            return !isHandledError(error, [400]);
+        },
+    });
+
     return {
         user: data?.data?.user as User | undefined,
         updateUserMutation,
         updateUserEmailMutation,
         logoutMutation,
+        reqPasswordCodeMutation,
     };
 }
