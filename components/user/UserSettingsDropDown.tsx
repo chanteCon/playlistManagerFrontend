@@ -5,11 +5,18 @@ import { LogOut, Settings } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import UserAvatar from './UserAvatar';
+import { Switch } from '../ui/switch';
+import { useTheme } from 'next-themes';
 
 export default function UserSettingsDropDown() {
     const { user, logoutMutation } = useProfile();
     const { accessToken, clearAccessToken } = useAuth();
     const router = useRouter();
+    const { setTheme, theme } = useTheme();
+
+    const handleThemeChange = (checked: boolean) => {
+        setTheme(checked ? 'dark' : 'light');
+    };
 
     return (
         accessToken && (
@@ -35,6 +42,18 @@ export default function UserSettingsDropDown() {
                     <span>Manage profile</span>
                 </DropdownMenuItem>
                 <hr />
+
+                <DropdownMenuItem>
+                    <Switch
+                        className="text-muted-foreground cursor-pointer"
+                        onClick={(e) => e.stopPropagation()}
+                        onCheckedChange={handleThemeChange}
+                        checked={theme === 'dark'}
+                    ></Switch>
+                    <p>Dark mode</p>
+                </DropdownMenuItem>
+                <hr />
+
                 <DropdownMenuItem
                     className="cursor-pointer focus:bg-destructive/10 focus:text-destructive"
                     disabled={logoutMutation.isPending}
