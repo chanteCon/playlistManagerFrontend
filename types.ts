@@ -31,3 +31,10 @@ export type GetPlaylistResponse =
 
 export type Playlist =
     paths['/api/playlists/{id}']['get']['responses'][200]['content']['application/json']['data']['playlist'];
+
+type GeneratedUser =
+    paths['/api/users/me']['get']['responses']['200']['content']['application/json']['data']['user'];
+
+export type User = Omit<GeneratedUser, 'username'> & {
+    username: string;
+};

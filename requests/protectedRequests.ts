@@ -118,3 +118,10 @@ export const patchVideo = (data: {
         }),
     );
 };
+
+export const getUser = () =>
+    authenticatedApiRequest(() =>
+        protectedApi.GET('/api/users/me', {
+            credentials: 'include',
+        }),
+    );
