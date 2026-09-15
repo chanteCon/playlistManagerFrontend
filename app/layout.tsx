@@ -22,7 +22,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
             className={`${inter.className} h-full antialiased`}
             suppressHydrationWarning
         >
-            <body className="min-h-full flex flex-col bg-muted/30">
+            <body className="min-h-full flex flex-col">
                 <ThemeProvider>
                     <QueryProvider>
                         <AuthProvider>
