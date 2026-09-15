@@ -7,8 +7,8 @@ type ConfirmationDialogProps = {
     isOpen: boolean;
     onOpenChange: (open: boolean) => void;
     onCancel: () => void;
-    onConfirm: () => void;
     isPending?: boolean;
+    confirmButton?: React.ReactNode;
 };
 
 export function ConfirmationDialog({
@@ -17,8 +17,8 @@ export function ConfirmationDialog({
     isOpen,
     onOpenChange,
     onCancel,
-    onConfirm,
     isPending,
+    confirmButton,
 }: ConfirmationDialogProps) {
     return (
         <AppDialogue isOpen={isOpen} onOpenChange={onOpenChange} title={title}>
@@ -29,15 +29,7 @@ export function ConfirmationDialog({
                     <Button type="button" variant="outline" onClick={onCancel} disabled={isPending}>
                         Cancel
                     </Button>
-
-                    <Button
-                        type="button"
-                        variant="destructive"
-                        onClick={onConfirm}
-                        disabled={isPending}
-                    >
-                        {isPending ? 'Deleting...' : 'Delete'}
-                    </Button>
+                    {confirmButton}
                 </div>
             </div>
         </AppDialogue>

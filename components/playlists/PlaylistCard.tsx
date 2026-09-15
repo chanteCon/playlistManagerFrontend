@@ -1,11 +1,11 @@
-import { Playlist } from '@/types';
+import { PlaylistSummary } from '@/types';
 import { Card } from '../ui/card';
 import { LucideIcon } from 'lucide-react';
 import Link from 'next/link';
 
 type PlaylistCardProps = {
     PlaylistIcon: LucideIcon;
-    playlist: Playlist;
+    playlist: PlaylistSummary;
     children: React.ReactNode;
 };
 export function PlaylistCard({ PlaylistIcon, playlist, children }: PlaylistCardProps) {

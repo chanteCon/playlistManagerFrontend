@@ -118,3 +118,26 @@ export const patchVideo = (data: {
         }),
     );
 };
+
+export const getUser = () =>
+    authenticatedApiRequest(() =>
+        protectedApi.GET('/api/users/me', {
+            credentials: 'include',
+        }),
+    );
+
+export const patchUser = (data: { username: string }) =>
+    authenticatedApiRequest(() =>
+        protectedApi.PATCH('/api/users/me', {
+            body: { username: data.username },
+            credentials: 'include',
+        }),
+    );
+
+export const patchUserEmail = (data: { email: string }) =>
+    authenticatedApiRequest(() =>
+        protectedApi.PATCH('/api/users/update-email', {
+            body: { email: data.email },
+            credentials: 'include',
+        }),
+    );

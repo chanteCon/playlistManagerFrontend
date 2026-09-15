@@ -158,6 +158,5 @@ export function usePlaylist(id: string) {
         addVideoMutation,
         editVideoMutation,
         deleteVideoMutation,
-        isAddVideoPending: addVideoMutation.isPending,
     };
 }

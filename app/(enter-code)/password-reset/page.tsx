@@ -1,7 +1,7 @@
 'use client';
 import { useMutation } from '@tanstack/react-query';
 import { passwordReset } from '@/requests/publicRequests';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { schemas } from '@/api/zod';
 import { ValidatedForm } from '@/components/forms/ValidatedForm';
 import CodeInput from '@/components/auth/codeInput';
@@ -15,6 +15,8 @@ import CodeExpiry from '@/components/auth/CodeExpiry';
 import Link from 'next/link';
 import { useServerErrors } from '@/hooks/useServerErrors';
 import { isHandledError } from '@/lib/utils';
+import { useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
 const codeInputBoxStyle = 'size-12 rounded-md border text-xl';
 const PASSWORD_ERROR =
@@ -45,6 +47,16 @@ export default function Verify() {
         clearError: clearServerError,
     } = useServerErrors();
     const router = useRouter();
+
+    const { clearAccessToken } = useAuth();
+    const searchParams = useSearchParams();
+
+    useEffect(() => {
+        if (searchParams.get('logout') === 'true') {
+            clearAccessToken();
+            router.replace('/password-reset');
+        }
+    }, [searchParams, clearAccessToken, router]);
 
     const passwordResetMutation = useMutation({
         mutationFn: passwordReset,

@@ -7,6 +7,7 @@ type AppBrandProps = {
 };
 
 export function AppBrand({ showTagline = true, variant = 'default' }: AppBrandProps) {
+    const appName = 'Playlists';
     if (variant === 'navbar') {
         return (
             <Link
@@ -18,7 +19,7 @@ export function AppBrand({ showTagline = true, variant = 'default' }: AppBrandPr
                 </div>
 
                 <span className="text-xl font-extrabold tracking-tight text-primary">
-                    Playlist Manager
+                    {appName}
                 </span>
             </Link>
         );
@@ -31,9 +32,7 @@ export function AppBrand({ showTagline = true, variant = 'default' }: AppBrandPr
                     <Library className="size-6" />
                 </div>
 
-                <h1 className="text-4xl font-extrabold tracking-tight text-primary">
-                    Playlist Manager
-                </h1>
+                <h1 className="text-4xl font-extrabold tracking-tight text-primary">{appName}</h1>
             </Link>
 
             {showTagline && (
