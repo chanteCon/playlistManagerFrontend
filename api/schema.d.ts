@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    "/api/auth/register": {
+    '/api/auth/register': {
         parameters: {
             query?: never;
             header?: never;
@@ -33,7 +33,7 @@ export interface paths {
                      *       "username": "User_name123"
                      *     }
                      */
-                    "application/json": {
+                    'application/json': {
                         /**
                          * Format: email
                          * @description User email address, must be valid and unique
@@ -67,7 +67,7 @@ export interface paths {
                          *       "message": "A code has been sent to the provided email address. Please verify email to continue."
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: true;
                             /** @example A code has been sent to the provided email address. Please verify email to continue. */
@@ -91,7 +91,7 @@ export interface paths {
                          *       "errors": "Validation error messages"
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Invalid Input */
@@ -117,7 +117,7 @@ export interface paths {
                          *       "errors": "Validation error messages"
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Email already in use */
@@ -137,7 +137,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/auth/verify": {
+    '/api/auth/verify': {
         parameters: {
             query?: never;
             header?: never;
@@ -165,7 +165,7 @@ export interface paths {
                      *       "code": "123"
                      *     }
                      */
-                    "application/json": {
+                    'application/json': {
                         /**
                          * @description Six character verification code, expires in 5 minutes
                          * @example 21923c
@@ -179,7 +179,7 @@ export interface paths {
                 200: {
                     headers: {
                         /** @description Refresh token cookie, expires in 7 days */
-                        "Set-Cookie"?: string;
+                        'Set-Cookie'?: string;
                         [name: string]: unknown;
                     };
                     content: {
@@ -192,7 +192,7 @@ export interface paths {
                          *       "message": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: true;
                             /** @example null */
@@ -221,7 +221,7 @@ export interface paths {
                          *       "errors": "Validation error messsages"
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Invalid Input */
@@ -247,7 +247,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Invalid or expired verification code. */
@@ -263,7 +263,7 @@ export interface paths {
         };
         trace?: never;
     };
-    "/api/auth/login": {
+    '/api/auth/login': {
         parameters: {
             query?: never;
             header?: never;
@@ -291,7 +291,7 @@ export interface paths {
                      *       "password": "Aa1!xyz"
                      *     }
                      */
-                    "application/json": {
+                    'application/json': {
                         /**
                          * Format: email
                          * @description User email address, must be valid and unique
@@ -316,7 +316,7 @@ export interface paths {
                          *       "message": "If email is valid you will receive a login code"
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: true;
                             /** @example If email is valid you will receive a login code */
@@ -340,7 +340,7 @@ export interface paths {
                          *       "errors": "Validation error messages"
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Invalid Input */
@@ -366,7 +366,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Incorrect email or password */
@@ -386,7 +386,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/auth/login/MFA": {
+    '/api/auth/login/MFA': {
         parameters: {
             query?: never;
             header?: never;
@@ -413,7 +413,7 @@ export interface paths {
                      *       "code": "123"
                      *     }
                      */
-                    "application/json": {
+                    'application/json': {
                         /**
                          * @description Six character verification code, expires in 5 minutes
                          * @example 21923c
@@ -427,7 +427,7 @@ export interface paths {
                 200: {
                     headers: {
                         /** @description Refresh token cookie, expires in 7 days */
-                        "Set-Cookie"?: string;
+                        'Set-Cookie'?: string;
                         [name: string]: unknown;
                     };
                     content: {
@@ -440,7 +440,7 @@ export interface paths {
                          *       "message": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: true;
                             /** @example null */
@@ -469,7 +469,7 @@ export interface paths {
                          *       "errors": "Validation error messages"
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Invalid Input */
@@ -495,7 +495,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Invalid or expired login code */
@@ -515,7 +515,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/auth/refresh": {
+    '/api/auth/refresh': {
         parameters: {
             query?: never;
             header?: never;
@@ -541,7 +541,7 @@ export interface paths {
                 200: {
                     headers: {
                         /** @description Refresh token cookie, expires in 7 days */
-                        "Set-Cookie"?: string;
+                        'Set-Cookie'?: string;
                         [name: string]: unknown;
                     };
                     content: {
@@ -554,7 +554,7 @@ export interface paths {
                          *       "message": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: true;
                             /** @example null */
@@ -583,7 +583,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Invalid token */
@@ -603,7 +603,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/auth/logout": {
+    '/api/auth/logout': {
         parameters: {
             query?: never;
             header?: never;
@@ -638,7 +638,7 @@ export interface paths {
                          *       "message": "Successfully logged out."
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: true;
                             /** @example Successfully logged out. */
@@ -662,7 +662,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Unauthorized */
@@ -682,7 +682,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/auth/verification-code-request": {
+    '/api/auth/verification-code-request': {
         parameters: {
             query?: never;
             header?: never;
@@ -709,7 +709,7 @@ export interface paths {
                      *       "email": "user@example.com"
                      *     }
                      */
-                    "application/json": {
+                    'application/json': {
                         /**
                          * Format: email
                          * @description User email address, must be valid and unique
@@ -733,7 +733,7 @@ export interface paths {
                          *       "message": "If email is valid you will receive a code"
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: true;
                             /** @example If email is valid you will receive a code */
@@ -757,7 +757,7 @@ export interface paths {
                          *       "errors": "Validation error messages"
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Invalid Input */
@@ -777,7 +777,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/auth/password-reset-request": {
+    '/api/auth/password-reset-request': {
         parameters: {
             query?: never;
             header?: never;
@@ -805,7 +805,7 @@ export interface paths {
                      *       "email": "user@example.com"
                      *     }
                      */
-                    "application/json": {
+                    'application/json': {
                         /**
                          * Format: email
                          * @description User email address, must be valid and unique
@@ -829,7 +829,7 @@ export interface paths {
                          *       "message": "If email is valid you will receive a code"
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: true;
                             /** @example If email is valid you will receive a code */
@@ -853,7 +853,7 @@ export interface paths {
                          *       "errors": "Validation error messages"
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Invalid Input */
@@ -873,7 +873,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/auth/password-reset": {
+    '/api/auth/password-reset': {
         parameters: {
             query?: never;
             header?: never;
@@ -902,7 +902,7 @@ export interface paths {
                      *       "password": "newPassword123!$"
                      *     }
                      */
-                    "application/json": {
+                    'application/json': {
                         /**
                          * @description Six character verification code, expires in 5 minutes
                          * @example 21923c
@@ -930,7 +930,7 @@ export interface paths {
                          *       "message": "Password successfully reset"
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: true;
                             /** @example Password successfully reset */
@@ -954,7 +954,7 @@ export interface paths {
                          *       "errors": "Validation error messsages"
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Invalid Input */
@@ -980,7 +980,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Invalid or expired password reset code. */
@@ -996,7 +996,7 @@ export interface paths {
         };
         trace?: never;
     };
-    "/api/users/me": {
+    '/api/users/me': {
         parameters: {
             query?: never;
             header?: never;
@@ -1032,7 +1032,7 @@ export interface paths {
                          *       "message": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: true;
                             /** @example null */
@@ -1075,7 +1075,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Unauthorized */
@@ -1101,7 +1101,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default User not found */
@@ -1148,7 +1148,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Unauthorized */
@@ -1174,7 +1174,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default User not found */
@@ -1205,7 +1205,7 @@ export interface paths {
                      *       "username": "newUsername123"
                      *     }
                      */
-                    "application/json": {
+                    'application/json': {
                         /**
                          * @description Username must be unique and between 5 and 30 characters. Can only contain letters, numbers, dots, underscores, and hyphens
                          * @example User_name123
@@ -1233,7 +1233,7 @@ export interface paths {
                          *       "message": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: true;
                             /** @example null */
@@ -1270,7 +1270,7 @@ export interface paths {
                          *       "errors": "{ password: [ Unrecognized key(s) in object: password ] }"
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Invalid Input */
@@ -1296,7 +1296,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Unauthorized */
@@ -1322,7 +1322,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default User not found */
@@ -1338,7 +1338,7 @@ export interface paths {
         };
         trace?: never;
     };
-    "/api/users/update-email": {
+    '/api/users/update-email': {
         parameters: {
             query?: never;
             header?: never;
@@ -1370,7 +1370,7 @@ export interface paths {
                      *       "email": "new@email.com.au"
                      *     }
                      */
-                    "application/json": {
+                    'application/json': {
                         /**
                          * Format: email
                          * @description User email address, must be valid and unique
@@ -1394,7 +1394,7 @@ export interface paths {
                          *       "message": "A verification code has been sent, please check email"
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: true;
                             /** @example A verification code has been sent, please check email */
@@ -1418,7 +1418,7 @@ export interface paths {
                          *       "errors": "Validation error messages"
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Invalid Input */
@@ -1444,7 +1444,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Unauthorized */
@@ -1470,7 +1470,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default User not found */
@@ -1496,7 +1496,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Email already in use */
@@ -1512,7 +1512,7 @@ export interface paths {
         };
         trace?: never;
     };
-    "/api/playlists/": {
+    '/api/playlists/': {
         parameters: {
             query?: never;
             header?: never;
@@ -1551,7 +1551,7 @@ export interface paths {
                          *       "message": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: true;
                             /** @example null */
@@ -1583,7 +1583,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Unauthorized */
@@ -1614,7 +1614,7 @@ export interface paths {
                      *       "description": "My playlist description"
                      *     }
                      */
-                    "application/json": {
+                    'application/json': {
                         /**
                          * @description Name must be between 1 and 50 characters. A user cannot have two playlists with the same name
                          * @example Playlist one
@@ -1649,7 +1649,7 @@ export interface paths {
                          *       "message": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: true;
                             /** @example null */
@@ -1681,7 +1681,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Invalid Input */
@@ -1707,7 +1707,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Unauthorized */
@@ -1733,7 +1733,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default You have another playlist with this name */
@@ -1753,7 +1753,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/playlists/{id}": {
+    '/api/playlists/{id}': {
         parameters: {
             query?: never;
             header?: never;
@@ -1804,7 +1804,7 @@ export interface paths {
                          *       "message": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: true;
                             /** @example null */
@@ -1845,7 +1845,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Invalid Input */
@@ -1871,7 +1871,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Unauthorized */
@@ -1897,7 +1897,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Playlist not found */
@@ -1947,7 +1947,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Invalid Input */
@@ -1973,7 +1973,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Unauthorized */
@@ -1999,7 +1999,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Playlist not found */
@@ -2035,7 +2035,7 @@ export interface paths {
                      *       "description": "Updated description"
                      *     }
                      */
-                    "application/json": {
+                    'application/json': {
                         /**
                          * @description Name must be between 1 and 50 characters. A user cannot have two playlists with the same name
                          * @example Playlist one
@@ -2070,7 +2070,7 @@ export interface paths {
                          *       "message": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: true;
                             /** @example null */
@@ -2102,7 +2102,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Invalid Input */
@@ -2128,7 +2128,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Unauthorized */
@@ -2154,7 +2154,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Playlist not found */
@@ -2180,7 +2180,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default You have another playlist with this name */
@@ -2196,7 +2196,7 @@ export interface paths {
         };
         trace?: never;
     };
-    "/api/playlists/{id}/videos": {
+    '/api/playlists/{id}/videos': {
         parameters: {
             query?: never;
             header?: never;
@@ -2223,7 +2223,7 @@ export interface paths {
                      *       "url": "https://www.youtube.com/watch?v=zzzzzzzzzzz"
                      *     }
                      */
-                    "application/json": {
+                    'application/json': {
                         /**
                          * Format: uri
                          * @description The URL of the video to add to the playlist. Must use HTTP or HTTPS.
@@ -2257,7 +2257,7 @@ export interface paths {
                          *       "message": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: true;
                             /** @example null */
@@ -2292,7 +2292,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Invalid input or unable to process video URL */
@@ -2318,7 +2318,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Unauthorized */
@@ -2344,7 +2344,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Playlist or Viideo not found */
@@ -2370,7 +2370,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default You have already added this video to the playlist */
@@ -2396,7 +2396,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Unable to fetch video metadata. Please try again later. */
@@ -2416,7 +2416,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/playlists/{id}/videos/{playlistVideoId}": {
+    '/api/playlists/{id}/videos/{playlistVideoId}': {
         parameters: {
             query?: never;
             header?: never;
@@ -2462,7 +2462,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Invalid Input */
@@ -2488,7 +2488,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Unauthorized */
@@ -2514,7 +2514,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Playlist not found */
@@ -2552,7 +2552,7 @@ export interface paths {
                      *       "description": "Updated description"
                      *     }
                      */
-                    "application/json": {
+                    'application/json': {
                         /**
                          * @description Title must be between 1 and 50 characters. Playlists cannot have two videos with the same custom title
                          * @example Video one
@@ -2591,7 +2591,7 @@ export interface paths {
                          *       "message": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: true;
                             /** @example null */
@@ -2626,7 +2626,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Invalid Input */
@@ -2652,7 +2652,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Unauthorized */
@@ -2678,7 +2678,7 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        "application/json": {
+                        'application/json': {
                             /** @constant */
                             success: false;
                             /** @default Playlist not found */

@@ -1,3 +1,4 @@
+import { Button } from '../ui/button';
 import { ConfirmationDialog } from './ConfirmationDialog';
 
 type DeleteDialogProps = {
@@ -28,12 +29,21 @@ export function DeleteDialog({
                 }
             }}
             onCancel={onCancel}
-            onConfirm={() => {
-                if (!itemId) return;
-
-                onConfirm(itemId);
-            }}
             isPending={isPending}
-        />
+            confirmButton={
+                <Button
+                    type="button"
+                    variant="destructive"
+                    onClick={() => {
+                        if (!itemId) return;
+
+                        onConfirm(itemId);
+                    }}
+                    disabled={isPending}
+                >
+                    {isPending ? 'Deleting...' : 'Delete'}
+                </Button>
+            }
+        ></ConfirmationDialog>
     );
 }

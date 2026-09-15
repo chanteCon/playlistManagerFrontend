@@ -1,14 +1,17 @@
 'use client';
 import { codeSchema } from '@/schemas/authSchemas';
-import CodeForm from '../../../../components/forms/codeForm';
+import CodeForm from '../../components/forms/codeForm';
 import { useMutation } from '@tanstack/react-query';
 import { verify } from '@/requests/publicRequests';
 import { useAuth } from '@/contexts/AuthContext';
 import { extractAccessToken, isHandledError } from '@/lib/utils';
 import { useServerErrors } from '@/hooks/useServerErrors';
+import { useRouter } from 'next/navigation';
 
 export default function Verify() {
     const { updateAccessToken } = useAuth();
+    const router = useRouter();
+
     const {
         errors: serverErrors,
         setErrors: setServerErrors,
@@ -20,6 +23,7 @@ export default function Verify() {
 
         onSuccess: (res) => {
             updateAccessToken(extractAccessToken(res));
+            router.replace('/dashboard');
         },
 
         onError: (error: unknown) => {

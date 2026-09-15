@@ -1,26 +1,16 @@
 import { useProfile } from '@/hooks/useProfile';
-import { Button } from '../ui/button';
 import { AppDropDown } from '../common/AppDropdown';
 import { DropdownMenuItem } from '../ui/dropdown-menu';
 import { LogOut, Settings } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { useMutation } from '@tanstack/react-query';
-import { logout } from '@/requests/protectedRequests';
 import UserAvatar from './UserAvatar';
 
 export default function UserSettingsDropDown() {
-    const { user } = useProfile();
+    const { user, logoutMutation } = useProfile();
     const { accessToken, clearAccessToken } = useAuth();
     const router = useRouter();
 
-    const logoutMutation = useMutation({
-        mutationFn: logout,
-        onSettled: () => {
-            clearAccessToken();
-            router.push('/');
-        },
-    });
     return (
         accessToken && (
             <AppDropDown
@@ -48,7 +38,14 @@ export default function UserSettingsDropDown() {
                 <DropdownMenuItem
                     className="cursor-pointer focus:bg-destructive/10 focus:text-destructive"
                     disabled={logoutMutation.isPending}
-                    onClick={() => logoutMutation.mutate(accessToken)}
+                    onClick={() =>
+                        logoutMutation.mutate(accessToken, {
+                            onSettled: () => {
+                                clearAccessToken();
+                                router.push('/');
+                            },
+                        })
+                    }
                 >
                     <LogOut className="h-4 w-4 text-muted-foreground" />
                     <span>Logout</span>

@@ -5,3 +5,11 @@ export const editSchema = z
     .passthrough();
 
 export const uuidSchema = z.string().uuid();
+
+export const userNameSchema = z.object({
+    username: z
+        .string()
+        .min(5)
+        .max(30)
+        .regex(/^[a-zA-Z0-9._-]+$/),
+});
