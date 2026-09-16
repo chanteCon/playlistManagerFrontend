@@ -38,3 +38,5 @@ type GeneratedUser =
 export type User = Omit<GeneratedUser, 'username'> & {
     username: string;
 };
+
+export type GetError = paths['/api/playlists/{id}']['patch']['responses'][404];

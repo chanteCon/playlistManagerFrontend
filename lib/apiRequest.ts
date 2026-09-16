@@ -1,4 +1,5 @@
 import { refreshOnce } from '@/lib/utils';
+
 type AuthHandlers = {
     updateAccessToken: (token: string) => void;
     clearAccessToken: () => void;
@@ -9,12 +10,13 @@ let authHandlers: AuthHandlers | null = null;
 export const registerAuthHandler = (handlers: AuthHandlers) => {
     authHandlers = handlers;
 };
+
 type ApiResponse<T> = {
     data?: T;
     error?: {
         message: string;
         status?: number;
-        errors?: Record<string, string[]> | null;
+        errors?: unknown;
     };
     response: Response;
 };
@@ -33,12 +35,16 @@ export class RequestError extends Error {
 
 const parseResponse = <T>(response: ApiResponse<T>) => {
     if (response.error) {
-        const errors = Object.fromEntries(
-            Object.entries(response.error.errors ?? {}).map(([field, reasons]) => [
-                field,
-                reasons[0],
-            ]),
-        );
+        const errors =
+            response.error.errors && typeof response.error.errors === 'object'
+                ? Object.fromEntries(
+                      Object.entries(response.error.errors).map(([field, reasons]) => [
+                          field,
+                          Array.isArray(reasons) ? reasons[0] : String(reasons),
+                      ]),
+                  )
+                : {};
+
         throw new RequestError(response.error.message, response.response.status, errors);
     }
 
@@ -55,9 +61,7 @@ export async function apiRequest<T>(request: Promise<ApiResponse<T>>) {
 }
 
 export async function authenticatedApiRequest<T>(request: () => Promise<ApiResponse<T>>) {
-    let response;
-
-    response = await request();
+    let response = await request();
 
     if (response.response?.status === 401) {
         try {
@@ -74,8 +78,10 @@ export async function authenticatedApiRequest<T>(request: () => Promise<ApiRespo
             authHandlers?.clearAccessToken?.();
         }
     }
+
     if (response.response.status === 204) {
         return undefined;
     }
+
     return parseResponse(response);
 }

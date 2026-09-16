@@ -85,10 +85,10 @@ const endpoints = makeApi([
         errors: [
             {
                 status: 400,
-                description: `Invalid Input`,
+                description: `Invalid input`,
                 schema: z.object({
                     success: z.boolean(),
-                    message: z.string().default('Invalid Input'),
+                    message: z.string().default('Invalid input'),
                     data: z.null(),
                     errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
                 }),
@@ -136,10 +136,10 @@ const endpoints = makeApi([
             },
             {
                 status: 401,
-                description: `Invalid or expired login code`,
+                description: `Could not verify code`,
                 schema: z.object({
                     success: z.boolean(),
-                    message: z.string().default('Invalid or expired login code'),
+                    message: z.string().default('Could not verify code'),
                     data: z.null(),
                     errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
                 }),
@@ -182,20 +182,20 @@ const endpoints = makeApi([
         errors: [
             {
                 status: 400,
-                description: `Invalid Input`,
+                description: `Invalid input`,
                 schema: z.object({
                     success: z.boolean(),
-                    message: z.string().default('Invalid Input'),
+                    message: z.string().default('Invalid input'),
                     data: z.null(),
                     errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
                 }),
             },
             {
                 status: 401,
-                description: `Invalid or expired password reset code.`,
+                description: `Could not verify code`,
                 schema: z.object({
                     success: z.boolean(),
-                    message: z.string().default('Invalid or expired password reset code.'),
+                    message: z.string().default('Could not verify code'),
                     data: z.null(),
                     errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
                 }),
@@ -280,20 +280,20 @@ const endpoints = makeApi([
         errors: [
             {
                 status: 400,
-                description: `Invalid Input`,
+                description: `Invalid input`,
                 schema: z.object({
                     success: z.boolean(),
-                    message: z.string().default('Invalid Input'),
+                    message: z.string().default('Invalid input'),
                     data: z.null(),
                     errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
                 }),
             },
             {
                 status: 409,
-                description: `Email already in use`,
+                description: `Conflict`,
                 schema: z.object({
                     success: z.boolean(),
-                    message: z.string().default('Email already in use'),
+                    message: z.string().default('Conflict'),
                     data: z.null(),
                     errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
                 }),
@@ -366,10 +366,10 @@ const endpoints = makeApi([
             },
             {
                 status: 401,
-                description: `Invalid or expired verification code.`,
+                description: `Could not verify verification code`,
                 schema: z.object({
                     success: z.boolean(),
-                    message: z.string().default('Invalid or expired verification code.'),
+                    message: z.string().default('Could not verify verification code'),
                     data: z.null(),
                     errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
                 }),
@@ -413,10 +413,10 @@ const endpoints = makeApi([
         errors: [
             {
                 status: 400,
-                description: `Invalid Input`,
+                description: `Invalid input`,
                 schema: z.object({
                     success: z.boolean(),
-                    message: z.string().default('Invalid Input'),
+                    message: z.string().default('Invalid input'),
                     data: z.null(),
                     errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
                 }),
@@ -433,10 +433,10 @@ const endpoints = makeApi([
             },
             {
                 status: 409,
-                description: `You have another playlist with this name`,
+                description: `Could not add playlist`,
                 schema: z.object({
                     success: z.boolean(),
-                    message: z.string().default('You have another playlist with this name'),
+                    message: z.string().default('Could not add playlist'),
                     data: z.null(),
                     errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
                 }),
@@ -615,10 +615,10 @@ const endpoints = makeApi([
         errors: [
             {
                 status: 400,
-                description: `Invalid Input`,
+                description: `Invalid input`,
                 schema: z.object({
                     success: z.boolean(),
-                    message: z.string().default('Invalid Input'),
+                    message: z.string().default('Invalid input'),
                     data: z.null(),
                     errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
                 }),
@@ -645,10 +645,10 @@ const endpoints = makeApi([
             },
             {
                 status: 409,
-                description: `You have another playlist with this name`,
+                description: `Could not update playlist`,
                 schema: z.object({
                     success: z.boolean(),
-                    message: z.string().default('You have another playlist with this name'),
+                    message: z.string().default('Could not update playlist'),
                     data: z.null(),
                     errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
                 }),
@@ -772,22 +772,20 @@ const endpoints = makeApi([
             },
             {
                 status: 404,
-                description: `Playlist or Viideo not found`,
+                description: `Invalid input or unable to process video URL`,
                 schema: z.object({
                     success: z.boolean(),
-                    message: z.string().default('Playlist or Viideo not found'),
+                    message: z.string().default('Invalid input or unable to process video URL'),
                     data: z.null(),
                     errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
                 }),
             },
             {
                 status: 409,
-                description: `You have already added this video to the playlist`,
+                description: `Cannot add video`,
                 schema: z.object({
                     success: z.boolean(),
-                    message: z
-                        .string()
-                        .default('You have already added this video to the playlist'),
+                    message: z.string().default('Cannot add video'),
                     data: z.null(),
                     errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
                 }),
@@ -862,10 +860,10 @@ const endpoints = makeApi([
         errors: [
             {
                 status: 400,
-                description: `Invalid Input`,
+                description: `Invalid input`,
                 schema: z.object({
                     success: z.boolean(),
-                    message: z.string().default('Invalid Input'),
+                    message: z.string().default('Invalid input'),
                     data: z.null(),
                     errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
                 }),
@@ -882,10 +880,10 @@ const endpoints = makeApi([
             },
             {
                 status: 404,
-                description: `Playlist not found`,
+                description: `Playlist or video not found`,
                 schema: z.object({
                     success: z.boolean(),
-                    message: z.string().default('Playlist not found'),
+                    message: z.string().default('Playlist or video not found'),
                     data: z.null(),
                     errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
                 }),
@@ -943,10 +941,10 @@ const endpoints = makeApi([
             },
             {
                 status: 404,
-                description: `Playlist not found`,
+                description: `Playlist or video not found`,
                 schema: z.object({
                     success: z.boolean(),
-                    message: z.string().default('Playlist not found'),
+                    message: z.string().default('Playlist or video not found'),
                     data: z.null(),
                     errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
                 }),
@@ -1040,10 +1038,10 @@ const endpoints = makeApi([
         errors: [
             {
                 status: 400,
-                description: `Invalid Input`,
+                description: `Invalid input`,
                 schema: z.object({
                     success: z.boolean(),
-                    message: z.string().default('Invalid Input'),
+                    message: z.string().default('Invalid input'),
                     data: z.null(),
                     errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
                 }),
@@ -1064,6 +1062,16 @@ const endpoints = makeApi([
                 schema: z.object({
                     success: z.boolean(),
                     message: z.string().default('User not found'),
+                    data: z.null(),
+                    errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
+                }),
+            },
+            {
+                status: 409,
+                description: `Conflict`,
+                schema: z.object({
+                    success: z.boolean(),
+                    message: z.string().default('Conflict'),
                     data: z.null(),
                     errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
                 }),
@@ -1126,10 +1134,10 @@ const endpoints = makeApi([
         errors: [
             {
                 status: 400,
-                description: `Invalid Input`,
+                description: `Invalid input`,
                 schema: z.object({
                     success: z.boolean(),
-                    message: z.string().default('Invalid Input'),
+                    message: z.string().default('Invalid input'),
                     data: z.null(),
                     errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
                 }),
@@ -1156,10 +1164,10 @@ const endpoints = makeApi([
             },
             {
                 status: 409,
-                description: `Email already in use`,
+                description: `Conflict`,
                 schema: z.object({
                     success: z.boolean(),
-                    message: z.string().default('Email already in use'),
+                    message: z.string().default('Conflict'),
                     data: z.null(),
                     errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
                 }),
