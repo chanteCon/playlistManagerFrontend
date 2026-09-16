@@ -9,7 +9,6 @@ type ErrorPageProps = {
 
 export default function ErrorPage({ error }: ErrorPageProps) {
     const isNotFound = hasErrorStatus(error, 404);
-
     return (
         <main className="mx-auto flex w-full max-w-5xl flex-col items-center px-6 py-16 text-center">
             <h1 className="text-3xl font-bold tracking-tight">

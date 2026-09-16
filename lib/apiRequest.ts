@@ -44,7 +44,6 @@ const parseResponse = <T>(response: ApiResponse<T>) => {
                       ]),
                   )
                 : {};
-
         throw new RequestError(response.error.message, response.response.status, errors);
     }
 
