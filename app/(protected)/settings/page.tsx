@@ -22,6 +22,7 @@ import { hasErrorStatus, isHandledError } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { ConfirmationDialog } from '@/components/common/ConfirmationDialog';
 import { useRouter } from 'next/navigation';
+import { DeleteDialog } from '@/components/common/DeleteDialog';
 
 const SettingsButton = ({
     isPending,
@@ -61,6 +62,7 @@ export default function Settings() {
         updateUserEmailMutation,
         logoutMutation,
         reqPasswordCodeMutation,
+        deleteUserMutation,
     } = useProfile();
     const { accessToken } = useAuth();
     const [changedName, setChangedName] = useState(false);
@@ -69,6 +71,7 @@ export default function Settings() {
     const [nameSaved, setNameSaved] = useState(false);
     const [changingEmail, setChangingEmail] = useState(false);
     const [resettingPassword, setResettingPassword] = useState(false);
+    const [deletingAccount, setDeletingAccount] = useState(false);
 
     const router = useRouter();
 
@@ -275,6 +278,20 @@ export default function Settings() {
                         </div>
                     </CardContent>
                 </Card>
+                <Card className="mt-5 border-destructive/50 bg-destructive/5">
+                    <CardContent className="flex items-center justify-between">
+                        <div>
+                            <h3 className="font-semibold text-destructive">Delete account</h3>
+                            <p className="text-sm text-muted-foreground">
+                                Permanently delete your account and all of your data.
+                            </p>
+                        </div>
+
+                        <Button onClick={() => setDeletingAccount(true)} variant="destructive">
+                            Delete account
+                        </Button>
+                    </CardContent>
+                </Card>
             </div>
 
             <ConfirmationDialog
@@ -321,6 +338,17 @@ export default function Settings() {
                         {reqPasswordCodeMutation.isPending ? 'Requesting...' : 'Request reset code'}
                     </Button>
                 }
+            />
+
+            <DeleteDialog
+                isPending={false}
+                title="Delete Account?"
+                message="Are you sure you want to delete this account? This action cannot be undone All data associated with the account will be lost."
+                itemId={deletingAccount ? user.id : null}
+                onCancel={() => {
+                    setDeletingAccount(false);
+                }}
+                onConfirm={() => deleteUserMutation.mutate()}
             />
         </main>
     );

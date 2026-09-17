@@ -11,7 +11,7 @@ import {
 
 import type { paths } from '@/api/schema';
 import { useAuth } from '@/contexts/AuthContext';
-import { hasErrorStatus, removePlaylistFromCache } from '@/lib/utils';
+import { hasErrorStatus, isHandledError, removePlaylistFromCache } from '@/lib/utils';
 
 type GetPlaylistsResponse =
     paths['/api/playlists/']['get']['responses'][200]['content']['application/json'];
@@ -43,6 +43,9 @@ export function usePlaylists() {
                     },
                 };
             });
+        },
+        throwOnError: (error) => {
+            return !isHandledError(error, [400, 409]);
         },
     });
 
@@ -83,6 +86,9 @@ export function usePlaylists() {
             if (hasErrorStatus(error, 404)) {
                 removePlaylistFromCache(queryClient, playlistId);
             }
+        },
+        throwOnError: (error) => {
+            return !isHandledError(error, [400, 409]);
         },
     });
 

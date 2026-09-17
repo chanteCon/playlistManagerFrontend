@@ -34,6 +34,7 @@ export function DeleteDialog({
                 <Button
                     type="button"
                     variant="destructive"
+                    className={'light:font-black'}
                     onClick={() => {
                         if (!itemId) return;
 

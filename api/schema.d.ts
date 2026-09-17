@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    '/api/auth/register': {
+    "/api/auth/register": {
         parameters: {
             query?: never;
             header?: never;
@@ -33,7 +33,7 @@ export interface paths {
                      *       "username": "User_name123"
                      *     }
                      */
-                    'application/json': {
+                    "application/json": {
                         /**
                          * Format: email
                          * @description User email address, must be valid and unique
@@ -67,7 +67,7 @@ export interface paths {
                          *       "message": "A code has been sent to the provided email address. Please verify email to continue."
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: true;
                             /** @example A code has been sent to the provided email address. Please verify email to continue. */
@@ -77,7 +77,7 @@ export interface paths {
                         };
                     };
                 };
-                /** @description Invalid Input */
+                /** @description Invalid input */
                 400: {
                     headers: {
                         [name: string]: unknown;
@@ -87,42 +87,58 @@ export interface paths {
                          * @example {
                          *       "success": false,
                          *       "data": null,
-                         *       "message": "Invalid Input",
-                         *       "errors": "Validation error messages"
+                         *       "message": "Invalid input",
+                         *       "errors": {
+                         *         "email": [
+                         *           "Invalid email address"
+                         *         ],
+                         *         "username": [
+                         *           "Username must be at least 5 characters"
+                         *         ],
+                         *         "password": [
+                         *           "Password must contain uppercase, lowercase, number, and symbol, and no invalid characters"
+                         *         ]
+                         *       }
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
-                            /** @default Invalid Input */
+                            /** @default Invalid input */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
                         };
                     };
                 };
-                /** @description Email already in use */
+                /** @description Conflict */
                 409: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "success": false,
-                         *       "data": null,
-                         *       "message": "Email already in use",
-                         *       "errors": "Validation error messages"
-                         *     }
-                         */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
-                            /** @default Email already in use */
+                            /** @default Conflict */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -137,7 +153,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    '/api/auth/verify': {
+    "/api/auth/verify": {
         parameters: {
             query?: never;
             header?: never;
@@ -165,7 +181,7 @@ export interface paths {
                      *       "code": "123"
                      *     }
                      */
-                    'application/json': {
+                    "application/json": {
                         /**
                          * @description Six character verification code, expires in 5 minutes
                          * @example 21923c
@@ -179,7 +195,7 @@ export interface paths {
                 200: {
                     headers: {
                         /** @description Refresh token cookie, expires in 7 days */
-                        'Set-Cookie'?: string;
+                        "Set-Cookie"?: string;
                         [name: string]: unknown;
                     };
                     content: {
@@ -192,7 +208,7 @@ export interface paths {
                          *       "message": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: true;
                             /** @example null */
@@ -218,22 +234,33 @@ export interface paths {
                          *       "success": false,
                          *       "data": null,
                          *       "message": "Invalid Input",
-                         *       "errors": "Validation error messsages"
+                         *       "errors": {
+                         *         "code": [
+                         *           "Too small: expected string to have >=6 characters"
+                         *         ]
+                         *       }
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default Invalid Input */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
                         };
                     };
                 };
-                /** @description Invalid or expired verification code. */
+                /** @description Could not verify verification code */
                 401: {
                     headers: {
                         [name: string]: unknown;
@@ -243,16 +270,27 @@ export interface paths {
                          * @example {
                          *       "success": false,
                          *       "data": null,
-                         *       "message": "Invalid or expired verification code.",
-                         *       "errors": null
+                         *       "message": "Could not verify verification code",
+                         *       "errors": {
+                         *         "code": [
+                         *           "Invalid or expired verification code"
+                         *         ]
+                         *       }
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
-                            /** @default Invalid or expired verification code. */
+                            /** @default Could not verify verification code */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -263,7 +301,7 @@ export interface paths {
         };
         trace?: never;
     };
-    '/api/auth/login': {
+    "/api/auth/login": {
         parameters: {
             query?: never;
             header?: never;
@@ -291,7 +329,7 @@ export interface paths {
                      *       "password": "Aa1!xyz"
                      *     }
                      */
-                    'application/json': {
+                    "application/json": {
                         /**
                          * Format: email
                          * @description User email address, must be valid and unique
@@ -316,7 +354,7 @@ export interface paths {
                          *       "message": "If email is valid you will receive a login code"
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: true;
                             /** @example If email is valid you will receive a login code */
@@ -326,7 +364,7 @@ export interface paths {
                         };
                     };
                 };
-                /** @description Invalid Input */
+                /** @description Invalid input */
                 400: {
                     headers: {
                         [name: string]: unknown;
@@ -336,16 +374,30 @@ export interface paths {
                          * @example {
                          *       "success": false,
                          *       "data": null,
-                         *       "message": "Invalid Input",
-                         *       "errors": "Validation error messages"
+                         *       "message": "Invalid input",
+                         *       "errors": {
+                         *         "email": [
+                         *           "Invalid email address"
+                         *         ],
+                         *         "password": [
+                         *           "Password must be a string"
+                         *         ]
+                         *       }
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
-                            /** @default Invalid Input */
+                            /** @default Invalid input */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -366,12 +418,19 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default Incorrect email or password */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -386,7 +445,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    '/api/auth/login/MFA': {
+    "/api/auth/login/MFA": {
         parameters: {
             query?: never;
             header?: never;
@@ -413,7 +472,7 @@ export interface paths {
                      *       "code": "123"
                      *     }
                      */
-                    'application/json': {
+                    "application/json": {
                         /**
                          * @description Six character verification code, expires in 5 minutes
                          * @example 21923c
@@ -427,7 +486,7 @@ export interface paths {
                 200: {
                     headers: {
                         /** @description Refresh token cookie, expires in 7 days */
-                        'Set-Cookie'?: string;
+                        "Set-Cookie"?: string;
                         [name: string]: unknown;
                     };
                     content: {
@@ -440,7 +499,7 @@ export interface paths {
                          *       "message": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: true;
                             /** @example null */
@@ -466,22 +525,33 @@ export interface paths {
                          *       "success": false,
                          *       "data": null,
                          *       "message": "Invalid Input",
-                         *       "errors": "Validation error messages"
+                         *       "errors": {
+                         *         "code": [
+                         *           "Too small: expected string to have >=6 characters"
+                         *         ]
+                         *       }
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default Invalid Input */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
                         };
                     };
                 };
-                /** @description Invalid or expired login code */
+                /** @description Could not verify code */
                 401: {
                     headers: {
                         [name: string]: unknown;
@@ -491,16 +561,27 @@ export interface paths {
                          * @example {
                          *       "success": false,
                          *       "data": null,
-                         *       "message": "Invalid or expired login code",
-                         *       "errors": null
+                         *       "message": "Could not verify code",
+                         *       "errors": {
+                         *         "code": [
+                         *           "Invalid or expired login code"
+                         *         ]
+                         *       }
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
-                            /** @default Invalid or expired login code */
+                            /** @default Could not verify code */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -515,7 +596,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    '/api/auth/refresh': {
+    "/api/auth/refresh": {
         parameters: {
             query?: never;
             header?: never;
@@ -541,7 +622,7 @@ export interface paths {
                 200: {
                     headers: {
                         /** @description Refresh token cookie, expires in 7 days */
-                        'Set-Cookie'?: string;
+                        "Set-Cookie"?: string;
                         [name: string]: unknown;
                     };
                     content: {
@@ -554,7 +635,7 @@ export interface paths {
                          *       "message": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: true;
                             /** @example null */
@@ -583,12 +664,19 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default Invalid token */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -603,7 +691,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    '/api/auth/logout': {
+    "/api/auth/logout": {
         parameters: {
             query?: never;
             header?: never;
@@ -638,7 +726,7 @@ export interface paths {
                          *       "message": "Successfully logged out."
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: true;
                             /** @example Successfully logged out. */
@@ -662,12 +750,19 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default Unauthorized */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -682,7 +777,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    '/api/auth/verification-code-request': {
+    "/api/auth/verification-code-request": {
         parameters: {
             query?: never;
             header?: never;
@@ -709,7 +804,7 @@ export interface paths {
                      *       "email": "user@example.com"
                      *     }
                      */
-                    'application/json': {
+                    "application/json": {
                         /**
                          * Format: email
                          * @description User email address, must be valid and unique
@@ -733,7 +828,7 @@ export interface paths {
                          *       "message": "If email is valid you will receive a code"
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: true;
                             /** @example If email is valid you will receive a code */
@@ -754,15 +849,26 @@ export interface paths {
                          *       "success": false,
                          *       "data": null,
                          *       "message": "Invalid Input",
-                         *       "errors": "Validation error messages"
+                         *       "errors": {
+                         *         "email": [
+                         *           "Invalid email address"
+                         *         ]
+                         *       }
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default Invalid Input */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -777,7 +883,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    '/api/auth/password-reset-request': {
+    "/api/auth/password-reset-request": {
         parameters: {
             query?: never;
             header?: never;
@@ -805,7 +911,7 @@ export interface paths {
                      *       "email": "user@example.com"
                      *     }
                      */
-                    'application/json': {
+                    "application/json": {
                         /**
                          * Format: email
                          * @description User email address, must be valid and unique
@@ -829,7 +935,7 @@ export interface paths {
                          *       "message": "If email is valid you will receive a code"
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: true;
                             /** @example If email is valid you will receive a code */
@@ -850,15 +956,26 @@ export interface paths {
                          *       "success": false,
                          *       "data": null,
                          *       "message": "Invalid Input",
-                         *       "errors": "Validation error messages"
+                         *       "errors": {
+                         *         "email": [
+                         *           "Invalid email address"
+                         *         ]
+                         *       }
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default Invalid Input */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -873,7 +990,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    '/api/auth/password-reset': {
+    "/api/auth/password-reset": {
         parameters: {
             query?: never;
             header?: never;
@@ -902,7 +1019,7 @@ export interface paths {
                      *       "password": "newPassword123!$"
                      *     }
                      */
-                    'application/json': {
+                    "application/json": {
                         /**
                          * @description Six character verification code, expires in 5 minutes
                          * @example 21923c
@@ -930,7 +1047,7 @@ export interface paths {
                          *       "message": "Password successfully reset"
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: true;
                             /** @example Password successfully reset */
@@ -940,7 +1057,7 @@ export interface paths {
                         };
                     };
                 };
-                /** @description Invalid Input */
+                /** @description Invalid input */
                 400: {
                     headers: {
                         [name: string]: unknown;
@@ -950,23 +1067,37 @@ export interface paths {
                          * @example {
                          *       "success": false,
                          *       "data": null,
-                         *       "message": "Invalid Input",
-                         *       "errors": "Validation error messsages"
+                         *       "message": "Invalid input",
+                         *       "errors": {
+                         *         "password": [
+                         *           "Password must contain uppercase, lowercase, number, and symbol, and no invalid characters"
+                         *         ],
+                         *         "code": [
+                         *           "Too small: expected string to have >=6 characters"
+                         *         ]
+                         *       }
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
-                            /** @default Invalid Input */
+                            /** @default Invalid input */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
                         };
                     };
                 };
-                /** @description Invalid or expired password reset code. */
+                /** @description Could not verify code */
                 401: {
                     headers: {
                         [name: string]: unknown;
@@ -976,16 +1107,27 @@ export interface paths {
                          * @example {
                          *       "success": false,
                          *       "data": null,
-                         *       "message": "Invalid or expired password reset code.",
-                         *       "errors": null
+                         *       "message": "Could not verify code",
+                         *       "errors": {
+                         *         "code": [
+                         *           "Invalid or expired login code"
+                         *         ]
+                         *       }
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
-                            /** @default Invalid or expired password reset code. */
+                            /** @default Could not verify code */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -996,7 +1138,7 @@ export interface paths {
         };
         trace?: never;
     };
-    '/api/users/me': {
+    "/api/users/me": {
         parameters: {
             query?: never;
             header?: never;
@@ -1032,7 +1174,7 @@ export interface paths {
                          *       "message": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: true;
                             /** @example null */
@@ -1075,12 +1217,19 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default Unauthorized */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -1101,12 +1250,19 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default User not found */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -1148,12 +1304,19 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default Unauthorized */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -1174,12 +1337,19 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default User not found */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -1205,7 +1375,7 @@ export interface paths {
                      *       "username": "newUsername123"
                      *     }
                      */
-                    'application/json': {
+                    "application/json": {
                         /**
                          * @description Username must be unique and between 5 and 30 characters. Can only contain letters, numbers, dots, underscores, and hyphens
                          * @example User_name123
@@ -1233,7 +1403,7 @@ export interface paths {
                          *       "message": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: true;
                             /** @example null */
@@ -1256,7 +1426,7 @@ export interface paths {
                         };
                     };
                 };
-                /** @description Invalid Input */
+                /** @description Invalid input */
                 400: {
                     headers: {
                         [name: string]: unknown;
@@ -1266,16 +1436,27 @@ export interface paths {
                          * @example {
                          *       "success": false,
                          *       "data": null,
-                         *       "message": "Invalid Input",
-                         *       "errors": "{ password: [ Unrecognized key(s) in object: password ] }"
+                         *       "message": "Invalid input",
+                         *       "errors": {
+                         *         "username": [
+                         *           "Username must be at least 5 characters"
+                         *         ]
+                         *       }
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
-                            /** @default Invalid Input */
+                            /** @default Invalid input */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -1296,12 +1477,19 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default Unauthorized */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -1322,12 +1510,56 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default User not found */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
+                            errors?: {
+                                [key: string]: string[];
+                            } | null;
+                        };
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": false,
+                         *       "data": null,
+                         *       "message": "Conflict",
+                         *       "errors": {
+                         *         "username": [
+                         *           "Username already in use"
+                         *         ]
+                         *       }
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: false;
+                            /** @default Conflict */
+                            message: string;
+                            data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -1338,7 +1570,7 @@ export interface paths {
         };
         trace?: never;
     };
-    '/api/users/update-email': {
+    "/api/users/update-email": {
         parameters: {
             query?: never;
             header?: never;
@@ -1370,7 +1602,7 @@ export interface paths {
                      *       "email": "new@email.com.au"
                      *     }
                      */
-                    'application/json': {
+                    "application/json": {
                         /**
                          * Format: email
                          * @description User email address, must be valid and unique
@@ -1394,7 +1626,7 @@ export interface paths {
                          *       "message": "A verification code has been sent, please check email"
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: true;
                             /** @example A verification code has been sent, please check email */
@@ -1404,7 +1636,7 @@ export interface paths {
                         };
                     };
                 };
-                /** @description Invalid Input */
+                /** @description Invalid input */
                 400: {
                     headers: {
                         [name: string]: unknown;
@@ -1414,16 +1646,27 @@ export interface paths {
                          * @example {
                          *       "success": false,
                          *       "data": null,
-                         *       "message": "Invalid Input",
-                         *       "errors": "Validation error messages"
+                         *       "message": "Invalid input",
+                         *       "errors": {
+                         *         "email": [
+                         *           "Invalid email address"
+                         *         ]
+                         *       }
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
-                            /** @default Invalid Input */
+                            /** @default Invalid input */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -1444,12 +1687,19 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default Unauthorized */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -1470,19 +1720,26 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default User not found */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
                         };
                     };
                 };
-                /** @description Email already in use */
+                /** @description Conflict */
                 409: {
                     headers: {
                         [name: string]: unknown;
@@ -1492,16 +1749,27 @@ export interface paths {
                          * @example {
                          *       "success": false,
                          *       "data": null,
-                         *       "message": "Email already in use",
-                         *       "errors": null
+                         *       "message": "Conflict",
+                         *       "errors": {
+                         *         "email": [
+                         *           "Email already in use"
+                         *         ]
+                         *       }
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
-                            /** @default Email already in use */
+                            /** @default Conflict */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -1512,7 +1780,7 @@ export interface paths {
         };
         trace?: never;
     };
-    '/api/playlists/': {
+    "/api/playlists/": {
         parameters: {
             query?: never;
             header?: never;
@@ -1551,7 +1819,7 @@ export interface paths {
                          *       "message": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: true;
                             /** @example null */
@@ -1583,12 +1851,19 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default Unauthorized */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -1614,7 +1889,7 @@ export interface paths {
                      *       "description": "My playlist description"
                      *     }
                      */
-                    'application/json': {
+                    "application/json": {
                         /**
                          * @description Name must be between 1 and 50 characters. A user cannot have two playlists with the same name
                          * @example Playlist one
@@ -1649,7 +1924,7 @@ export interface paths {
                          *       "message": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: true;
                             /** @example null */
@@ -1667,7 +1942,7 @@ export interface paths {
                         };
                     };
                 };
-                /** @description Invalid Input */
+                /** @description Invalid input */
                 400: {
                     headers: {
                         [name: string]: unknown;
@@ -1677,16 +1952,30 @@ export interface paths {
                          * @example {
                          *       "success": false,
                          *       "data": null,
-                         *       "message": "Invalid Input",
-                         *       "errors": null
+                         *       "message": "Invalid input",
+                         *       "errors": {
+                         *         "name": [
+                         *           "Playlist name must be between 1 and 50 characters"
+                         *         ],
+                         *         "description": [
+                         *           "Description must be 500 characters or fewer"
+                         *         ]
+                         *       }
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
-                            /** @default Invalid Input */
+                            /** @default Invalid input */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -1707,19 +1996,26 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default Unauthorized */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
                         };
                     };
                 };
-                /** @description You have another playlist with this name */
+                /** @description Could not add playlist */
                 409: {
                     headers: {
                         [name: string]: unknown;
@@ -1729,16 +2025,27 @@ export interface paths {
                          * @example {
                          *       "success": false,
                          *       "data": null,
-                         *       "message": "You have another playlist with this name",
-                         *       "errors": null
+                         *       "message": "Could not add playlist",
+                         *       "errors": {
+                         *         "name": [
+                         *           "You already have a playlist with this name"
+                         *         ]
+                         *       }
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
-                            /** @default You have another playlist with this name */
+                            /** @default Could not add playlist */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -1753,7 +2060,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    '/api/playlists/{id}': {
+    "/api/playlists/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -1804,7 +2111,7 @@ export interface paths {
                          *       "message": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: true;
                             /** @example null */
@@ -1842,15 +2149,26 @@ export interface paths {
                          *       "success": false,
                          *       "data": null,
                          *       "message": "Invalid Input",
-                         *       "errors": null
+                         *       "errors": {
+                         *         "id": [
+                         *           "Invalid UUID"
+                         *         ]
+                         *       }
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default Invalid Input */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -1871,12 +2189,19 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default Unauthorized */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -1897,12 +2222,19 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default Playlist not found */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -1944,15 +2276,26 @@ export interface paths {
                          *       "success": false,
                          *       "data": null,
                          *       "message": "Invalid Input",
-                         *       "errors": null
+                         *       "errors": {
+                         *         "id": [
+                         *           "Invalid UUID"
+                         *         ]
+                         *       }
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default Invalid Input */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -1973,12 +2316,19 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default Unauthorized */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -1999,12 +2349,19 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default Playlist not found */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -2035,7 +2392,7 @@ export interface paths {
                      *       "description": "Updated description"
                      *     }
                      */
-                    'application/json': {
+                    "application/json": {
                         /**
                          * @description Name must be between 1 and 50 characters. A user cannot have two playlists with the same name
                          * @example Playlist one
@@ -2070,7 +2427,7 @@ export interface paths {
                          *       "message": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: true;
                             /** @example null */
@@ -2088,7 +2445,7 @@ export interface paths {
                         };
                     };
                 };
-                /** @description Invalid Input */
+                /** @description Invalid input */
                 400: {
                     headers: {
                         [name: string]: unknown;
@@ -2098,16 +2455,30 @@ export interface paths {
                          * @example {
                          *       "success": false,
                          *       "data": null,
-                         *       "message": "Invalid Input",
-                         *       "errors": null
+                         *       "message": "Invalid input",
+                         *       "errors": {
+                         *         "name": [
+                         *           "Playlist name must be between 1 and 50 characters"
+                         *         ],
+                         *         "description": [
+                         *           "Description must be 500 characters or fewer"
+                         *         ]
+                         *       }
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
-                            /** @default Invalid Input */
+                            /** @default Invalid input */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -2128,12 +2499,19 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default Unauthorized */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -2154,19 +2532,26 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default Playlist not found */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
                         };
                     };
                 };
-                /** @description You have another playlist with this name */
+                /** @description Could not update playlist */
                 409: {
                     headers: {
                         [name: string]: unknown;
@@ -2176,16 +2561,27 @@ export interface paths {
                          * @example {
                          *       "success": false,
                          *       "data": null,
-                         *       "message": "You have another playlist with this name",
-                         *       "errors": null
+                         *       "message": "Could not update playlist",
+                         *       "errors": {
+                         *         "name": [
+                         *           "You already have a playlist with this name"
+                         *         ]
+                         *       }
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
-                            /** @default You have another playlist with this name */
+                            /** @default Could not update playlist */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -2196,7 +2592,7 @@ export interface paths {
         };
         trace?: never;
     };
-    '/api/playlists/{id}/videos': {
+    "/api/playlists/{id}/videos": {
         parameters: {
             query?: never;
             header?: never;
@@ -2223,7 +2619,7 @@ export interface paths {
                      *       "url": "https://www.youtube.com/watch?v=zzzzzzzzzzz"
                      *     }
                      */
-                    'application/json': {
+                    "application/json": {
                         /**
                          * Format: uri
                          * @description The URL of the video to add to the playlist. Must use HTTP or HTTPS.
@@ -2257,7 +2653,7 @@ export interface paths {
                          *       "message": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: true;
                             /** @example null */
@@ -2284,20 +2680,19 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "success": false,
-                         *       "data": null,
-                         *       "message": "Invalid input or unable to process video URL",
-                         *       "errors": null
-                         *     }
-                         */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default Invalid input or unable to process video URL */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -2318,45 +2713,51 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default Unauthorized */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
                         };
                     };
                 };
-                /** @description Playlist or Viideo not found */
+                /** @description Invalid input or unable to process video URL */
                 404: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "success": false,
-                         *       "data": null,
-                         *       "message": "Playlist or Viideo not found",
-                         *       "errors": null
-                         *     }
-                         */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
-                            /** @default Playlist or Viideo not found */
+                            /** @default Invalid input or unable to process video URL */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
                         };
                     };
                 };
-                /** @description You have already added this video to the playlist */
+                /** @description Cannot add video */
                 409: {
                     headers: {
                         [name: string]: unknown;
@@ -2366,16 +2767,27 @@ export interface paths {
                          * @example {
                          *       "success": false,
                          *       "data": null,
-                         *       "message": "You have already added this video to the playlist",
-                         *       "errors": null
+                         *       "message": "Cannot add video",
+                         *       "errors": {
+                         *         "url": [
+                         *           "You have already added this video to the playlist"
+                         *         ]
+                         *       }
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
-                            /** @default You have already added this video to the playlist */
+                            /** @default Cannot add video */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -2396,12 +2808,19 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default Unable to fetch video metadata. Please try again later. */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -2416,7 +2835,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    '/api/playlists/{id}/videos/{playlistVideoId}': {
+    "/api/playlists/{id}/videos/{playlistVideoId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -2459,15 +2878,29 @@ export interface paths {
                          *       "success": false,
                          *       "data": null,
                          *       "message": "Invalid Input",
-                         *       "errors": null
+                         *       "errors": {
+                         *         "id": [
+                         *           "invalid UUID"
+                         *         ],
+                         *         "videoId": [
+                         *           "Invalid UUID"
+                         *         ]
+                         *       }
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default Invalid Input */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -2488,38 +2921,44 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default Unauthorized */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
                         };
                     };
                 };
-                /** @description Playlist not found */
+                /** @description Playlist or video not found */
                 404: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "success": false,
-                         *       "data": null,
-                         *       "message": "Playlist not found",
-                         *       "errors": null
-                         *     }
-                         */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
-                            /** @default Playlist not found */
+                            /** @default Playlist or video not found */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -2552,7 +2991,7 @@ export interface paths {
                      *       "description": "Updated description"
                      *     }
                      */
-                    'application/json': {
+                    "application/json": {
                         /**
                          * @description Title must be between 1 and 50 characters. Playlists cannot have two videos with the same custom title
                          * @example Video one
@@ -2591,7 +3030,7 @@ export interface paths {
                          *       "message": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: true;
                             /** @example null */
@@ -2612,26 +3051,25 @@ export interface paths {
                         };
                     };
                 };
-                /** @description Invalid Input */
+                /** @description Invalid input */
                 400: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "success": false,
-                         *       "data": null,
-                         *       "message": "Invalid Input",
-                         *       "errors": null
-                         *     }
-                         */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
-                            /** @default Invalid Input */
+                            /** @default Invalid input */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -2652,38 +3090,44 @@ export interface paths {
                          *       "errors": null
                          *     }
                          */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
                             /** @default Unauthorized */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
                         };
                     };
                 };
-                /** @description Playlist not found */
+                /** @description Playlist or video not found */
                 404: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "success": false,
-                         *       "data": null,
-                         *       "message": "Playlist not found",
-                         *       "errors": null
-                         *     }
-                         */
-                        'application/json': {
+                        "application/json": {
                             /** @constant */
                             success: false;
-                            /** @default Playlist not found */
+                            /** @default Playlist or video not found */
                             message: string;
                             data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
                             errors?: {
                                 [key: string]: string[];
                             } | null;
@@ -2709,6 +3153,13 @@ export interface components {
             success: false;
             message: string;
             data: null;
+            /**
+             * @example {
+             *       "field": [
+             *         "Validation error"
+             *       ]
+             *     }
+             */
             errors?: {
                 [key: string]: string[];
             } | null;

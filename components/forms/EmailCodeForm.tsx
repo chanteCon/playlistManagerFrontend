@@ -32,7 +32,7 @@ export function EmailCodeForm<T extends z.ZodType>({
                 requiredFields={requiredFields}
                 onClearServerError={onClearServerError}
             >
-                <FormField id="email" label="Email" type="email" />
+                <FormField id="email" label="email" type="email" />
                 <Button type="submit" className="w-full" disabled={isPending}>
                     {isPending ? 'Getting code...' : 'Get code'}
                 </Button>

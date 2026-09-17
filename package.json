@@ -6,8 +6,8 @@
         "dev": "next dev",
         "build": "next build",
         "start": "next start",
-        "generate:types": "openapi-typescript ./app/openapi.yaml -o api/schema.d.ts",
-        "generate:zod": "npx openapi-zod-client ./app/openapi.yaml  -o api/zod.ts",
+        "generate:types": "openapi-typescript https://raw.githubusercontent.com/chanteCon/playlistManager/refs/heads/main/openapi.yaml -o api/schema.d.ts",
+        "generate:zod": "npx openapi-zod-client https://raw.githubusercontent.com/chanteCon/playlistManager/refs/heads/main/openapi.yaml  -o api/zod.ts",
         "generate:api": "npm run generate:types && npm run generate:zod",
         "lint": "eslint"
     },
