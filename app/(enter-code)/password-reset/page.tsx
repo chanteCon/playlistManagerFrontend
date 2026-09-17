@@ -15,7 +15,7 @@ import CodeExpiry from '@/components/auth/CodeExpiry';
 import Link from 'next/link';
 import { useServerErrors } from '@/hooks/useServerErrors';
 import { isHandledError } from '@/lib/utils';
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 
 const codeInputBoxStyle = 'size-12 rounded-md border text-xl';
@@ -40,7 +40,7 @@ const passwordResetFormSchema = schemas.patchApiauthpasswordReset_Body
         path: ['confirmPassword'],
     });
 
-export default function Verify() {
+function PasswordReset() {
     const {
         errors: serverErrors,
         setErrors: setServerErrors,
@@ -120,5 +120,13 @@ export default function Verify() {
                 </AuthCard>
             </ValidatedForm>
         </>
+    );
+}
+
+export default function PasswordResetPage() {
+    return (
+        <Suspense>
+            <PasswordReset />
+        </Suspense>
     );
 }

@@ -12,7 +12,6 @@ import {
 import type { paths } from '@/api/schema';
 import { useAuth } from '@/contexts/AuthContext';
 import { hasErrorStatus, isHandledError, removePlaylistFromCache } from '@/lib/utils';
-import { RequestError } from '@/lib/apiRequest';
 
 type GetPlaylistsResponse =
     paths['/api/playlists/']['get']['responses'][200]['content']['application/json'];

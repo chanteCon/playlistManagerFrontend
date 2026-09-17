@@ -7,9 +7,9 @@ import { useAuth } from '@/contexts/AuthContext';
 import { extractAccessToken, isHandledError } from '@/lib/utils';
 import { useServerErrors } from '@/hooks/useServerErrors';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 
-export default function Verify() {
+function Verify() {
     const { updateAccessToken, clearAccessToken } = useAuth();
     const router = useRouter();
 
@@ -59,4 +59,10 @@ export default function Verify() {
             isPending={verifyMutation.isPending}
         />
     );
+}
+
+export default function VerifyPage() {
+    <Suspense>
+        <Verify />
+    </Suspense>;
 }
