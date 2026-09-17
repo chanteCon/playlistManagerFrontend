@@ -31,7 +31,7 @@ export default function VideoGrid({
                         </p>
                     )}
 
-                    <div className="grid w-fit max-w-full grid-cols-[repeat(auto-fill,220px)] justify-start gap-6">
+                    <div className="grid w-fit w-full grid-cols-[repeat(auto-fill,220px)] justify-center gap-6">
                         <AddCard
                             className="h-[200px] w-[220px] rounded-sm border"
                             setDialogOpen={setIsAddVideoOpen}
