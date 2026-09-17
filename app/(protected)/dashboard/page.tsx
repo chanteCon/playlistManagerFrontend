@@ -17,6 +17,7 @@ import { useServerErrors } from '@/hooks/useServerErrors';
 
 import { hasErrorStatus, isHandledError } from '@/lib/utils';
 import { uuidSchema } from '@/schemas/common';
+import { RequestError } from '@/lib/apiRequest';
 
 function mapPlaylistFieldErrors(fieldErrors: Record<string, string>): Record<string, string> {
     const errors = { ...fieldErrors };

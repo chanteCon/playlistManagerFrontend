@@ -141,3 +141,10 @@ export const patchUserEmail = (data: { email: string }) =>
             credentials: 'include',
         }),
     );
+
+export const deleteUser = () =>
+    authenticatedApiRequest(() =>
+        protectedApi.DELETE('/api/users/me', {
+            credentials: 'include',
+        }),
+    );

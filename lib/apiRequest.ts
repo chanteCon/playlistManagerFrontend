@@ -62,7 +62,9 @@ export async function apiRequest<T>(request: Promise<ApiResponse<T>>) {
 export async function authenticatedApiRequest<T>(request: () => Promise<ApiResponse<T>>) {
     let response = await request();
 
-    if (response.response?.status === 401) {
+    if (response.response?.status === 404 && response.error?.message === 'User not found') {
+        authHandlers?.clearAccessToken?.();
+    } else if (response.response?.status === 401) {
         try {
             const refreshResponse = await refreshOnce();
             authHandlers?.updateAccessToken(refreshResponse.data.accessToken);
@@ -76,9 +78,7 @@ export async function authenticatedApiRequest<T>(request: () => Promise<ApiRespo
         if (response.response?.status === 401) {
             authHandlers?.clearAccessToken?.();
         }
-    }
-
-    if (response.response.status === 204) {
+    } else if (response.response.status === 204) {
         return undefined;
     }
 
