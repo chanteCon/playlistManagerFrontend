@@ -45,6 +45,7 @@ export function useProfile() {
         },
         queryKey: ['user'],
         enabled: !!accessToken && !isAuthPending,
+        staleTime: 5 * 60 * 1000,
     });
 
     const updateUserMutation = useMutation({
