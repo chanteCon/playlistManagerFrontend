@@ -9,6 +9,7 @@ import { useServerErrors } from '@/hooks/useServerErrors';
 
 export default function LoginMfa() {
     const { updateAccessToken } = useAuth();
+
     const {
         errors: serverErrors,
         setErrors: setServerErrors,
@@ -18,6 +19,7 @@ export default function LoginMfa() {
         mutationFn: loginMFA,
 
         onSuccess: (res) => {
+            sessionStorage.removeItem('demoCode');
             updateAccessToken(extractAccessToken(res));
         },
 

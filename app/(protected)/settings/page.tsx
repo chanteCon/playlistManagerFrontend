@@ -23,6 +23,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { ConfirmationDialog } from '@/components/common/ConfirmationDialog';
 import { useRouter } from 'next/navigation';
 import { DeleteDialog } from '@/components/common/DeleteDialog';
+import { ErrorDialog } from '@/components/common/ErrorDialog';
 
 const SettingsButton = ({
     isPending,
@@ -72,6 +73,7 @@ export default function Settings() {
     const [changingEmail, setChangingEmail] = useState(false);
     const [resettingPassword, setResettingPassword] = useState(false);
     const [deletingAccount, setDeletingAccount] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const router = useRouter();
 
@@ -97,9 +99,13 @@ export default function Settings() {
     const handleUpdateEmail = (data: { email: string }) => {
         updateUserEmailMutation.mutate(data, {
             onError: (error) => {
+                setChangingEmail(false);
+
                 if (isHandledError(error, [400, 409])) {
-                    setChangingEmail(false);
                     setServerErrors(error.fieldErrors);
+                }
+                if (hasErrorStatus(error, 403)) {
+                    setErrorMessage(error.message);
                 }
             },
             onSuccess: async () => {
@@ -127,6 +133,20 @@ export default function Settings() {
                 setResettingPassword(false);
                 if (hasErrorStatus(error, 400)) {
                     alert('Invalid email');
+                }
+                if (hasErrorStatus(error, 403)) {
+                    setErrorMessage('Demo accounts do not have permission to perform this action');
+                }
+            },
+        });
+    };
+
+    const handleDeleteUser = () => {
+        deleteUserMutation.mutate(undefined, {
+            onError: (error) => {
+                setDeletingAccount(false);
+                if (hasErrorStatus(error, 403)) {
+                    setErrorMessage(error.message);
                 }
             },
         });
@@ -348,7 +368,14 @@ export default function Settings() {
                 onCancel={() => {
                     setDeletingAccount(false);
                 }}
-                onConfirm={() => deleteUserMutation.mutate()}
+                onConfirm={handleDeleteUser}
+            />
+
+            <ErrorDialog
+                isOpen={!!errorMessage}
+                onOpenChange={() => setErrorMessage(null)}
+                title=""
+                message={errorMessage ?? ''}
             />
         </main>
     );

@@ -15,6 +15,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useServerErrors } from '@/hooks/useServerErrors';
 import { hasErrorStatus, isHandledError } from '@/lib/utils';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 const requiredFields = new Set(['email', 'password']);
 
@@ -25,10 +26,17 @@ export default function Login() {
         clearError: clearServerError,
     } = useServerErrors();
     const router = useRouter();
-
+    type LoginResponse = {
+        demoCode?: string;
+    };
     const loginMutation = useMutation({
         mutationFn: login,
-        onSuccess: () => {
+        onSuccess: (data) => {
+            const resData = data.data;
+            const { demoCode } = resData as LoginResponse;
+            if (demoCode) {
+                sessionStorage.setItem('demoCode', demoCode);
+            }
             router.push('/login-mfa');
         },
 
@@ -90,10 +98,39 @@ export default function Login() {
                             Forgot password?
                         </Link>
                     </div>
+                    <div className="flex w-full gap-x-10 justify-center">
+                        <Button type="submit" className="w-40" disabled={loginMutation.isPending}>
+                            {loginMutation.isPending ? 'Logging in...' : 'Login'}
+                        </Button>
 
-                    <Button type="submit" className="w-full" disabled={loginMutation.isPending}>
-                        {loginMutation.isPending ? 'Logging in...' : 'Login'}
-                    </Button>
+                        <Tooltip>
+                            <TooltipTrigger
+                                render={
+                                    <Button
+                                        type="button"
+                                        className="w-40"
+                                        variant="outline"
+                                        disabled={loginMutation.isPending}
+                                        onClick={() => {
+                                            loginMutation.mutate({
+                                                email: 'demo@example.com',
+                                                password: 'demo123!',
+                                            });
+                                        }}
+                                    />
+                                }
+                            >
+                                Try Demo Account
+                            </TooltipTrigger>
+
+                            <TooltipContent>
+                                <p>
+                                    Try the demo without creating an account or using your email.
+                                    The account has limited access.
+                                </p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </div>
                 </ValidatedForm>
             </AuthLayout>
 

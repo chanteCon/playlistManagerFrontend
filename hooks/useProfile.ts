@@ -69,24 +69,37 @@ export function useProfile() {
             updateCachedUser(res.data.user);
         },
         onError: handleUserDeleted,
+        throwOnError: (error) => {
+            return !isHandledError(error, [400, 409, 404]);
+        },
     });
 
     const updateUserEmailMutation = useMutation({
         mutationFn: patchUserEmail,
         onError: handleUserDeleted,
+        throwOnError: (error) => {
+            return !isHandledError(error, [403, 400, 409, 404]);
+        },
     });
 
     const reqPasswordCodeMutation = useMutation({
         mutationFn: passwordResetCode,
         onError: handleUserDeleted,
         throwOnError: (error: unknown) => {
-            return !isHandledError(error, [400]);
+            return !isHandledError(error, [400, 403]);
         },
     });
 
     const deleteUserMutation = useMutation({
         mutationFn: deleteUser,
-        onSettled: clearAccessToken,
+        onSuccess: () => {
+            clearAccessToken();
+        },
+        onError: (error: unknown) => {
+            if (!hasErrorStatus(error, 403)) {
+                clearAccessToken();
+            }
+        },
     });
 
     return {
