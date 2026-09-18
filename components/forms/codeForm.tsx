@@ -2,7 +2,7 @@
 import { InputOTP } from '@/components/ui/input-otp';
 import { z } from 'zod';
 import { ValidatedForm } from './ValidatedForm';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AuthLayout } from '../../layouts/AuthLayout';
 import CodeInput from '../auth/codeInput';
 import CodeExpiry from '../auth/CodeExpiry';
@@ -39,6 +39,13 @@ export default function CodeForm<T extends z.ZodType>({
     } as const;
 
     const resendRoute = resendRoutes[type];
+    const [code, setCode] = useState(sessionStorage.getItem('demoCode') ?? '');
+
+    useEffect(() => {
+        if (code.length === 6) {
+            formRef.current?.requestSubmit();
+        }
+    }, [code]);
 
     return (
         <>
@@ -62,13 +69,12 @@ export default function CodeForm<T extends z.ZodType>({
                         }`}
                     >
                         <InputOTP
+                            value={code}
                             disabled={isPending}
                             name="code"
                             maxLength={6}
                             onChange={(value) => {
-                                if (value.length === 6) {
-                                    formRef.current?.requestSubmit();
-                                }
+                                setCode(value);
                             }}
                         >
                             <CodeInput boxStyle={codeInputBoxStyle} />
