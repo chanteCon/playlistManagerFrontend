@@ -62,7 +62,9 @@ function Verify() {
 }
 
 export default function VerifyPage() {
-    <Suspense>
-        <Verify />
-    </Suspense>;
+      return (
+        <Suspense>
+            <Verify />
+        </Suspense>
+    );
 }
