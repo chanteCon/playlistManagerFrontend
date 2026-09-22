@@ -15,7 +15,7 @@ import { ErrorDialog } from '@/components/common/ErrorDialog';
 import { usePlaylists } from '@/hooks/usePlaylists';
 import { useServerErrors } from '@/hooks/useServerErrors';
 
-import { hasErrorStatus, isHandledError } from '@/lib/utils';
+import { buildPlaylistUpdates, hasErrorStatus, isHandledError } from '@/lib/utils';
 import { uuidSchema } from '@/schemas/common';
 
 function mapPlaylistFieldErrors(fieldErrors: Record<string, string>): Record<string, string> {
@@ -103,12 +103,7 @@ export default function Dashboard() {
             return;
         }
 
-        const updates = Object.fromEntries(
-            Object.entries({
-                name: data.title,
-                description: data.description,
-            }).filter(([, value]) => value !== ''),
-        );
+        const updates = buildPlaylistUpdates(data);
 
         editPlaylistMutation.mutate(
             {
