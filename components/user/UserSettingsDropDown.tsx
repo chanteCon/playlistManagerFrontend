@@ -26,6 +26,7 @@ export default function UserSettingsDropDown() {
         logoutMutation.mutate(accessToken!, {
             onSettled: () => {
                 clearAccessToken();
+                setLoggingOut(false);
                 router.replace('/');
             },
         });

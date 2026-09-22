@@ -41,5 +41,16 @@ export const verificationCode = (data: Email) =>
 export const passwordResetCode = (data: Email) =>
     apiRequest(publicApi.POST('/api/auth/password-reset-request', { body: data }));
 
-export const refresh = () =>
-    apiRequest(publicApi.POST('/api/auth/refresh', { credentials: 'include' }));
+export const refresh = async () => {
+    const response = await apiRequest(
+        publicApi.POST('/api/auth/refresh', {
+            credentials: 'include',
+        }),
+    );
+
+    if (process.env.NODE_ENV === 'development') {
+        await new Promise((resolve) => setTimeout(resolve, 15000));
+    }
+
+    return response;
+};

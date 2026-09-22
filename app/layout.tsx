@@ -6,6 +6,7 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import Navbar from '@/components/common/Navbar';
 import { ThemeProvider } from '@/components/common/ThemeProvider';
 import { Toaster } from '@/components/ui/sonner';
+import AppShell from '@/components/AppShell';
 
 const inter = Inter({
     subsets: ['latin'],
@@ -28,8 +29,10 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
                     <Toaster className="z-[100]" position="top-right" />
                     <QueryProvider>
                         <AuthProvider>
-                            <Navbar />
-                            {children}
+                            <AppShell>
+                                <Navbar />
+                                {children}
+                            </AppShell>
                         </AuthProvider>
                     </QueryProvider>
                 </ThemeProvider>
