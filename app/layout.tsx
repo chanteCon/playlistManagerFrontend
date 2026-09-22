@@ -13,8 +13,21 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-    title: 'Playlist Manager',
-    description: 'Manage your playlist collection',
+    title: 'Playlists',
+    description: 'Build your personal video library from multiple platforms.',
+    openGraph: {
+        title: 'Playlists',
+        description: 'Build your personal video library from multiple platforms.',
+        type: 'website',
+        images: [
+            {
+                url: '/icon.svg',
+                width: 1200,
+                height: 630,
+                alt: 'Playlists',
+            },
+        ],
+    },
 };
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
