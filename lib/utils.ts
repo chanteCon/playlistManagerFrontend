@@ -4,6 +4,7 @@ import { twMerge } from 'tailwind-merge';
 import { RequestError } from './apiRequest';
 import type { paths } from '@/api/schema';
 import type { QueryClient } from '@tanstack/react-query';
+import { EditInput } from '@/types';
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -74,3 +75,23 @@ export const removePlaylistFromCache = (queryClient: QueryClient, playlistId: st
         };
     });
 };
+
+export const buildPlaylistUpdates = (data: EditInput) =>
+    Object.fromEntries(
+        Object.entries({
+            name: data.title,
+            description: data.description,
+        }).filter(([, value]) => value !== ''),
+    );
+export function mapPlaylistFieldErrors(
+    fieldErrors: Record<string, string>,
+): Record<string, string> {
+    const errors = { ...fieldErrors };
+
+    if (errors.name) {
+        errors.title = errors.name;
+        delete errors.name;
+    }
+
+    return errors;
+}

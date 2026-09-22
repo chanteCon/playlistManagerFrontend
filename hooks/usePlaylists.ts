@@ -12,6 +12,7 @@ import {
 import type { paths } from '@/api/schema';
 import { useAuth } from '@/contexts/AuthContext';
 import { hasErrorStatus, isHandledError, removePlaylistFromCache } from '@/lib/utils';
+import { GetPlaylistResponse } from '@/types';
 
 type GetPlaylistsResponse =
     paths['/api/playlists/']['get']['responses'][200]['content']['application/json'];
@@ -67,19 +68,44 @@ export function usePlaylists() {
         mutationFn: editPlaylist,
 
         onSuccess: (data, { playlistId }) => {
+            if (!data) return;
+
+            const playlist = data.data.playlist;
+
             queryClient.setQueryData<GetPlaylistsResponse>(['playlists'], (current) => {
-                if (!current || !data) return current;
+                if (!current) return current;
 
                 return {
                     ...current,
                     data: {
                         ...current.data,
-                        playlists: current.data.playlists.map((playlist) =>
-                            playlist.id === playlistId ? data.data.playlist : playlist,
+                        playlists: current.data.playlists.map((currentPlaylist) =>
+                            currentPlaylist.id === playlistId ? playlist : currentPlaylist,
                         ),
                     },
                 };
             });
+
+            if (queryClient.getQueryData<GetPlaylistResponse>(['playlist', playlistId])) {
+                queryClient.setQueryData<GetPlaylistResponse>(
+                    ['playlist', playlistId],
+                    (current) => {
+                        if (!current) return current;
+
+                        return {
+                            ...current,
+                            data: {
+                                ...current.data,
+                                playlist: {
+                                    ...current.data.playlist,
+                                    name: playlist.name,
+                                    description: playlist.description,
+                                },
+                            },
+                        };
+                    },
+                );
+            }
         },
 
         onError: (error, { playlistId }) => {

@@ -16,6 +16,7 @@ import { uuidSchema } from '@/schemas/common';
 import { ErrorDialog } from '@/components/common/ErrorDialog';
 import PlaylistHeader from '@/components/videos/PlaylistHeader';
 import VideoGrid from '@/components/videos/VideoGrid';
+import { PlaylistHeaderSkeleton } from '@/components/skeletons/PlaylistHeaderSkeleton';
 
 type PageProps = {
     params: Promise<{
@@ -113,7 +114,11 @@ export default function Playlist({ params }: PageProps) {
 
     return (
         <main className="mx-auto w-full max-w-5xl px-6 py-10">
-            <PlaylistHeader isLoading={isLoading} playlist={playlist} />
+            {isLoading || !playlist ? (
+                <PlaylistHeaderSkeleton />
+            ) : (
+                <PlaylistHeader playlist={playlist} />
+            )}
 
             <section className="py-8 flex flex-col gap-5">
                 <h2 className="text-lg font-semibold">Videos</h2>
