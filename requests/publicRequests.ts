@@ -48,9 +48,5 @@ export const refresh = async () => {
         }),
     );
 
-    if (process.env.NODE_ENV === 'development') {
-        await new Promise((resolve) => setTimeout(resolve, 15000));
-    }
-
     return response;
 };
