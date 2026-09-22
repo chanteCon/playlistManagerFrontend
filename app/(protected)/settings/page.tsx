@@ -361,7 +361,7 @@ export default function Settings() {
             />
 
             <DeleteDialog
-                isPending={false}
+                isPending={deleteUserMutation.isPending}
                 title="Delete Account?"
                 message="Are you sure you want to delete this account? This action cannot be undone All data associated with the account will be lost."
                 itemId={deletingAccount ? user.id : null}
