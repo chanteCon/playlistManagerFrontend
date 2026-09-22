@@ -74,6 +74,7 @@ export default function Settings() {
     const [resettingPassword, setResettingPassword] = useState(false);
     const [deletingAccount, setDeletingAccount] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [logoutReason, setLogoutReason] = useState('');
 
     const router = useRouter();
 
@@ -109,6 +110,7 @@ export default function Settings() {
                 }
             },
             onSuccess: async () => {
+                setLogoutReason('email');
                 setChangingEmail(false);
                 logoutMutation.mutate(accessToken!, {
                     onSettled: () => {
@@ -122,6 +124,7 @@ export default function Settings() {
     const handleUpdatePasswordRequest = (data: { email: string }) => {
         reqPasswordCodeMutation.mutate(data, {
             onSuccess: () => {
+                setLogoutReason('password');
                 setResettingPassword(false);
                 logoutMutation.mutate(accessToken!, {
                     onSettled: () => {
@@ -158,162 +161,189 @@ export default function Settings() {
 
     return (
         <main className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 lg:py-12">
-            <div className="mb-8">
-                <h1 className="text-2xl font-bold tracking-tight text-foreground">Settings</h1>
-                <p className="mt-1 text-sm text-muted-foreground">
-                    Manage your account and security settings.
-                </p>
-            </div>
+            {logoutMutation.isPending ? (
+                <div className="flex flex-col items-center justify-center py-20 text-center">
+                    <h2 className="text-lg font-semibold">{`${
+                        logoutReason
+                            ? logoutReason.charAt(0).toUpperCase() + logoutReason.slice(1)
+                            : ''
+                    }} updated`}</h2>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                        {` Your ${logoutReason} was updated successfully.`}
+                    </p>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                        Logging out and redirecting...
+                    </p>
+                </div>
+            ) : (
+                <>
+                    <div className="mb-8">
+                        <h1 className="text-2xl font-bold tracking-tight text-foreground">
+                            Settings
+                        </h1>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                            Manage your account and security settings.
+                        </p>
+                    </div>
 
-            <div>
-                <Card className="rounded-none rounded-t-lg">
-                    <CardContent className="p-6">
-                        <div className="flex items-start gap-4">
-                            <UserAvatar user={user} className="h-10 w-10 shrink-0 text-sm" />
+                    <div>
+                        <Card className="rounded-none rounded-t-lg">
+                            <CardContent className="p-6">
+                                <div className="flex items-start gap-4">
+                                    <UserAvatar
+                                        user={user}
+                                        className="h-10 w-10 shrink-0 text-sm"
+                                    />
 
-                            <div className="min-w-0 flex-1">
-                                <h2 className="font-semibold text-foreground">Profile</h2>
+                                    <div className="min-w-0 flex-1">
+                                        <h2 className="font-semibold text-foreground">Profile</h2>
 
-                                <p className="mt-1 text-sm text-muted-foreground">
-                                    Update your username.
-                                </p>
-
-                                <div className="mt-6">
-                                    <ValidatedForm
-                                        key={user.username}
-                                        schema={userNameSchema}
-                                        requiredFields={new Set(['username'])}
-                                        onValidSubmit={handleUpdateUser}
-                                        serverErrors={serverErrors}
-                                        onClearServerError={clearServerErrors}
-                                    >
-                                        <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
-                                            <FormField
-                                                id="username"
-                                                label="Username"
-                                                defaultValue={user.username}
-                                                required
-                                                className="flex-1"
-                                                onChange={(value) => {
-                                                    setNameSaved(false);
-                                                    setChangedName(value !== user.username);
-                                                }}
-                                            />
-                                            <SettingsButton
-                                                saved={nameSaved}
-                                                isPending={updateUserMutation.isPending}
-                                                changed={changedName}
-                                            />
-                                        </div>
-                                    </ValidatedForm>
-                                </div>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card className="rounded-none">
-                    <CardContent className="p-6">
-                        <div className="flex items-start gap-4">
-                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-muted">
-                                <Mail className="h-5 w-5 text-muted-foreground" />
-                            </div>
-
-                            <div className="min-w-0 flex-1">
-                                <h2 className="font-semibold text-foreground">Email</h2>
-
-                                <p className="mt-1 text-sm text-muted-foreground">
-                                    Update the email address for your account.
-                                </p>
-
-                                <div className="mt-6">
-                                    <ValidatedForm
-                                        schema={emailSchema}
-                                        requiredFields={new Set(['email'])}
-                                        onValidSubmit={() => {
-                                            setChangingEmail(true);
-                                        }}
-                                        serverErrors={serverErrors}
-                                        onClearServerError={clearServerErrors}
-                                    >
-                                        <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
-                                            <FormField
-                                                id="email"
-                                                label="Email address"
-                                                type="email"
-                                                defaultValue={user.email}
-                                                required
-                                                className="flex-1"
-                                                onChange={(value) => {
-                                                    setEmail(value);
-                                                    setChangedEmail(value !== user.email);
-                                                }}
-                                            />
-
-                                            <Button type="submit" disabled={!changedEmail}>
-                                                <Save className="h-4 w-4" />
-                                                Update email
-                                            </Button>
-                                        </div>
-                                    </ValidatedForm>
-                                </div>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card className="rounded-none rounded-b-lg">
-                    <CardContent className="p-6">
-                        <div className="flex items-start gap-4">
-                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-muted">
-                                <KeyRound className="h-5 w-5 text-muted-foreground" />
-                            </div>
-
-                            <div className="min-w-0 flex-1">
-                                <h2 className="font-semibold text-foreground">Security</h2>
-
-                                <p className="mt-1 text-sm text-muted-foreground">
-                                    Manage your account security.
-                                </p>
-                                <hr className="mt-3" />
-
-                                <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                                    <div>
-                                        <p className="text-sm font-medium text-foreground">
-                                            Password
+                                        <p className="mt-1 text-sm text-muted-foreground">
+                                            Update your username.
                                         </p>
-                                        <p className="text-sm text-muted-foreground">
-                                            Request a code to reset your password.
-                                        </p>
+
+                                        <div className="mt-6">
+                                            <ValidatedForm
+                                                key={user.username}
+                                                schema={userNameSchema}
+                                                requiredFields={new Set(['username'])}
+                                                onValidSubmit={handleUpdateUser}
+                                                serverErrors={serverErrors}
+                                                onClearServerError={clearServerErrors}
+                                            >
+                                                <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+                                                    <FormField
+                                                        id="username"
+                                                        label="Username"
+                                                        defaultValue={user.username}
+                                                        required
+                                                        className="flex-1"
+                                                        onChange={(value) => {
+                                                            setNameSaved(false);
+                                                            setChangedName(value !== user.username);
+                                                        }}
+                                                    />
+                                                    <SettingsButton
+                                                        saved={nameSaved}
+                                                        isPending={updateUserMutation.isPending}
+                                                        changed={changedName}
+                                                    />
+                                                </div>
+                                            </ValidatedForm>
+                                        </div>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="rounded-none">
+                            <CardContent className="p-6">
+                                <div className="flex items-start gap-4">
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-muted">
+                                        <Mail className="h-5 w-5 text-muted-foreground" />
                                     </div>
 
-                                    <Button
-                                        onClick={() => setResettingPassword(true)}
-                                        variant="outline"
-                                    >
-                                        Reset password
-                                    </Button>
+                                    <div className="min-w-0 flex-1">
+                                        <h2 className="font-semibold text-foreground">Email</h2>
+
+                                        <p className="mt-1 text-sm text-muted-foreground">
+                                            Update the email address for your account.
+                                        </p>
+
+                                        <div className="mt-6">
+                                            <ValidatedForm
+                                                schema={emailSchema}
+                                                requiredFields={new Set(['email'])}
+                                                onValidSubmit={() => {
+                                                    setChangingEmail(true);
+                                                }}
+                                                serverErrors={serverErrors}
+                                                onClearServerError={clearServerErrors}
+                                            >
+                                                <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+                                                    <FormField
+                                                        id="email"
+                                                        label="Email address"
+                                                        type="email"
+                                                        defaultValue={user.email}
+                                                        required
+                                                        className="flex-1"
+                                                        onChange={(value) => {
+                                                            setEmail(value);
+                                                            setChangedEmail(value !== user.email);
+                                                        }}
+                                                    />
+
+                                                    <Button type="submit" disabled={!changedEmail}>
+                                                        <Save className="h-4 w-4" />
+                                                        Update email
+                                                    </Button>
+                                                </div>
+                                            </ValidatedForm>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-                <Card className="mt-5 border-destructive/50 bg-destructive/5">
-                    <CardContent className="flex items-center justify-between">
-                        <div>
-                            <h3 className="font-semibold text-destructive">Delete account</h3>
-                            <p className="text-sm text-muted-foreground">
-                                Permanently delete your account and all of your data.
-                            </p>
-                        </div>
+                            </CardContent>
+                        </Card>
 
-                        <Button onClick={() => setDeletingAccount(true)} variant="destructive">
-                            Delete account
-                        </Button>
-                    </CardContent>
-                </Card>
-            </div>
+                        <Card className="rounded-none rounded-b-lg">
+                            <CardContent className="p-6">
+                                <div className="flex items-start gap-4">
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-muted">
+                                        <KeyRound className="h-5 w-5 text-muted-foreground" />
+                                    </div>
 
+                                    <div className="min-w-0 flex-1">
+                                        <h2 className="font-semibold text-foreground">Security</h2>
+
+                                        <p className="mt-1 text-sm text-muted-foreground">
+                                            Manage your account security.
+                                        </p>
+                                        <hr className="mt-3" />
+
+                                        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                            <div>
+                                                <p className="text-sm font-medium text-foreground">
+                                                    Password
+                                                </p>
+                                                <p className="text-sm text-muted-foreground">
+                                                    Request a code to reset your password.
+                                                </p>
+                                            </div>
+
+                                            <Button
+                                                onClick={() => setResettingPassword(true)}
+                                                variant="outline"
+                                            >
+                                                Reset password
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                        <Card className="mt-5 border-destructive/50 bg-destructive/5">
+                            <CardContent className="flex items-center justify-between">
+                                <div>
+                                    <h3 className="font-semibold text-destructive">
+                                        Delete account
+                                    </h3>
+                                    <p className="text-sm text-muted-foreground">
+                                        Permanently delete your account and all of your data.
+                                    </p>
+                                </div>
+
+                                <Button
+                                    onClick={() => setDeletingAccount(true)}
+                                    variant="destructive"
+                                >
+                                    Delete account
+                                </Button>
+                            </CardContent>
+                        </Card>
+                    </div>
+                </>
+            )}
             <ConfirmationDialog
                 title={'Update email'}
                 message="Changing your email address will log you out. You will be emailed a code to verify your new email address before you can log back in."
