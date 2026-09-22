@@ -79,7 +79,7 @@ export default function PlaylistHeader({ playlist }: { playlist: Playlist | unde
                             setName(data);
                             setMadeChange(true);
                         }}
-                        inputClassName="border-0 p-1 text-3xl font-bold focus-visible:ring-1 dark:bg-transparent"
+                        inputClassName="border-0 p-1 text-3xl! font-bold focus-visible:ring-1 dark:bg-transparent"
                     />
 
                     <FormTextArea
