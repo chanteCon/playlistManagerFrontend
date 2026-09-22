@@ -5,6 +5,7 @@ import { QueryProvider } from './queryProvider';
 import { AuthProvider } from '@/contexts/AuthContext';
 import Navbar from '@/components/common/Navbar';
 import { ThemeProvider } from '@/components/common/ThemeProvider';
+import { Toaster } from '@/components/ui/sonner';
 
 const inter = Inter({
     subsets: ['latin'],
@@ -24,6 +25,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
         >
             <body className="min-h-full flex flex-col">
                 <ThemeProvider>
+                    <Toaster className="z-[100]" position="top-right" />
                     <QueryProvider>
                         <AuthProvider>
                             <Navbar />

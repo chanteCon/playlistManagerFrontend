@@ -13,6 +13,8 @@ type FormFieldProps = {
     value?: string;
     defaultValue?: string;
     className?: string;
+    hideLabel?: boolean;
+    inputClassName?: string;
 };
 
 export function FormField({
@@ -26,6 +28,8 @@ export function FormField({
     value,
     defaultValue,
     className,
+    hideLabel,
+    inputClassName,
 }: FormFieldProps) {
     const { errors, clearError } = useFormContext();
 
@@ -33,7 +37,7 @@ export function FormField({
 
     return (
         <div className={cn('space-y-2', className)}>
-            <Label htmlFor={id}>{label}</Label>
+            {!hideLabel && <Label htmlFor={id}>{label}</Label>}
 
             <div className="relative">
                 <Input
@@ -48,7 +52,7 @@ export function FormField({
                         onChange?.(event.target.value);
                     }}
                     required={required}
-                    className={children ? 'pr-10' : undefined}
+                    className={cn(children && 'pr-10', inputClassName)}
                 />
 
                 {children}

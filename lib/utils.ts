@@ -83,3 +83,15 @@ export const buildPlaylistUpdates = (data: EditInput) =>
             description: data.description,
         }).filter(([, value]) => value !== ''),
     );
+export function mapPlaylistFieldErrors(
+    fieldErrors: Record<string, string>,
+): Record<string, string> {
+    const errors = { ...fieldErrors };
+
+    if (errors.name) {
+        errors.title = errors.name;
+        delete errors.name;
+    }
+
+    return errors;
+}

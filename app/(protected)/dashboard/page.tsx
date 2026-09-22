@@ -15,19 +15,13 @@ import { ErrorDialog } from '@/components/common/ErrorDialog';
 import { usePlaylists } from '@/hooks/usePlaylists';
 import { useServerErrors } from '@/hooks/useServerErrors';
 
-import { buildPlaylistUpdates, hasErrorStatus, isHandledError } from '@/lib/utils';
+import {
+    buildPlaylistUpdates,
+    hasErrorStatus,
+    isHandledError,
+    mapPlaylistFieldErrors,
+} from '@/lib/utils';
 import { uuidSchema } from '@/schemas/common';
-
-function mapPlaylistFieldErrors(fieldErrors: Record<string, string>): Record<string, string> {
-    const errors = { ...fieldErrors };
-
-    if (errors.name) {
-        errors.title = errors.name;
-        delete errors.name;
-    }
-
-    return errors;
-}
 
 function CreatePlaylistSection({ onOpen }: { onOpen: () => void }) {
     return (
