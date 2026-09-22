@@ -1,5 +1,4 @@
 import { EditInput, Playlist } from '@/types';
-import { PlaylistHeaderSkeleton } from '../skeletons/PlaylistHeaderSkeleton';
 import { ValidatedForm } from '../forms/ValidatedForm';
 import { editSchema } from '@/schemas/common';
 import { useServerErrors } from '@/hooks/useServerErrors';

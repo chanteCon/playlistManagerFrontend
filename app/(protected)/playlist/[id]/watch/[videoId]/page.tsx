@@ -1,11 +1,14 @@
 'use client';
 
+import VideoDetails from '@/components/videos/VideoDetails';
 import VideoQueue from '@/components/videos/VideoQueue';
 import { usePlaylist } from '@/hooks/usePlaylist';
 import { uuidSchema } from '@/schemas/common';
+import { EditInput } from '@/types';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { use } from 'react';
+import { toast } from 'sonner';
 
 type PageProps = {
     params: Promise<{
@@ -21,7 +24,7 @@ export default function WatchVideoPage({ params }: PageProps) {
         notFound();
     }
 
-    const { playlist, error } = usePlaylist(id);
+    const { editVideoMutation, playlist, error } = usePlaylist(id);
 
     if (error) {
         return (
@@ -54,6 +57,27 @@ export default function WatchVideoPage({ params }: PageProps) {
         );
     }
     const video = videos[currentVideoIndex];
+
+    const handleEditVideo = (data: EditInput) => {
+        if (!video) return;
+
+        const updates = Object.fromEntries(
+            Object.entries(data).filter(([, value]) => value !== ''),
+        );
+
+        editVideoMutation.mutate(
+            {
+                playlistId: id,
+                videoId: video.id,
+                ...updates,
+            },
+            {
+                onSuccess: () => {
+                    toast.success('Video updated');
+                },
+            },
+        );
+    };
 
     return (
         <div className=" w-full max-w-[1350px] @container p-10 mx-auto @[850px]:mt-2">
@@ -107,25 +131,20 @@ export default function WatchVideoPage({ params }: PageProps) {
                             </div>
                         </div>
                     )}
-                    <div className="flex flex-col gap-2 mt-4">
-                        <h1 className="text-xl font-semibold tracking-tight">
-                            {video.title || 'Untitled video'}
-                        </h1>
-
-                        {video.description && (
-                            <p className="rounded-lg bg-muted/90 p-4 text-sm leading-relaxed text-muted-foreground">
-                                {video.description}
-                            </p>
-                        )}
-                    </div>
+                    <VideoDetails
+                        video={video}
+                        onSubmit={handleEditVideo}
+                        isPending={editVideoMutation.isPending}
+                    />
                 </section>
-
-                <VideoQueue
-                    id={playlist.id}
-                    videos={videos}
-                    currentVideoIndex={currentVideoIndex}
-                    playlistName={playlist.name}
-                />
+                {video && (
+                    <VideoQueue
+                        id={playlist.id}
+                        videos={videos}
+                        currentVideoIndex={currentVideoIndex}
+                        playlistName={playlist.name}
+                    />
+                )}
             </div>
         </div>
     );
