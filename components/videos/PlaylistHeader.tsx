@@ -15,10 +15,15 @@ import {
 } from '@/lib/utils';
 import { ErrorDialog } from '../common/ErrorDialog';
 import { toast } from 'sonner';
+import { Trash } from 'lucide-react';
+import { ConfirmationDialog } from '../common/ConfirmationDialog';
+import { useRouter } from 'next/navigation';
 export default function PlaylistHeader({ playlist }: { playlist: Playlist | undefined }) {
+    const router = useRouter();
     const serverErrorState = useServerErrors();
     const [madeChange, setMadeChange] = useState(false);
-    const { editPlaylistMutation } = usePlaylists();
+    const [deleting, setDeleting] = useState(false);
+    const { editPlaylistMutation, deletePlaylistMutation } = usePlaylists();
     const [errorDialog, setErrorDialog] = useState({
         isOpen: false,
         title: '',
@@ -58,62 +63,93 @@ export default function PlaylistHeader({ playlist }: { playlist: Playlist | unde
         );
     };
 
+    const handleDelete = () => {
+        deletePlaylistMutation.mutate(playlist!.id, {
+            onSuccess: () => {
+                setDeleting(false);
+                router.push('/dashboard');
+            },
+        });
+    };
+
     return (
-        <>
-            <section className="border-b pb-8 flex justify-between">
-                <ValidatedForm
-                    schema={editSchema}
-                    onValidSubmit={handleEdit}
-                    requiredFields={new Set([])}
-                    serverErrors={serverErrorState?.errors}
-                    onClearServerError={serverErrorState?.clearError}
-                    key={playlist?.id}
-                >
-                    <FormField
-                        type="text"
-                        label="title"
-                        id="title"
-                        hideLabel
-                        value={name}
-                        onChange={(data) => {
-                            setName(data);
-                            setMadeChange(true);
-                        }}
-                        inputClassName="border-0 p-1 text-3xl! font-bold focus-visible:ring-1 dark:bg-transparent"
-                    />
-
-                    <FormTextArea
-                        id="description"
-                        label="description"
-                        hideLabel
-                        value={description || ''}
-                        className="mt-3 max-w-2xl"
-                        onChange={(data) => {
-                            setDescription(data);
-                            setMadeChange(true);
-                        }}
-                        textareaClassName="min-w-[400px] rounded-sm min-h-6 h-auto resize-none overflow-hidden field-sizing-content border-0 bg-transparent p-1 text-base text-muted-foreground shadow-none focus-visible:border-1 focus-visible:ring-0 dark:bg-transparent"
-                    />
-
-                    {madeChange && (
-                        <Button type="submit" disabled={editPlaylistMutation.isPending}>
-                            {editPlaylistMutation.isPending ? 'Saving...' : 'Save'}
-                        </Button>
-                    )}
-                </ValidatedForm>
-
-                <ErrorDialog
-                    title={errorDialog.title}
-                    message={errorDialog.message}
-                    isOpen={errorDialog.isOpen}
-                    onOpenChange={(isOpen) =>
-                        setErrorDialog((current) => ({
-                            ...current,
-                            isOpen,
-                        }))
-                    }
+        <section className="relative border-b pb-8 flex justify-between">
+            <ValidatedForm
+                schema={editSchema}
+                onValidSubmit={handleEdit}
+                requiredFields={new Set([])}
+                serverErrors={serverErrorState?.errors}
+                onClearServerError={serverErrorState?.clearError}
+                key={playlist?.id}
+            >
+                <FormField
+                    type="text"
+                    label="title"
+                    id="title"
+                    hideLabel
+                    value={name}
+                    onChange={(data) => {
+                        setName(data);
+                        setMadeChange(true);
+                    }}
+                    inputClassName="border-0 p-1 text-3xl! font-bold focus-visible:ring-1 dark:bg-transparent"
                 />
-            </section>
-        </>
+
+                <FormTextArea
+                    id="description"
+                    label="description"
+                    hideLabel
+                    value={description || ''}
+                    onChange={(data) => {
+                        setDescription(data);
+                        setMadeChange(true);
+                    }}
+                    textareaClassName="min-w-[400px] rounded-sm min-h-6 h-auto resize-none overflow-hidden field-sizing-content border-0 bg-transparent p-1 text-base text-muted-foreground shadow-none focus-visible:border-1 focus-visible:ring-0 dark:bg-transparent"
+                />
+
+                {madeChange && (
+                    <Button type="submit" disabled={editPlaylistMutation.isPending}>
+                        {editPlaylistMutation.isPending ? 'Saving...' : 'Save'}
+                    </Button>
+                )}
+            </ValidatedForm>
+
+            <ErrorDialog
+                title={errorDialog.title}
+                message={errorDialog.message}
+                isOpen={errorDialog.isOpen}
+                onOpenChange={(isOpen) =>
+                    setErrorDialog((current) => ({
+                        ...current,
+                        isOpen,
+                    }))
+                }
+            />
+            <button className="absolute right-0 top-0" onClick={() => setDeleting(true)}>
+                <Trash className="cursor-pointer hover:text-destructive" />
+            </button>
+            <ConfirmationDialog
+                title={'Delete playlist?'}
+                message={'Are you sure you want to delete this playlist?'}
+                isOpen={deleting}
+                onOpenChange={(open) => {
+                    if (!open) {
+                        setDeleting(false);
+                    }
+                }}
+                onCancel={() => setDeleting(false)}
+                isPending={deletePlaylistMutation.isPending}
+                confirmButton={
+                    <Button
+                        type="button"
+                        variant="destructive"
+                        onClick={handleDelete}
+                        disabled={deletePlaylistMutation.isPending}
+                    >
+                        {deletePlaylistMutation.isPending ? 'Deleting...' : 'Delete'}
+                    </Button>
+                }
+            ></ConfirmationDialog>
+        </section>
     );
 }
