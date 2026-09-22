@@ -38,7 +38,7 @@ export default function UserSettingsDropDown() {
                 <AppDropDown
                     contentStyling="w-[min(15rem,70vw)] flex flex-col gap-y-1"
                     trigger={
-                        <button className="">
+                        <button className="cursor-pointer">
                             <UserAvatar user={user} className="font-medium h-7 w-7" />
                         </button>
                     }

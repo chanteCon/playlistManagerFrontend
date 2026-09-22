@@ -83,7 +83,7 @@ export default function WatchVideoPage({ params }: PageProps) {
         <div className=" w-full max-w-[1350px] @container p-10 mx-auto @[850px]:mt-2">
             <Link
                 href={`/playlist/${id}`}
-                className="shadow-[0_4px_4px_-4px_rgba(0,0,0,0.2)] sticky top-0 z-10 block w-full truncate bg-background pb-1 text-xl font-bold tracking-tight @[850px]:hidden hover:text-muted-foreground mb-4"
+                className="sticky top-0 z-10 mb-4 block w-full truncate bg-background pb-1 text-xl font-bold tracking-tight @[850px]:hidden hover:text-muted-foreground"
             >
                 {playlist.name}
             </Link>

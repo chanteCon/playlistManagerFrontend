@@ -92,7 +92,7 @@ export default function PlaylistHeader({ playlist }: { playlist: Playlist | unde
                             setDescription(data);
                             setMadeChange(true);
                         }}
-                        textareaClassName="rounded-sm min-h-6 h-auto resize-none overflow-hidden field-sizing-content border-0 bg-transparent p-1 text-base text-muted-foreground shadow-none focus-visible:border-1 focus-visible:ring-0 dark:bg-transparent"
+                        textareaClassName="min-w-[400px] rounded-sm min-h-6 h-auto resize-none overflow-hidden field-sizing-content border-0 bg-transparent p-1 text-base text-muted-foreground shadow-none focus-visible:border-1 focus-visible:ring-0 dark:bg-transparent"
                     />
 
                     {madeChange && (

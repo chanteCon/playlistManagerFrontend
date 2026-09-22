@@ -40,11 +40,11 @@ export default function VideoQueue({
             <div className="min-h-0 flex-1  ">
                 <div
                     ref={queueRef}
-                    className="h-full overflow-y-auto bg-muted/90 @[850px]:bg-muted/20 rounded-lg  @[850px]:border p-5"
+                    className="h-full overflow-y-auto bg-card rounded-lg  @[850px]:border p-5"
                 >
                     <Link
                         href={`/playlist/${id}`}
-                        className="sticky top-[-20] z-10 hidden truncate bg-background pb-3 pt-1 text-md font-semibold hover:text-muted-foreground @[850px]:block"
+                        className="sticky top-[-20] z-10 hidden truncate bg-card pb-3 pt-1 text-md font-semibold hover:text-muted-foreground @[850px]:block"
                     >
                         {playlistName}
                     </Link>
