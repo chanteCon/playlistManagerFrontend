@@ -22,7 +22,11 @@ export default function VideoDetails({ video, onSubmit, isPending }: VideoDetail
     const [showFullDescription, setShowFullDescription] = useState(false);
 
     const madeChange = title !== (video.title || '') || description !== (video.description || '');
-
+    const handleCancel = () => {
+        setTitle(video.title || '');
+        setDescription(video.description || '');
+        setShowFullDescription(false);
+    };
     return (
         <>
             <ValidatedForm
@@ -58,9 +62,19 @@ export default function VideoDetails({ video, onSubmit, isPending }: VideoDetail
                 />
 
                 {madeChange && (
-                    <Button type="submit" disabled={isPending}>
-                        {isPending ? 'Saving...' : 'Save'}
-                    </Button>
+                    <div className="flex gap-2">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={handleCancel}
+                            disabled={isPending}
+                        >
+                            Cancel
+                        </Button>
+                        <Button type="submit" disabled={isPending}>
+                            {isPending ? 'Saving...' : 'Save'}
+                        </Button>
+                    </div>
                 )}
             </ValidatedForm>
             {!madeChange && description.length > 300 && (

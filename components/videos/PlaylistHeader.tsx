@@ -72,6 +72,13 @@ export default function PlaylistHeader({ playlist }: { playlist: Playlist | unde
         });
     };
 
+    const handleCancel = () => {
+        setName(playlist?.name);
+        setDescription(playlist?.description);
+        setMadeChange(false);
+        serverErrorState?.setErrors({});
+    };
+
     return (
         <section className="relative border-b pb-8 flex justify-between">
             <ValidatedForm
@@ -108,9 +115,20 @@ export default function PlaylistHeader({ playlist }: { playlist: Playlist | unde
                 />
 
                 {madeChange && (
-                    <Button type="submit" disabled={editPlaylistMutation.isPending}>
-                        {editPlaylistMutation.isPending ? 'Saving...' : 'Save'}
-                    </Button>
+                    <div className="flex gap-2">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={handleCancel}
+                            disabled={editPlaylistMutation.isPending}
+                        >
+                            Cancel
+                        </Button>
+
+                        <Button type="submit" disabled={editPlaylistMutation.isPending}>
+                            {editPlaylistMutation.isPending ? 'Saving...' : 'Save'}
+                        </Button>
+                    </div>
                 )}
             </ValidatedForm>
 
@@ -125,7 +143,10 @@ export default function PlaylistHeader({ playlist }: { playlist: Playlist | unde
                     }))
                 }
             />
-            <button className="absolute right-0 top-0" onClick={() => setDeleting(true)}>
+            <button
+                className="absolute right-0 top-0 rounded-lg p-2 hover:bg-muted"
+                onClick={() => setDeleting(true)}
+            >
                 <Trash className="cursor-pointer hover:text-destructive" />
             </button>
             <ConfirmationDialog
