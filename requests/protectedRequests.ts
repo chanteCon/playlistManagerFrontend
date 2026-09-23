@@ -148,3 +148,15 @@ export const deleteUser = () =>
             credentials: 'include',
         }),
     );
+
+export const searchUserLibrary = (search: string) =>
+    authenticatedApiRequest(() =>
+        protectedApi.GET('/api/playlists/search', {
+            params: {
+                query: {
+                    search,
+                },
+            },
+            credentials: 'include',
+        }),
+    );

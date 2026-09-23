@@ -71,7 +71,7 @@ export default function Register() {
                 </ValidatedForm>
             </AuthLayout>
             <p className="text-sm text-muted-foreground">
-                Already have an account?{' '}
+                Already have an account?
                 <Link href="/login" className="font-medium text-link hover:underline">
                     Login
                 </Link>

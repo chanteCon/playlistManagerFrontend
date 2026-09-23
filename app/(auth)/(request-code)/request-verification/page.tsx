@@ -37,7 +37,7 @@ export default function RequestCode() {
 
     const footer = (
         <p className="text-sm text-muted-foreground">
-            Already verified?{' '}
+            Already verified?
             <Link href="/login" className="font-medium text-link hover:underline">
                 Login
             </Link>
