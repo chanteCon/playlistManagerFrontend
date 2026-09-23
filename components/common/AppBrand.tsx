@@ -18,7 +18,7 @@ export function AppBrand({ showTagline = true, variant = 'default' }: AppBrandPr
                     <Library className="size-5" />
                 </div>
 
-                <span className="text-xl font-extrabold tracking-tight text-primary">
+                <span className="hidden text-xl font-extrabold tracking-tight text-primary sm:inline">
                     {appName}
                 </span>
             </Link>
