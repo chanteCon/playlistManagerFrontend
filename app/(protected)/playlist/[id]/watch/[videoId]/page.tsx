@@ -83,6 +83,14 @@ export default function WatchVideoPage({ params }: PageProps) {
         );
     };
 
+    let embedUrl = '';
+
+    if (video.platform === 'youtube') {
+        embedUrl = `https://www.youtube.com/embed/${video.platformId}`;
+    } else if (video.platform === 'tiktok') {
+        embedUrl = `https://www.tiktok.com/player/v1/${video.platformId}`;
+    }
+
     return (
         <div className=" w-full max-w-[1350px] @container p-10 mx-auto @[850px]:mt-2">
             <Link
@@ -93,7 +101,7 @@ export default function WatchVideoPage({ params }: PageProps) {
             </Link>
             <div className="flex w-full min-w-0 flex-col items-center justify-between gap-5 @[850px]:flex-row @[850px]:items-stretch">
                 <section className="w-full min-w-0 @[850px]:flex-1 @[1000px]:max-w-[900px]">
-                    {video.render === false || video.platform !== 'youtube' ? (
+                    {video.render === false ? (
                         <div className="flex flex-col items-center justify-center gap-3 rounded-lg border bg-muted/30 px-6 py-10 text-center">
                             <div className="space-y-1">
                                 <p className="font-medium">This content can’t be played here</p>
@@ -114,7 +122,7 @@ export default function WatchVideoPage({ params }: PageProps) {
                     ) : (
                         <div className="w-full">
                             <iframe
-                                src={`https://www.youtube.com/embed/${video.platformId}`}
+                                src={embedUrl}
                                 title="YouTube video"
                                 allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
                                 allowFullScreen
@@ -129,7 +137,7 @@ export default function WatchVideoPage({ params }: PageProps) {
                                         rel="noopener noreferrer"
                                         className="font-medium text-link hover:underline"
                                     >
-                                        Watch on YouTube
+                                        {` Watch on ${video.platform?.charAt(0).toUpperCase()}${video.platform?.slice(1)}`}
                                     </a>
                                 </p>
                             </div>
