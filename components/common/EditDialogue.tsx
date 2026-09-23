@@ -4,6 +4,7 @@ import { ValidatedForm } from '@/components/forms/ValidatedForm';
 import { FormField } from '@/components/forms/FormField';
 import { EditInput, ServerErrorState } from '@/types';
 import { editSchema } from '@/schemas/common';
+import { FormTextArea } from '../forms/FormTextArea';
 
 type EditDialogProps = {
     message?: string;
@@ -40,11 +41,12 @@ export function EditDialog({
             >
                 <FormField type="text" label="title" id="title" defaultValue={title} />
 
-                <FormField
-                    type="text"
-                    label="description"
+                <FormTextArea
                     id="description"
-                    defaultValue={description}
+                    label="description"
+                    hideLabel
+                    defaultValue={description || ''}
+                    textareaClassName="max-h-[400px] overflow-y-auto"
                 />
 
                 <Button type="submit" className="w-full" disabled={isPending}>

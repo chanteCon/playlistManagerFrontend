@@ -1,5 +1,6 @@
 'use client';
 
+import { Spinner } from '@/components/ui/spinner';
 import VideoDetails from '@/components/videos/VideoDetails';
 import VideoQueue from '@/components/videos/VideoQueue';
 import { usePlaylist } from '@/hooks/usePlaylist';
@@ -24,7 +25,15 @@ export default function WatchVideoPage({ params }: PageProps) {
         notFound();
     }
 
-    const { editVideoMutation, playlist, error } = usePlaylist(id);
+    const { editVideoMutation, playlist, error, isLoading } = usePlaylist(id);
+
+    if (isLoading) {
+        return (
+            <div className="flex min-h-[300px] items-center justify-center">
+                <Spinner className="size-5" />
+            </div>
+        );
+    }
 
     if (error) {
         return (
@@ -36,12 +45,7 @@ export default function WatchVideoPage({ params }: PageProps) {
     }
 
     if (!playlist) {
-        return (
-            <div>
-                <h2>Playlist not found</h2>
-                <p>This playlist may have been deleted or you may not have access to it.</p>
-            </div>
-        );
+        return null;
     }
 
     const videos = playlist.videos;
@@ -87,8 +91,8 @@ export default function WatchVideoPage({ params }: PageProps) {
             >
                 {playlist.name}
             </Link>
-            <div className="flex w-full flex-col gap-5 items-center @[850px]:flex-row @[850px]:items-stretch justify-between ">
-                <section className="min-w-0 flex-[2] @[1000px]:max-w-[900px]">
+            <div className="flex w-full min-w-0 flex-col items-center justify-between gap-5 @[850px]:flex-row @[850px]:items-stretch">
+                <section className="w-full min-w-0 @[850px]:flex-1 @[1000px]:max-w-[900px]">
                     {video.render === false || video.platform !== 'youtube' ? (
                         <div className="flex flex-col items-center justify-center gap-3 rounded-lg border bg-muted/30 px-6 py-10 text-center">
                             <div className="space-y-1">
