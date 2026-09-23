@@ -91,8 +91,8 @@ export default function WatchVideoPage({ params }: PageProps) {
             >
                 {playlist.name}
             </Link>
-            <div className="flex w-full flex-col gap-5 items-center @[850px]:flex-row @[850px]:items-stretch justify-between ">
-                <section className="min-w-0 flex-[2] @[1000px]:max-w-[900px]">
+            <div className="flex w-full min-w-0 flex-col items-center justify-between gap-5 @[850px]:flex-row @[850px]:items-stretch">
+                <section className="w-full min-w-0 @[850px]:flex-1 @[1000px]:max-w-[900px]">
                     {video.render === false || video.platform !== 'youtube' ? (
                         <div className="flex flex-col items-center justify-center gap-3 rounded-lg border bg-muted/30 px-6 py-10 text-center">
                             <div className="space-y-1">
