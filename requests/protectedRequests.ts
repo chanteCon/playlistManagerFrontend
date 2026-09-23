@@ -40,6 +40,7 @@ export const editPlaylist = async (data: {
     description?: string;
 }) => {
     const { name, playlistId, description } = data;
+    console.log(data);
     return authenticatedApiRequest(() =>
         protectedApi.PATCH('/api/playlists/{id}', {
             body: {

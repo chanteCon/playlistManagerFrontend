@@ -1,8 +1,9 @@
 'use client';
 
 import { z } from 'zod';
-import { useState } from 'react';
+import { useState, forwardRef, useImperativeHandle } from 'react';
 import { FormContext } from '@/contexts/ValidatedFormContext';
+import { ValidatedFormRef } from '@/types';
 
 type ValidatedFormProps<T extends z.ZodType> = {
     schema: T;
@@ -14,15 +15,18 @@ type ValidatedFormProps<T extends z.ZodType> = {
     onClearServerError?: (field: string) => void;
 };
 
-export function ValidatedForm<T extends z.ZodType>({
-    schema,
-    onValidSubmit,
-    children,
-    requiredFields,
-    formRef,
-    serverErrors,
-    onClearServerError,
-}: ValidatedFormProps<T>) {
+export const ValidatedForm = forwardRef(function ValidatedForm<T extends z.ZodType>(
+    {
+        schema,
+        onValidSubmit,
+        children,
+        requiredFields,
+        serverErrors,
+        onClearServerError,
+        formRef,
+    }: ValidatedFormProps<T>,
+    ref: React.ForwardedRef<ValidatedFormRef>,
+) {
     const [errors, setErrors] = useState<Record<string, string>>({});
     async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -75,6 +79,18 @@ export function ValidatedForm<T extends z.ZodType>({
         onClearServerError?.(field);
     }
 
+    function clearErrors() {
+        setErrors({});
+
+        Object.keys(serverErrors ?? {}).forEach((field) => {
+            onClearServerError?.(field);
+        });
+    }
+
+    useImperativeHandle(ref, () => ({
+        clearErrors,
+    }));
+
     return (
         <FormContext.Provider
             value={{
@@ -91,4 +107,4 @@ export function ValidatedForm<T extends z.ZodType>({
             </form>
         </FormContext.Provider>
     );
-}
+});

@@ -1,10 +1,10 @@
-import { EditInput, Playlist } from '@/types';
+import { EditInput, Playlist, ValidatedFormRef } from '@/types';
 import { ValidatedForm } from '../forms/ValidatedForm';
 import { editSchema } from '@/schemas/common';
 import { useServerErrors } from '@/hooks/useServerErrors';
 import { FormField } from '../forms/FormField';
 import { FormTextArea } from '../forms/FormTextArea';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Button } from '../ui/button';
 import { usePlaylists } from '@/hooks/usePlaylists';
 import {
@@ -21,6 +21,7 @@ import { useRouter } from 'next/navigation';
 export default function PlaylistHeader({ playlist }: { playlist: Playlist | undefined }) {
     const router = useRouter();
     const serverErrorState = useServerErrors();
+    const validatedFormRef = useRef<ValidatedFormRef>(null);
     const [madeChange, setMadeChange] = useState(false);
     const [deleting, setDeleting] = useState(false);
     const { editPlaylistMutation, deletePlaylistMutation } = usePlaylists();
@@ -76,7 +77,7 @@ export default function PlaylistHeader({ playlist }: { playlist: Playlist | unde
         setName(playlist?.name);
         setDescription(playlist?.description);
         setMadeChange(false);
-        serverErrorState?.setErrors({});
+        validatedFormRef.current?.clearErrors();
     };
 
     return (
@@ -88,6 +89,7 @@ export default function PlaylistHeader({ playlist }: { playlist: Playlist | unde
                 serverErrors={serverErrorState?.errors}
                 onClearServerError={serverErrorState?.clearError}
                 key={playlist?.id}
+                ref={validatedFormRef}
             >
                 <FormField
                     type="text"
@@ -100,6 +102,7 @@ export default function PlaylistHeader({ playlist }: { playlist: Playlist | unde
                         setMadeChange(true);
                     }}
                     inputClassName="border-0 p-1 text-3xl! font-bold focus-visible:ring-1 dark:bg-transparent"
+                    placeHolder="No name"
                 />
 
                 <FormTextArea
@@ -111,6 +114,8 @@ export default function PlaylistHeader({ playlist }: { playlist: Playlist | unde
                         setDescription(data);
                         setMadeChange(true);
                     }}
+                    placeHolder="No description"
+
                     textareaClassName="min-w-[400px] rounded-sm min-h-6 h-auto resize-none overflow-hidden field-sizing-content border-0 bg-transparent p-1 text-base text-muted-foreground shadow-none focus-visible:border-1 focus-visible:ring-0 dark:bg-transparent"
                 />
 

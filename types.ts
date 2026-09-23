@@ -40,3 +40,7 @@ export type User = Omit<GeneratedUser, 'username'> & {
 };
 
 export type GetError = paths['/api/playlists/{id}']['patch']['responses'][404];
+
+export type ValidatedFormRef = {
+    clearErrors: () => void;
+};

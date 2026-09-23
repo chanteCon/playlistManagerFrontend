@@ -14,6 +14,7 @@ type FormTextAreaProps = {
     className?: string;
     hideLabel?: boolean;
     textareaClassName?: string;
+    placeHolder?: string;
 };
 
 export function FormTextArea({
@@ -27,6 +28,7 @@ export function FormTextArea({
     className,
     hideLabel,
     textareaClassName,
+    placeHolder,
 }: FormTextAreaProps) {
     const { errors, clearError } = useFormContext();
     const error = customError ?? errors[id];
@@ -47,6 +49,7 @@ export function FormTextArea({
                 }}
                 required={required}
                 className={textareaClassName}
+                placeholder={placeHolder}
             />
 
             {error && <p className="text-sm text-destructive">{error}</p>}

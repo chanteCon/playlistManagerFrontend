@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 
@@ -10,25 +10,33 @@ import { ValidatedForm } from '@/components/forms/ValidatedForm';
 
 import { editSchema } from '@/schemas/common';
 
-import { EditInput, Video } from '@/types';
+import { EditInput, ServerErrorState, ValidatedFormRef, Video } from '@/types';
 
 type VideoDetailsProps = {
     video: Video;
     onSubmit: (data: EditInput) => void;
     isPending: boolean;
+    serverErrorState?: ServerErrorState;
 };
 
-export default function VideoDetails({ video, onSubmit, isPending }: VideoDetailsProps) {
+export default function VideoDetails({
+    video,
+    onSubmit,
+    isPending,
+    serverErrorState,
+}: VideoDetailsProps) {
     const [title, setTitle] = useState(video.title || '');
     const [description, setDescription] = useState(video.description || '');
     const [showFullDescription, setShowFullDescription] = useState(false);
 
     const madeChange = title !== (video.title || '') || description !== (video.description || '');
+    const validatedFormRef = useRef<ValidatedFormRef>(null);
 
     const handleCancel = () => {
         setTitle(video.title || '');
         setDescription(video.description || '');
         setShowFullDescription(false);
+        validatedFormRef.current?.clearErrors();
     };
 
     return (
@@ -37,6 +45,9 @@ export default function VideoDetails({ video, onSubmit, isPending }: VideoDetail
                 schema={editSchema}
                 onValidSubmit={onSubmit}
                 requiredFields={new Set([])}
+                serverErrors={serverErrorState?.errors}
+                onClearServerError={serverErrorState?.clearError}
+                ref={validatedFormRef}
             >
                 <FormField
                     type="text"
@@ -45,7 +56,8 @@ export default function VideoDetails({ video, onSubmit, isPending }: VideoDetail
                     hideLabel
                     value={title}
                     onChange={setTitle}
-                    inputClassName="border-0 p-1 text-xl font-semibold tracking-tight focus-visible:ring-1 dark:bg-transparent"
+                    placeHolder="No title"
+                    inputClassName="border-1 p-3 text-xl font-semibold tracking-tight focus-visible:ring-1 dark:bg-transparent"
                 />
 
                 {madeChange && (
@@ -74,8 +86,9 @@ export default function VideoDetails({ video, onSubmit, isPending }: VideoDetail
                         setDescription(value);
                         setShowFullDescription(true);
                     }}
+                    placeHolder="No description"
                     className="mt-3"
-                    textareaClassName={`rounded-sm resize-none border-0 bg-muted/90 p-4 text-sm leading-relaxed text-muted-foreground shadow-none focus-visible:border-1 focus-visible:ring-0 dark:bg-transparent ${
+                    textareaClassName={`resize-none rounded-sm border bg-muted/90 p-3 text-sm leading-relaxed text-muted-foreground shadow-none focus-visible:border-1 focus-visible:ring-1 dark:bg-transparent ${
                         showFullDescription
                             ? 'min-h-6 h-auto overflow-hidden field-sizing-content'
                             : 'h-[100px] overflow-hidden'
