@@ -3,11 +3,13 @@
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+
 import { FormField } from '@/components/forms/FormField';
 import { FormTextArea } from '@/components/forms/FormTextArea';
 import { ValidatedForm } from '@/components/forms/ValidatedForm';
 
 import { editSchema } from '@/schemas/common';
+
 import { EditInput, Video } from '@/types';
 
 type VideoDetailsProps = {
@@ -22,11 +24,13 @@ export default function VideoDetails({ video, onSubmit, isPending }: VideoDetail
     const [showFullDescription, setShowFullDescription] = useState(false);
 
     const madeChange = title !== (video.title || '') || description !== (video.description || '');
+
     const handleCancel = () => {
         setTitle(video.title || '');
         setDescription(video.description || '');
         setShowFullDescription(false);
     };
+
     return (
         <>
             <ValidatedForm
@@ -44,6 +48,23 @@ export default function VideoDetails({ video, onSubmit, isPending }: VideoDetail
                     inputClassName="border-0 p-1 text-xl font-semibold tracking-tight focus-visible:ring-1 dark:bg-transparent"
                 />
 
+                {madeChange && (
+                    <div className="mt-2 flex gap-2">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={handleCancel}
+                            disabled={isPending}
+                        >
+                            Cancel
+                        </Button>
+
+                        <Button type="submit" disabled={isPending}>
+                            {isPending ? 'Saving...' : 'Save'}
+                        </Button>
+                    </div>
+                )}
+
                 <FormTextArea
                     id="description"
                     label="description"
@@ -60,28 +81,13 @@ export default function VideoDetails({ video, onSubmit, isPending }: VideoDetail
                             : 'h-[100px] overflow-hidden'
                     }`}
                 />
-
-                {madeChange && (
-                    <div className="flex gap-2">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={handleCancel}
-                            disabled={isPending}
-                        >
-                            Cancel
-                        </Button>
-                        <Button type="submit" disabled={isPending}>
-                            {isPending ? 'Saving...' : 'Save'}
-                        </Button>
-                    </div>
-                )}
             </ValidatedForm>
+
             {!madeChange && description.length > 300 && (
                 <button
                     type="button"
                     onClick={() => setShowFullDescription((current) => !current)}
-                    className="mt-2 text-sm font-medium text-link hover:underline"
+                    className="mt-2 cursor-pointer text-sm font-medium text-link hover:underline"
                 >
                     {showFullDescription ? 'Show less' : 'Show more'}
                 </button>
