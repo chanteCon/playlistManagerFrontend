@@ -1,5 +1,6 @@
 'use client';
 
+import { Spinner } from '@/components/ui/spinner';
 import VideoDetails from '@/components/videos/VideoDetails';
 import VideoQueue from '@/components/videos/VideoQueue';
 import { usePlaylist } from '@/hooks/usePlaylist';
@@ -24,7 +25,15 @@ export default function WatchVideoPage({ params }: PageProps) {
         notFound();
     }
 
-    const { editVideoMutation, playlist, error } = usePlaylist(id);
+    const { editVideoMutation, playlist, error, isLoading } = usePlaylist(id);
+
+    if (isLoading) {
+        return (
+            <div className="flex min-h-[300px] items-center justify-center">
+                <Spinner className="size-5" />
+            </div>
+        );
+    }
 
     if (error) {
         return (
@@ -36,12 +45,7 @@ export default function WatchVideoPage({ params }: PageProps) {
     }
 
     if (!playlist) {
-        return (
-            <div>
-                <h2>Playlist not found</h2>
-                <p>This playlist may have been deleted or you may not have access to it.</p>
-            </div>
-        );
+        return null;
     }
 
     const videos = playlist.videos;
