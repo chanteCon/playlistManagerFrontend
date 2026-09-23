@@ -37,7 +37,7 @@ export function AppBrand({ showTagline = true, variant = 'default' }: AppBrandPr
 
             {showTagline && (
                 <p className="mt-3 max-w-sm text-sm text-muted-foreground">
-                    Build your personal video library from multiple platforms.
+                    Build a video library from multiple platforms.
                 </p>
             )}
         </div>
