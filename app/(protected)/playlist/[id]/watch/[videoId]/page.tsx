@@ -138,7 +138,7 @@ export default function WatchVideoPage({ params }: PageProps) {
                                 allowFullScreen
                                 className="w-full aspect-video rounded-lg border"
                             />
-                            <div className="flex flex-col gap-2 mt-4">
+                            <div className="flex flex-col gap-2 mt-4 mb-3">
                                 <p className="text-sm text-muted-foreground">
                                     Having trouble watching this video?
                                     <a
