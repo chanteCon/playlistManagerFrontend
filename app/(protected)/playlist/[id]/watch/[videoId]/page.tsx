@@ -118,7 +118,7 @@ export default function WatchVideoPage({ params }: PageProps) {
                             />
                             <div className="flex flex-col gap-2 mt-4">
                                 <p className="text-sm text-muted-foreground">
-                                    Having trouble watching this video?{' '}
+                                    Having trouble watching this video?
                                     <a
                                         href={video.url}
                                         target="_blank"

@@ -5,6 +5,7 @@ import { Input } from './ui/input';
 import { cn } from '@/lib/utils';
 import { useSearch } from '@/hooks/useSearch';
 import { useRouter } from 'next/navigation';
+import { Spinner } from './ui/spinner';
 export default function SearchBar({ className }: { className?: string }) {
     const [search, setSearch] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -29,7 +30,7 @@ export default function SearchBar({ className }: { className?: string }) {
         };
     }, []);
     const { data } = useSearch(debouncedSearch);
-    const showResults = search.trim().length > 0 && debouncedSearch.length > 0 && !!data;
+    const showResults = search.trim().length > 0 && debouncedSearch.length > 0;
     const playlists = data?.data.results.playlists ?? [];
     const videos = data?.data.results.videos ?? [];
     const hasResults = playlists.length > 0 || videos.length > 0;
@@ -40,32 +41,31 @@ export default function SearchBar({ className }: { className?: string }) {
     };
     return (
         <div ref={searchBarRef} className={cn('relative', className)}>
-            {' '}
-            <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2" />{' '}
+            <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2" />
             <Input
                 className="truncate pl-9"
                 placeholder="Search playlists and videos..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-            />{' '}
+            />
             {showResults && (
                 <div className="absolute top-full right-0 left-0 z-50 mt-2 rounded-md border bg-popover p-1 shadow-md">
-                    {' '}
-                    {!hasResults ? (
+                    {!data ? (
+                        <div className="flex items-center gap-2 px-3 py-2.5 text-sm text-muted-foreground">
+                            <Spinner className="size-3.5" />
+                            <span>Searching...</span>
+                        </div>
+                    ) : !hasResults ? (
                         <div className="px-2 py-1.5 text-sm text-muted-foreground">
-                            {' '}
-                            No results found{' '}
+                            No results found
                         </div>
                     ) : (
                         <>
-                            {' '}
                             {playlists.length > 0 && (
                                 <div>
-                                    {' '}
                                     <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
-                                        {' '}
-                                        Playlists{' '}
-                                    </div>{' '}
+                                        Playlists
+                                    </div>
                                     {playlists.map((playlist) => (
                                         <button
                                             key={playlist.id}
@@ -75,19 +75,16 @@ export default function SearchBar({ className }: { className?: string }) {
                                                 handleResultClick(`/playlist/${playlist.id}`)
                                             }
                                         >
-                                            {' '}
-                                            {playlist.name}{' '}
+                                            {playlist.name}
                                         </button>
-                                    ))}{' '}
+                                    ))}
                                 </div>
-                            )}{' '}
+                            )}
                             {videos.length > 0 && (
                                 <div>
-                                    {' '}
                                     <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
-                                        {' '}
-                                        Videos{' '}
-                                    </div>{' '}
+                                        Videos
+                                    </div>
                                     {videos.slice(0, 10).map((video) => (
                                         <button
                                             key={video.id}
