@@ -448,6 +448,13 @@ const endpoints = makeApi([
         path: '/api/playlists/',
         alias: 'getApiplaylists',
         requestFormat: 'json',
+        parameters: [
+            {
+                name: 'search',
+                type: 'Query',
+                schema: z.string().optional(),
+            },
+        ],
         response: z.object({
             success: z.boolean(),
             message: z.union([z.string(), z.null()]),
@@ -501,6 +508,11 @@ const endpoints = makeApi([
                     )
                     .uuid(),
             },
+            {
+                name: 'search',
+                type: 'Query',
+                schema: z.string().optional(),
+            },
         ],
         response: z.object({
             success: z.boolean(),
@@ -518,6 +530,12 @@ const endpoints = makeApi([
                     videos: z.array(
                         z.object({
                             id: z
+                                .string()
+                                .regex(
+                                    /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                                )
+                                .uuid(),
+                            playlistId: z
                                 .string()
                                 .regex(
                                     /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
@@ -739,6 +757,12 @@ const endpoints = makeApi([
                             /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
                         )
                         .uuid(),
+                    playlistId: z
+                        .string()
+                        .regex(
+                            /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                        )
+                        .uuid(),
                     title: z.string(),
                     description: z.string().optional(),
                     thumbnail: z.string().optional(),
@@ -847,6 +871,12 @@ const endpoints = makeApi([
                             /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
                         )
                         .uuid(),
+                    playlistId: z
+                        .string()
+                        .regex(
+                            /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                        )
+                        .uuid(),
                     title: z.string(),
                     description: z.string().optional(),
                     thumbnail: z.string().optional(),
@@ -945,6 +975,80 @@ const endpoints = makeApi([
                 schema: z.object({
                     success: z.boolean(),
                     message: z.string().default('Playlist or video not found'),
+                    data: z.null(),
+                    errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
+                }),
+            },
+        ],
+    },
+    {
+        method: 'get',
+        path: '/api/playlists/search',
+        alias: 'getApiplaylistssearch',
+        requestFormat: 'json',
+        parameters: [
+            {
+                name: 'search',
+                type: 'Query',
+                schema: z.string().optional(),
+            },
+        ],
+        response: z.object({
+            success: z.boolean(),
+            message: z.union([z.string(), z.null()]),
+            data: z.object({
+                results: z.object({
+                    playlists: z.array(
+                        z.object({
+                            id: z
+                                .string()
+                                .regex(
+                                    /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                                )
+                                .uuid(),
+                            userId: z
+                                .string()
+                                .regex(
+                                    /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                                )
+                                .uuid(),
+                            name: z.string(),
+                            description: z.union([z.string(), z.null()]),
+                        }),
+                    ),
+                    videos: z.array(
+                        z.object({
+                            id: z
+                                .string()
+                                .regex(
+                                    /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                                )
+                                .uuid(),
+                            playlistId: z
+                                .string()
+                                .regex(
+                                    /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                                )
+                                .uuid(),
+                            title: z.string(),
+                            description: z.string().optional(),
+                            thumbnail: z.string().optional(),
+                            url: z.string(),
+                            platform: z.union([z.string(), z.null()]).optional(),
+                            platformId: z.union([z.string(), z.null()]).optional(),
+                            render: z.boolean(),
+                        }),
+                    ),
+                }),
+            }),
+        }),
+        errors: [
+            {
+                status: 401,
+                description: `Unauthorized`,
+                schema: z.object({
+                    success: z.boolean(),
+                    message: z.string().default('Unauthorized'),
                     data: z.null(),
                     errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
                 }),

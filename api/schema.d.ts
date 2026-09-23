@@ -1790,7 +1790,9 @@ export interface paths {
         /** Get all user playlists */
         get: {
             parameters: {
-                query?: never;
+                query?: {
+                    search?: string;
+                };
                 header?: never;
                 path?: never;
                 cookie?: never;
@@ -2060,6 +2062,138 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/playlists/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Search user library */
+        get: {
+            parameters: {
+                query?: {
+                    search?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": true,
+                         *       "data": {
+                         *         "results": {
+                         *           "playlists": [
+                         *             {
+                         *               "id": "00000000-0000-0000-0000-000000000000",
+                         *               "userId": "00000000-0000-0000-0000-000000000000",
+                         *               "name": "Music Favourites",
+                         *               "description": "My favourite songs"
+                         *             }
+                         *           ],
+                         *           "videos": [
+                         *             {
+                         *               "id": "00000000-0000-0000-0000-000000000000",
+                         *               "playlistId": "00000000-0000-0000-0000-000000000000",
+                         *               "title": "Best Music Videos",
+                         *               "description": "My favourite music",
+                         *               "thumbnail": "https://example.com/thumbnail.jpg",
+                         *               "url": "https://www.youtube.com/watch?v=zzzzzzzzzzz",
+                         *               "platform": "youtube",
+                         *               "platformId": "zzzzzzzzzzz",
+                         *               "render": true
+                         *             }
+                         *           ]
+                         *         }
+                         *       },
+                         *       "message": null
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: true;
+                            /** @example null */
+                            message: string | null;
+                            data: {
+                                results: {
+                                    playlists: {
+                                        /** Format: uuid */
+                                        id: string;
+                                        /** Format: uuid */
+                                        userId: string;
+                                        name: string;
+                                        description: string | null;
+                                    }[];
+                                    videos: {
+                                        /** Format: uuid */
+                                        id: string;
+                                        /** Format: uuid */
+                                        playlistId: string;
+                                        title: string;
+                                        description?: string;
+                                        thumbnail?: string;
+                                        url: string;
+                                        platform?: string | null;
+                                        platformId?: string | null;
+                                        render: boolean;
+                                    }[];
+                                };
+                            };
+                        };
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": false,
+                         *       "data": null,
+                         *       "message": "Unauthorized",
+                         *       "errors": null
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: false;
+                            /** @default Unauthorized */
+                            message: string;
+                            data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
+                            errors?: {
+                                [key: string]: string[];
+                            } | null;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/playlists/{id}": {
         parameters: {
             query?: never;
@@ -2070,7 +2204,9 @@ export interface paths {
         /** Get playlist */
         get: {
             parameters: {
-                query?: never;
+                query?: {
+                    search?: string;
+                };
                 header?: never;
                 path: {
                     /** @description The unique ID of the playlist */
@@ -2125,6 +2261,8 @@ export interface paths {
                                     videos: {
                                         /** Format: uuid */
                                         id: string;
+                                        /** Format: uuid */
+                                        playlistId: string;
                                         title: string;
                                         description?: string;
                                         thumbnail?: string;
@@ -2662,6 +2800,8 @@ export interface paths {
                                 video: {
                                     /** Format: uuid */
                                     id: string;
+                                    /** Format: uuid */
+                                    playlistId: string;
                                     title: string;
                                     description?: string;
                                     thumbnail?: string;
@@ -3039,6 +3179,8 @@ export interface paths {
                                 video: {
                                     /** Format: uuid */
                                     id: string;
+                                    /** Format: uuid */
+                                    playlistId: string;
                                     title: string;
                                     description?: string;
                                     thumbnail?: string;
