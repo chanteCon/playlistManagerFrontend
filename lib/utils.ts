@@ -76,13 +76,11 @@ export const removePlaylistFromCache = (queryClient: QueryClient, playlistId: st
     });
 };
 
-export const buildPlaylistUpdates = (data: EditInput) =>
-    Object.fromEntries(
-        Object.entries({
-            name: data.title,
-            description: data.description,
-        }).filter(([, value]) => value !== ''),
-    );
+export const buildPlaylistUpdates = (data: EditInput) => ({
+    name: data.title,
+    description: data.description,
+});
+
 export function mapPlaylistFieldErrors(
     fieldErrors: Record<string, string>,
 ): Record<string, string> {

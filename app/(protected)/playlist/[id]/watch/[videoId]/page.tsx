@@ -4,6 +4,8 @@ import { Spinner } from '@/components/ui/spinner';
 import VideoDetails from '@/components/videos/VideoDetails';
 import VideoQueue from '@/components/videos/VideoQueue';
 import { usePlaylist } from '@/hooks/usePlaylist';
+import { useServerErrors } from '@/hooks/useServerErrors';
+import { hasErrorStatus } from '@/lib/utils';
 import { uuidSchema } from '@/schemas/common';
 import { EditInput } from '@/types';
 import Link from 'next/link';
@@ -20,6 +22,7 @@ type PageProps = {
 
 export default function WatchVideoPage({ params }: PageProps) {
     const { id, videoId } = use(params);
+    const serverErrorState = useServerErrors();
 
     if (!uuidSchema.safeParse(id).success || !uuidSchema.safeParse(videoId).success) {
         notFound();
@@ -65,9 +68,10 @@ export default function WatchVideoPage({ params }: PageProps) {
     const handleEditVideo = (data: EditInput) => {
         if (!video) return;
 
-        const updates = Object.fromEntries(
-            Object.entries(data).filter(([, value]) => value !== ''),
-        );
+        const updates = {
+            title: data.title,
+            description: data.description,
+        };
 
         editVideoMutation.mutate(
             {
@@ -78,6 +82,12 @@ export default function WatchVideoPage({ params }: PageProps) {
             {
                 onSuccess: () => {
                     toast.success('Video updated');
+                },
+                onError: (error) => {
+                    if (hasErrorStatus(error, 400)) {
+                        console.log(error.fieldErrors);
+                        serverErrorState.setErrors(error.fieldErrors);
+                    }
                 },
             },
         );
@@ -128,7 +138,7 @@ export default function WatchVideoPage({ params }: PageProps) {
                                 allowFullScreen
                                 className="w-full aspect-video rounded-lg border"
                             />
-                            <div className="flex flex-col gap-2 mt-4">
+                            <div className="flex flex-col gap-2 mt-4 mb-3">
                                 <p className="text-sm text-muted-foreground">
                                     Having trouble watching this video?
                                     <a
@@ -147,6 +157,7 @@ export default function WatchVideoPage({ params }: PageProps) {
                         video={video}
                         onSubmit={handleEditVideo}
                         isPending={editVideoMutation.isPending}
+                        serverErrorState={serverErrorState}
                     />
                 </section>
                 {video && (

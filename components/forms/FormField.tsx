@@ -15,6 +15,7 @@ type FormFieldProps = {
     className?: string;
     hideLabel?: boolean;
     inputClassName?: string;
+    placeHolder?: string;
 };
 
 export function FormField({
@@ -30,6 +31,7 @@ export function FormField({
     className,
     hideLabel,
     inputClassName,
+    placeHolder,
 }: FormFieldProps) {
     const { errors, clearError } = useFormContext();
 
@@ -53,6 +55,7 @@ export function FormField({
                     }}
                     required={required}
                     className={cn(children && 'pr-10', inputClassName)}
+                    placeholder={placeHolder}
                 />
 
                 {children}

@@ -63,9 +63,10 @@ export default function Playlist({ params }: PageProps) {
     const handleEditVideo = (data: EditInput) => {
         if (!playlist || !videoToEdit) return;
 
-        const updates = Object.fromEntries(
-            Object.entries(data).filter(([, value]) => value !== ''),
-        );
+        const updates = {
+            title: data.title,
+            description: data.description,
+        };
 
         editVideoMutation.mutate(
             {
