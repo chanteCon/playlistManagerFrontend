@@ -9,6 +9,5 @@ export function useSearch(search: string) {
         queryFn: () => searchUserLibrary(search),
         enabled: !isAuthPending && !!accessToken && search.trim().length > 0,
         retry: false,
-        staleTime: 5 * 60 * 1000,
     });
 }
