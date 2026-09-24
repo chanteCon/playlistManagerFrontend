@@ -12,6 +12,7 @@ type VideoGridProps = {
     setIsAddVideoOpen: (arg0: boolean) => void;
     editingPlaylist: boolean;
     onSelectCover: (video: Video) => void;
+    coverPending: boolean;
 };
 
 export default function VideoGrid({
@@ -22,6 +23,7 @@ export default function VideoGrid({
     setIsAddVideoOpen,
     editingPlaylist,
     onSelectCover,
+    coverPending,
 }: VideoGridProps) {
     return (
         <>
@@ -50,11 +52,14 @@ export default function VideoGrid({
                                     type="button"
                                     className="group relative h-[200px] w-[220px] cursor-pointer overflow-hidden rounded-sm border-3 border-dashed border-secondary transition-all hover:border-primary hover:ring-2 hover:ring-primary/30"
                                     onClick={() => onSelectCover(video)}
+                                    disabled={coverPending}
                                 >
                                     <VideoCard video={video} playlistId={playlist.id} />
 
                                     <div className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 transition-opacity group-hover:opacity-100">
-                                        <span className="font-medium text-white">Use as cover</span>
+                                        <span className="font-medium text-white">
+                                            {coverPending ? 'Cover updating...' : 'Use as cover'}
+                                        </span>
                                     </div>
                                 </button>
                             ) : (

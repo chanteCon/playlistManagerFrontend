@@ -188,6 +188,7 @@ export default function Playlist({ params }: PageProps) {
                     setIsAddVideoOpen={setIsAddVideoOpen}
                     editingPlaylist={editingPlaylist}
                     onSelectCover={onSelectCover}
+                    coverPending={editPlaylistMutation.isPending}
                 />
             </section>
             <AddVideoDialog
