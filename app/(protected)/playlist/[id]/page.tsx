@@ -41,7 +41,11 @@ export default function Playlist({ params }: PageProps) {
     const [videoToEdit, setVideoToEdit] = useState<Video | null>(null);
     const [videoNotFound, setVideoNotFound] = useState(false);
     const [editingPlaylist, seteditingPlaylist] = useState(false);
-
+    const [errorDialog, setErrorDialog] = useState({
+        isOpen: false,
+        title: '',
+        message: '',
+    });
     const serverErrorState = useServerErrors();
 
     const onAddVideoSubmit = async (data: z.infer<typeof addVideoSchema>, playlistId: string) => {
@@ -88,7 +92,11 @@ export default function Playlist({ params }: PageProps) {
                     }
 
                     if (hasErrorStatus(error, 404) && !!error.fieldErrors['video']) {
-                        setVideoNotFound(true);
+                        setErrorDialog({
+                            isOpen: true,
+                            title: 'Video not found',
+                            message: 'This video no longer exists in this playlist',
+                        });
                         setVideoToEdit(null);
                     }
                 },
@@ -133,11 +141,19 @@ export default function Playlist({ params }: PageProps) {
                 },
                 onError: (error) => {
                     if (isHandledError(error, [400])) {
-                        alert(error.fieldErrors);
+                        setErrorDialog({
+                            isOpen: true,
+                            title: 'Unable to update playlist',
+                            message: 'The selected video could not be set as the playlist cover.',
+                        });
                     }
 
                     if (hasErrorStatus(error, 404)) {
-                        alert(error.fieldErrors);
+                        setErrorDialog({
+                            isOpen: true,
+                            title: 'Playlist not found',
+                            message: 'This playlist no longer exists.',
+                        });
                     }
                 },
             },
@@ -206,10 +222,15 @@ export default function Playlist({ params }: PageProps) {
             />
 
             <ErrorDialog
-                isOpen={videoNotFound}
-                onOpenChange={setVideoNotFound}
-                title="Video not found"
-                message="This video no longer exists in this playlist"
+                isOpen={errorDialog.isOpen}
+                onOpenChange={() =>
+                    setErrorDialog((current) => ({
+                        ...current,
+                        isOpen: false,
+                    }))
+                }
+                title={errorDialog.title}
+                message={errorDialog.message}
             />
         </main>
     );
