@@ -30,8 +30,10 @@ export default function AddVideoDialog({
             >
                 <FormField id="url" label="URL"></FormField>
                 <p className="text-muted-foreground">
-                    <strong>Note:</strong> YouTube link previews are supported. Videos may not play
-                    in the app due to external platform restrictions.
+                    <strong>Note:</strong> YouTube and TikTok link previews are supported. Playback
+                    is attempted for YouTube and TikTok videos, but videos may not play in the app
+                    due to external platform restrictions. Other platforms are not supported for
+                    previews or playback.
                 </p>
 
                 {children}

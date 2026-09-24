@@ -17,7 +17,7 @@ export function PlaylistCard({ PlaylistIcon, playlist, children }: PlaylistCardP
                         <img
                             src={playlist.coverUrl}
                             alt={`${playlist.name} cover`}
-                            className="absolute inset-0 h-full w-full rounded-md object-cover"
+                            className="absolute inset-0 h-full w-full rounded-t-sm object-cover"
                         />
                     ) : (
                         <PlaylistIcon className="h-20 w-20 text-muted-foreground" />
