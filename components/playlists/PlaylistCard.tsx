@@ -26,9 +26,13 @@ export function PlaylistCard({ PlaylistIcon, playlist, children }: PlaylistCardP
                 <div className="h-[50px] shrink-0 px-3">
                     <h2 className="truncate font-semibold">{playlist.name}</h2>
 
-                    <p className="mt-1 truncate text-sm text-muted-foreground">
-                        {playlist.description || 'No description'}
-                    </p>
+                    <div className="flex items-center justify-between gap-2 text-sm text-muted-foreground">
+                        <p className="truncate">{playlist.description || 'No description'}</p>
+
+                        <span className="shrink-0">
+                            {playlist.numVideos} {playlist.numVideos === 1 ? 'video' : 'videos'}
+                        </span>
+                    </div>
                 </div>
             </Link>
             {children}

@@ -168,7 +168,13 @@ export default function Playlist({ params }: PageProps) {
             )}
 
             <section className="py-8 flex flex-col gap-5">
-                <h2 className="text-lg font-semibold">Videos</h2>
+                <div className="flex items-center gap-2">
+                    <h2 className="text-lg font-semibold">Videos</h2>
+                    <span className="text-sm text-muted-foreground">
+                        ({playlist?.numVideos ?? 0})
+                    </span>
+                </div>
+
                 <VideoGrid
                     isLoading={isLoading}
                     playlist={playlist}

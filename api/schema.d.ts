@@ -1815,7 +1815,8 @@ export interface paths {
                          *             "userId": "00000000-0000-0000-0000-000000000000",
                          *             "name": "Playlist 1",
                          *             "description": null,
-                         *             "coverUrl": null
+                         *             "coverUrl": null,
+                         *             "numVideos": 10
                          *           }
                          *         ]
                          *       },
@@ -1836,6 +1837,7 @@ export interface paths {
                                     name: string;
                                     description: string | null;
                                     coverUrl: string | null;
+                                    numVideos: number;
                                 }[];
                             };
                         };
@@ -1923,7 +1925,8 @@ export interface paths {
                          *           "userId": "00000000-0000-0000-0000-000000000000",
                          *           "name": "My Playlist",
                          *           "description": null,
-                         *           "coverUrl": null
+                         *           "coverUrl": null,
+                         *           "numVideos": 10
                          *         }
                          *       },
                          *       "message": null
@@ -1943,6 +1946,7 @@ export interface paths {
                                     name: string;
                                     description: string | null;
                                     coverUrl: string | null;
+                                    numVideos: number;
                                 };
                             };
                         };
@@ -2237,6 +2241,7 @@ export interface paths {
                          *           "name": "My Playlist",
                          *           "description": "My playlist description",
                          *           "coverUrl": null,
+                         *           "numVideos": 10,
                          *           "videos": [
                          *             {
                          *               "id": "00000000-0000-0000-0000-000000000000",
@@ -2279,6 +2284,7 @@ export interface paths {
                                         platformId?: string | null;
                                         render: boolean;
                                     }[];
+                                    numVideos: number;
                                 };
                             };
                         };
@@ -2571,7 +2577,8 @@ export interface paths {
                          *           "userId": "00000000-0000-0000-0000-000000000000",
                          *           "name": "Updated Playlist",
                          *           "description": "Updated description",
-                         *           "coverUrl": "example.image.com"
+                         *           "coverUrl": "example.image.com",
+                         *           "numVideos": 10
                          *         }
                          *       },
                          *       "message": null
@@ -2591,6 +2598,7 @@ export interface paths {
                                     name: string;
                                     description: string | null;
                                     coverUrl: string | null;
+                                    numVideos: number;
                                 };
                             };
                         };
