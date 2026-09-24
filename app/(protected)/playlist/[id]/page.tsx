@@ -39,7 +39,6 @@ export default function Playlist({ params }: PageProps) {
     const [isAddVideoOpen, setIsAddVideoOpen] = useState(false);
     const [videoToDelete, setVideoToDelete] = useState<string | null>(null);
     const [videoToEdit, setVideoToEdit] = useState<Video | null>(null);
-    const [videoNotFound, setVideoNotFound] = useState(false);
     const [editingPlaylist, seteditingPlaylist] = useState(false);
     const [errorDialog, setErrorDialog] = useState({
         isOpen: false,
