@@ -100,6 +100,7 @@ export function usePlaylists() {
                                     ...current.data.playlist,
                                     name: playlist.name,
                                     description: playlist.description,
+                                    coverUrl: playlist.coverUrl,
                                 },
                             },
                         };

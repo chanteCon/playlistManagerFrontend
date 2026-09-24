@@ -1814,7 +1814,8 @@ export interface paths {
                          *             "id": "00000000-0000-0000-0000-000000000000",
                          *             "userId": "00000000-0000-0000-0000-000000000000",
                          *             "name": "Playlist 1",
-                         *             "description": null
+                         *             "description": null,
+                         *             "coverUrl": null
                          *           }
                          *         ]
                          *       },
@@ -1834,6 +1835,7 @@ export interface paths {
                                     userId: string;
                                     name: string;
                                     description: string | null;
+                                    coverUrl: string | null;
                                 }[];
                             };
                         };
@@ -1920,7 +1922,8 @@ export interface paths {
                          *           "id": "00000000-0000-0000-0000-000000000000",
                          *           "userId": "00000000-0000-0000-0000-000000000000",
                          *           "name": "My Playlist",
-                         *           "description": null
+                         *           "description": null,
+                         *           "coverUrl": null
                          *         }
                          *       },
                          *       "message": null
@@ -1939,6 +1942,7 @@ export interface paths {
                                     userId: string;
                                     name: string;
                                     description: string | null;
+                                    coverUrl: string | null;
                                 };
                             };
                         };
@@ -2097,7 +2101,8 @@ export interface paths {
                          *               "id": "00000000-0000-0000-0000-000000000000",
                          *               "userId": "00000000-0000-0000-0000-000000000000",
                          *               "name": "Music Favourites",
-                         *               "description": "My favourite songs"
+                         *               "description": "My favourite songs",
+                         *               "coverUrl": null
                          *             }
                          *           ],
                          *           "videos": [
@@ -2132,6 +2137,7 @@ export interface paths {
                                         userId: string;
                                         name: string;
                                         description: string | null;
+                                        coverUrl: string | null;
                                     }[];
                                     videos: {
                                         /** Format: uuid */
@@ -2230,6 +2236,7 @@ export interface paths {
                          *           "id": "00000000-0000-0000-0000-000000000000",
                          *           "name": "My Playlist",
                          *           "description": "My playlist description",
+                         *           "coverUrl": null,
                          *           "videos": [
                          *             {
                          *               "id": "00000000-0000-0000-0000-000000000000",
@@ -2258,6 +2265,7 @@ export interface paths {
                                     id: string;
                                     name: string;
                                     description?: string | null;
+                                    coverUrl?: string | null;
                                     videos: {
                                         /** Format: uuid */
                                         id: string;
@@ -2527,7 +2535,8 @@ export interface paths {
                      * @description At least one or name or description must be provided.
                      * @example {
                      *       "name": "Updated Playlist",
-                     *       "description": "Updated description"
+                     *       "description": "Updated description",
+                     *       "cover": "00000000-0000-0000-0000-000000000000"
                      *     }
                      */
                     "application/json": {
@@ -2541,6 +2550,8 @@ export interface paths {
                          * @example This is a description example.
                          */
                         description?: string;
+                        /** @description The id of the playlist video whose thumbnail should be used as the cover */
+                        cover?: string | null;
                     };
                 };
             };
@@ -2559,7 +2570,8 @@ export interface paths {
                          *           "id": "00000000-0000-0000-0000-000000000000",
                          *           "userId": "00000000-0000-0000-0000-000000000000",
                          *           "name": "Updated Playlist",
-                         *           "description": "Updated description"
+                         *           "description": "Updated description",
+                         *           "coverUrl": "example.image.com"
                          *         }
                          *       },
                          *       "message": null
@@ -2578,6 +2590,7 @@ export interface paths {
                                     userId: string;
                                     name: string;
                                     description: string | null;
+                                    coverUrl: string | null;
                                 };
                             };
                         };
@@ -2656,24 +2669,16 @@ export interface paths {
                         };
                     };
                 };
-                /** @description Playlist not found */
+                /** @description Not found */
                 404: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "success": false,
-                         *       "data": null,
-                         *       "message": "Playlist not found",
-                         *       "errors": null
-                         *     }
-                         */
                         "application/json": {
                             /** @constant */
                             success: false;
-                            /** @default Playlist not found */
+                            /** @default Not found */
                             message: string;
                             data: null;
                             /**

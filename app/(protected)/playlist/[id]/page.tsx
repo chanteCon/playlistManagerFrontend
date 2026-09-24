@@ -17,6 +17,8 @@ import { ErrorDialog } from '@/components/common/ErrorDialog';
 import PlaylistHeader from '@/components/videos/PlaylistHeader';
 import VideoGrid from '@/components/videos/VideoGrid';
 import { PlaylistHeaderSkeleton } from '@/components/skeletons/PlaylistHeaderSkeleton';
+import { usePlaylists } from '@/hooks/usePlaylists';
+import { toast } from 'sonner';
 
 type PageProps = {
     params: Promise<{
@@ -33,10 +35,12 @@ export default function Playlist({ params }: PageProps) {
 
     const { playlist, isLoading, addVideoMutation, editVideoMutation, deleteVideoMutation } =
         usePlaylist(id);
+    const { editPlaylistMutation } = usePlaylists();
     const [isAddVideoOpen, setIsAddVideoOpen] = useState(false);
     const [videoToDelete, setVideoToDelete] = useState<string | null>(null);
     const [videoToEdit, setVideoToEdit] = useState<Video | null>(null);
     const [videoNotFound, setVideoNotFound] = useState(false);
+    const [editingPlaylist, seteditingPlaylist] = useState(false);
 
     const serverErrorState = useServerErrors();
 
@@ -113,12 +117,39 @@ export default function Playlist({ params }: PageProps) {
         );
     };
 
+    const onSelectCover = (video: Video) => {
+        if (!playlist) {
+            return;
+        }
+        const updates = { cover: video.id };
+        editPlaylistMutation.mutate(
+            {
+                playlistId: playlist.id,
+                ...updates,
+            },
+            {
+                onSuccess: () => {
+                    toast.success('Playlist updated');
+                },
+                onError: (error) => {
+                    if (isHandledError(error, [400])) {
+                        alert(error.fieldErrors);
+                    }
+
+                    if (hasErrorStatus(error, 404)) {
+                        alert(error.fieldErrors);
+                    }
+                },
+            },
+        );
+    };
+
     return (
         <main className="mx-auto w-full max-w-5xl px-6 py-10">
             {isLoading || !playlist ? (
                 <PlaylistHeaderSkeleton />
             ) : (
-                <PlaylistHeader playlist={playlist} />
+                <PlaylistHeader playlist={playlist} onEdit={seteditingPlaylist} />
             )}
 
             <section className="py-8 flex flex-col gap-5">
@@ -134,6 +165,8 @@ export default function Playlist({ params }: PageProps) {
                         setVideoToDelete(video.id);
                     }}
                     setIsAddVideoOpen={setIsAddVideoOpen}
+                    editingPlaylist={editingPlaylist}
+                    onSelectCover={onSelectCover}
                 />
             </section>
             <AddVideoDialog

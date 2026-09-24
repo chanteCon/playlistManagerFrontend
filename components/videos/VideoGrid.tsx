@@ -10,6 +10,8 @@ type VideoGridProps = {
     onEdit: (video: Video) => void;
     onDelete: (video: Video) => void;
     setIsAddVideoOpen: (arg0: boolean) => void;
+    editingPlaylist: boolean;
+    onSelectCover: (video: Video) => void;
 };
 
 export default function VideoGrid({
@@ -18,6 +20,8 @@ export default function VideoGrid({
     onEdit,
     onDelete,
     setIsAddVideoOpen,
+    editingPlaylist,
+    onSelectCover,
 }: VideoGridProps) {
     return (
         <>
@@ -32,21 +36,37 @@ export default function VideoGrid({
                     )}
 
                     <div className="grid w-fit w-full grid-cols-[repeat(auto-fill,220px)] justify-center gap-6">
-                        <AddCard
-                            className="h-[200px] w-[220px] rounded-sm border"
-                            setDialogOpen={setIsAddVideoOpen}
-                            message="Add video"
-                        />
+                        {!editingPlaylist && (
+                            <AddCard
+                                className="h-[200px] w-[220px] rounded-sm border"
+                                setDialogOpen={setIsAddVideoOpen}
+                                message="Add video"
+                            />
+                        )}
+                        {playlist?.videos.map((video) =>
+                            editingPlaylist ? (
+                                <button
+                                    key={video.id}
+                                    type="button"
+                                    className="group relative h-[200px] w-[220px] cursor-pointer overflow-hidden rounded-sm border-3 border-dashed border-secondary transition-all hover:border-primary hover:ring-2 hover:ring-primary/30"
+                                    onClick={() => onSelectCover(video)}
+                                >
+                                    <VideoCard video={video} playlistId={playlist.id} />
 
-                        {playlist?.videos.map((video) => (
-                            <VideoCard key={video.id} video={video} playlistId={playlist.id}>
-                                <ActionsDropDown
-                                    className="border border-white bg-black/40 text-white"
-                                    onEdit={() => onEdit(video)}
-                                    onDelete={() => onDelete(video)}
-                                />
-                            </VideoCard>
-                        ))}
+                                    <div className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 transition-opacity group-hover:opacity-100">
+                                        <span className="font-medium text-white">Use as cover</span>
+                                    </div>
+                                </button>
+                            ) : (
+                                <VideoCard key={video.id} video={video} playlistId={playlist.id}>
+                                    <ActionsDropDown
+                                        className="border border-white bg-black/40 text-white"
+                                        onEdit={() => onEdit(video)}
+                                        onDelete={() => onDelete(video)}
+                                    />
+                                </VideoCard>
+                            ),
+                        )}
                     </div>
                 </>
             )}

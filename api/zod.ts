@@ -50,7 +50,11 @@ const postApiplaylists_Body = z
     .object({ name: z.string().min(1).max(50), description: z.string().max(500).optional() })
     .passthrough();
 const patchApiplaylistsId_Body = z
-    .object({ name: z.string().min(1).max(50), description: z.string().max(500) })
+    .object({
+        name: z.string().min(1).max(50),
+        description: z.string().max(500),
+        cover: z.union([z.string(), z.null()]),
+    })
     .partial()
     .passthrough();
 const patchApiplaylistsIdvideosPlaylistVideoId_Body = z
@@ -407,6 +411,7 @@ const endpoints = makeApi([
                         .uuid(),
                     name: z.string(),
                     description: z.union([z.string(), z.null()]),
+                    coverUrl: z.union([z.string(), z.null()]),
                 }),
             }),
         }),
@@ -475,6 +480,7 @@ const endpoints = makeApi([
                             .uuid(),
                         name: z.string(),
                         description: z.union([z.string(), z.null()]),
+                        coverUrl: z.union([z.string(), z.null()]),
                     }),
                 ),
             }),
@@ -527,6 +533,7 @@ const endpoints = makeApi([
                         .uuid(),
                     name: z.string(),
                     description: z.union([z.string(), z.null()]).optional(),
+                    coverUrl: z.union([z.string(), z.null()]).optional(),
                     videos: z.array(
                         z.object({
                             id: z
@@ -627,6 +634,7 @@ const endpoints = makeApi([
                         .uuid(),
                     name: z.string(),
                     description: z.union([z.string(), z.null()]),
+                    coverUrl: z.union([z.string(), z.null()]),
                 }),
             }),
         }),
@@ -653,10 +661,10 @@ const endpoints = makeApi([
             },
             {
                 status: 404,
-                description: `Playlist not found`,
+                description: `Not found`,
                 schema: z.object({
                     success: z.boolean(),
-                    message: z.string().default('Playlist not found'),
+                    message: z.string().default('Not found'),
                     data: z.null(),
                     errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
                 }),
@@ -1014,6 +1022,7 @@ const endpoints = makeApi([
                                 .uuid(),
                             name: z.string(),
                             description: z.union([z.string(), z.null()]),
+                            coverUrl: z.union([z.string(), z.null()]),
                         }),
                     ),
                     videos: z.array(
