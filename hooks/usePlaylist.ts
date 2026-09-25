@@ -4,14 +4,36 @@ import { hasErrorStatus, isHandledError, removePlaylistFromCache } from '@/lib/u
 import {
     addVideoToPlaylist,
     deleteVideoFromPlaylist,
+    editPositons,
     getPlaylist,
     patchVideo,
 } from '@/requests/protectedRequests';
-import { GetPlaylistResponse } from '@/types';
+import { GetPlaylistResponse, GetPlaylistsResponse } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export function usePlaylist(id: string) {
     const queryClient = useQueryClient();
+
+    const updatePlaylistVideoCount = (playlistId: string, change: 1 | -1) => {
+        queryClient.setQueryData<GetPlaylistsResponse>(['playlists'], (current) => {
+            if (!current) return current;
+
+            return {
+                ...current,
+                data: {
+                    ...current.data,
+                    playlists: current.data.playlists.map((playlist) =>
+                        playlist.id === playlistId
+                            ? {
+                                  ...playlist,
+                                  numVideos: playlist.numVideos + change,
+                              }
+                            : playlist,
+                    ),
+                },
+            };
+        });
+    };
 
     const removeVideoFromCache = (playlistId: string, videoId: string) => {
         queryClient.setQueryData<GetPlaylistResponse>(['playlist', playlistId], (current) => {
@@ -23,6 +45,7 @@ export function usePlaylist(id: string) {
                     ...current.data,
                     playlist: {
                         ...current.data.playlist,
+                        numVideos: Math.max(0, current.data.playlist.numVideos - 1),
                         videos: current.data.playlist.videos.filter(
                             (video) => video.id !== videoId,
                         ),
@@ -30,6 +53,7 @@ export function usePlaylist(id: string) {
                 },
             };
         });
+        updatePlaylistVideoCount(playlistId, -1);
     };
 
     const { isAuthPending } = useAuth();
@@ -70,12 +94,14 @@ export function usePlaylist(id: string) {
                             ...current.data,
                             playlist: {
                                 ...current.data.playlist,
+                                numVideos: Math.max(0, current.data.playlist.numVideos + 1),
                                 videos: [...current.data.playlist.videos, data.data.video],
                             },
                         },
                     };
                 },
             );
+            updatePlaylistVideoCount(variables.playlistId, 1);
         },
         onError: (error, variables) => {
             if (hasErrorStatus(error, 404)) {
@@ -150,6 +176,53 @@ export function usePlaylist(id: string) {
             return !isHandledError(error, [400, 404]) || playlistNotFound;
         },
     });
+
+    const updatePositionsMutation = useMutation({
+        mutationFn: editPositons,
+
+        onSuccess: (_, variables) => {
+            queryClient.setQueryData<GetPlaylistResponse>(
+                ['playlist', variables.playlistId],
+                (current) => {
+                    if (!current) return current;
+
+                    return {
+                        ...current,
+                        data: {
+                            ...current.data,
+                            playlist: {
+                                ...current.data.playlist,
+                                videos: current.data.playlist.videos.map((video) => {
+                                    const updated = variables.positions.find(
+                                        (position) => position.id === video.id,
+                                    );
+
+                                    return updated
+                                        ? { ...video, position: updated.position }
+                                        : video;
+                                }),
+                            },
+                        },
+                    };
+                },
+            );
+        },
+
+        onError: (error, variables) => {
+            if (hasErrorStatus(error, 404)) {
+                if (error.fieldErrors['playlist']) {
+                    removePlaylistFromCache(queryClient, variables.playlistId);
+                }
+            }
+        },
+
+        throwOnError: (error) => {
+            const playlistNotFound = hasErrorStatus(error, 404) && !!error.fieldErrors['playlist'];
+
+            return !isHandledError(error, [400, 404]) || playlistNotFound;
+        },
+    });
+
     return {
         playlist: data?.data.playlist,
         isLoading,
@@ -158,5 +231,6 @@ export function usePlaylist(id: string) {
         addVideoMutation,
         editVideoMutation,
         deleteVideoMutation,
+        updatePositionsMutation,
     };
 }

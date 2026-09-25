@@ -41,13 +41,32 @@ export const editPlaylist = async (data: {
     cover?: string;
 }) => {
     const { name, playlistId, description, cover } = data;
-    console.log(data);
     return authenticatedApiRequest(() =>
         protectedApi.PATCH('/api/playlists/{id}', {
             body: {
                 name,
                 description,
                 cover,
+            },
+            params: {
+                path: {
+                    id: playlistId,
+                },
+            },
+            credentials: 'include',
+        }),
+    );
+};
+
+export const editPositons = async (data: {
+    playlistId: string;
+    positions: { id: string; position: number }[];
+}) => {
+    const { playlistId, positions } = data;
+    return authenticatedApiRequest(() =>
+        protectedApi.PATCH('/api/playlists/{id}/videos/positions', {
+            body: {
+                positions,
             },
             params: {
                 path: {

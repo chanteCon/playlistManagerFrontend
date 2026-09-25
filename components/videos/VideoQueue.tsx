@@ -58,6 +58,7 @@ export default function VideoQueue({
                                         playlistId={id}
                                         video={video}
                                         className="w-full h-auto max-h-full @[850px]:w-[250px] @[850px]:h-[172px]"
+                                        interactive={true}
                                     />
                                 ))}
                             </div>
@@ -72,6 +73,7 @@ export default function VideoQueue({
                                 playlistId={id}
                                 video={videos[currentVideoIndex]}
                                 className="w-full h-auto max-h-full @[850px]:w-[250px] @[850px]:h-[165x]"
+                                interactive={true}
                             />
                         </div>
 
@@ -83,6 +85,7 @@ export default function VideoQueue({
                                         playlistId={id}
                                         video={video}
                                         className="w-full h-auto max-h-full @[850px]:w-[250px] @[850px]:h-[172px]"
+                                        interactive={true}
                                     />
                                 ))}
                             </div>

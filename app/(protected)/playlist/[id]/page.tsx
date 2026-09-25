@@ -19,6 +19,8 @@ import VideoGrid from '@/components/videos/VideoGrid';
 import { PlaylistHeaderSkeleton } from '@/components/skeletons/PlaylistHeaderSkeleton';
 import { usePlaylists } from '@/hooks/usePlaylists';
 import { toast } from 'sonner';
+import ToolTipButton from '@/components/common/ToolTipButton';
+import { ArrowDownUp } from 'lucide-react';
 
 type PageProps = {
     params: Promise<{
@@ -40,6 +42,7 @@ export default function Playlist({ params }: PageProps) {
     const [videoToDelete, setVideoToDelete] = useState<string | null>(null);
     const [videoToEdit, setVideoToEdit] = useState<Video | null>(null);
     const [editingPlaylist, seteditingPlaylist] = useState(false);
+    const [editingVideoOrder, setEditingVideoOrder] = useState(false);
     const [errorDialog, setErrorDialog] = useState({
         isOpen: false,
         title: '',
@@ -164,15 +167,37 @@ export default function Playlist({ params }: PageProps) {
             {isLoading || !playlist ? (
                 <PlaylistHeaderSkeleton />
             ) : (
-                <PlaylistHeader playlist={playlist} onEdit={seteditingPlaylist} />
+                <PlaylistHeader
+                    playlist={playlist}
+                    onEdit={seteditingPlaylist}
+                    allowEdit={!editingVideoOrder}
+                />
             )}
 
-            <section className="py-8 flex flex-col gap-5">
-                <div className="flex items-center gap-2">
-                    <h2 className="text-lg font-semibold">Videos</h2>
-                    <span className="text-sm text-muted-foreground">
-                        ({playlist?.numVideos ?? 0})
-                    </span>
+            <section className="py-8 w-fullflex flex-col gap-5">
+                <div className="flex items-center gap-2 justify-between py-3">
+                    {!editingVideoOrder && (
+                        <div className="flex items-center gap-2">
+                            <h2 className="text-lg font-semibold">Videos</h2>
+                            <span className="text-sm text-muted-foreground">
+                                ({playlist?.numVideos ?? 0})
+                            </span>
+                        </div>
+                    )}
+                    {!editingPlaylist && !editingVideoOrder && (
+                        <ToolTipButton
+                            button={
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="icon"
+                                    onClick={() => setEditingVideoOrder(true)}
+                                />
+                            }
+                            content="Re-order videos"
+                            icon={<ArrowDownUp />}
+                        />
+                    )}
                 </div>
 
                 <VideoGrid
@@ -189,6 +214,8 @@ export default function Playlist({ params }: PageProps) {
                     editingPlaylist={editingPlaylist}
                     onSelectCover={onSelectCover}
                     coverPending={editPlaylistMutation.isPending}
+                    editingOrder={editingVideoOrder}
+                    handleSave={() => setEditingVideoOrder(false)}
                 />
             </section>
             <AddVideoDialog

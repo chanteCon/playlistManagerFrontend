@@ -50,10 +50,9 @@ export default function WatchVideoPage({ params }: PageProps) {
     if (!playlist) {
         return null;
     }
+    const sortedVideos = [...(playlist?.videos ?? [])].sort((a, b) => a.position - b.position);
 
-    const videos = playlist.videos;
-
-    const currentVideoIndex = videos.findIndex((video) => video.id === videoId);
+    const currentVideoIndex = sortedVideos.findIndex((video) => video.id === videoId);
 
     if (currentVideoIndex === -1) {
         return (
@@ -63,7 +62,7 @@ export default function WatchVideoPage({ params }: PageProps) {
             </div>
         );
     }
-    const video = videos[currentVideoIndex];
+    const video = sortedVideos[currentVideoIndex];
 
     const handleEditVideo = (data: EditInput) => {
         if (!video) return;
@@ -163,7 +162,7 @@ export default function WatchVideoPage({ params }: PageProps) {
                 {video && (
                     <VideoQueue
                         id={playlist.id}
-                        videos={videos}
+                        videos={sortedVideos}
                         currentVideoIndex={currentVideoIndex}
                         playlistName={playlist.name}
                     />

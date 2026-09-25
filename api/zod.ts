@@ -57,6 +57,25 @@ const patchApiplaylistsId_Body = z
     })
     .partial()
     .passthrough();
+const patchApiplaylistsIdvideospositions_Body = z
+    .object({
+        positions: z
+            .array(
+                z
+                    .object({
+                        id: z
+                            .string()
+                            .regex(
+                                /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                            )
+                            .uuid(),
+                        position: z.number().int().gte(0).lte(9007199254740991),
+                    })
+                    .passthrough(),
+            )
+            .min(1),
+    })
+    .passthrough();
 const patchApiplaylistsIdvideosPlaylistVideoId_Body = z
     .object({ title: z.string().min(1).max(50), description: z.string().max(500) })
     .partial()
@@ -68,6 +87,7 @@ export const schemas = {
     patchApiauthpasswordReset_Body,
     postApiplaylists_Body,
     patchApiplaylistsId_Body,
+    patchApiplaylistsIdvideospositions_Body,
     patchApiplaylistsIdvideosPlaylistVideoId_Body,
 };
 
@@ -557,6 +577,7 @@ const endpoints = makeApi([
                             platform: z.union([z.string(), z.null()]).optional(),
                             platformId: z.union([z.string(), z.null()]).optional(),
                             render: z.boolean(),
+                            position: z.number(),
                         }),
                     ),
                     numVideos: z.number(),
@@ -782,6 +803,7 @@ const endpoints = makeApi([
                     platform: z.union([z.string(), z.null()]).optional(),
                     platformId: z.union([z.string(), z.null()]).optional(),
                     render: z.boolean(),
+                    position: z.number(),
                 }),
             }),
         }),
@@ -896,6 +918,7 @@ const endpoints = makeApi([
                     platform: z.union([z.string(), z.null()]).optional(),
                     platformId: z.union([z.string(), z.null()]).optional(),
                     render: z.boolean(),
+                    position: z.number(),
                 }),
             }),
         }),
@@ -994,6 +1017,91 @@ const endpoints = makeApi([
         ],
     },
     {
+        method: 'patch',
+        path: '/api/playlists/:id/videos/positions',
+        alias: 'patchApiplaylistsIdvideospositions',
+        requestFormat: 'json',
+        parameters: [
+            {
+                name: 'body',
+                type: 'Body',
+                schema: patchApiplaylistsIdvideospositions_Body,
+            },
+            {
+                name: 'id',
+                type: 'Path',
+                schema: z
+                    .string()
+                    .regex(
+                        /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                    )
+                    .uuid(),
+            },
+        ],
+        response: z.object({
+            success: z.boolean(),
+            message: z.union([z.string(), z.null()]),
+            data: z.object({
+                videos: z.array(
+                    z.object({
+                        id: z
+                            .string()
+                            .regex(
+                                /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                            )
+                            .uuid(),
+                        playlistId: z
+                            .string()
+                            .regex(
+                                /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                            )
+                            .uuid(),
+                        title: z.string(),
+                        description: z.string().optional(),
+                        thumbnail: z.string().optional(),
+                        url: z.string(),
+                        platform: z.union([z.string(), z.null()]).optional(),
+                        platformId: z.union([z.string(), z.null()]).optional(),
+                        render: z.boolean(),
+                        position: z.number(),
+                    }),
+                ),
+            }),
+        }),
+        errors: [
+            {
+                status: 400,
+                description: `Invalid Input`,
+                schema: z.object({
+                    success: z.boolean(),
+                    message: z.string().default('Invalid Input'),
+                    data: z.null(),
+                    errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
+                }),
+            },
+            {
+                status: 401,
+                description: `Unauthorized`,
+                schema: z.object({
+                    success: z.boolean(),
+                    message: z.string().default('Unauthorized'),
+                    data: z.null(),
+                    errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
+                }),
+            },
+            {
+                status: 404,
+                description: `Playlist not found`,
+                schema: z.object({
+                    success: z.boolean(),
+                    message: z.string().default('Playlist not found'),
+                    data: z.null(),
+                    errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
+                }),
+            },
+        ],
+    },
+    {
         method: 'get',
         path: '/api/playlists/search',
         alias: 'getApiplaylistssearch',
@@ -1050,6 +1158,7 @@ const endpoints = makeApi([
                             platform: z.union([z.string(), z.null()]).optional(),
                             platformId: z.union([z.string(), z.null()]).optional(),
                             render: z.boolean(),
+                            position: z.number(),
                         }),
                     ),
                 }),

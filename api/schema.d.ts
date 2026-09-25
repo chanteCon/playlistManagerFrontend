@@ -2155,6 +2155,7 @@ export interface paths {
                                         platform?: string | null;
                                         platformId?: string | null;
                                         render: boolean;
+                                        position: number;
                                     }[];
                                 };
                             };
@@ -2251,7 +2252,8 @@ export interface paths {
                          *               "url": "https://www.youtube.com/watch?v=zzzzzzzzzzz",
                          *               "platform": "youtube",
                          *               "platformId": "zzzzzzzzzzz",
-                         *               "render": false
+                         *               "render": false,
+                         *               "position": 1
                          *             }
                          *           ]
                          *         }
@@ -2283,6 +2285,7 @@ export interface paths {
                                         platform?: string | null;
                                         platformId?: string | null;
                                         render: boolean;
+                                        position: number;
                                     }[];
                                     numVideos: number;
                                 };
@@ -2798,7 +2801,8 @@ export interface paths {
                          *           "url": "https://www.youtube.com/watch?v=zzzzzzzzzzz",
                          *           "platform": "youtube",
                          *           "platformId": "zzzzzzzzzzz",
-                         *           "render": false
+                         *           "render": false,
+                         *           "positoin": 1
                          *         }
                          *       },
                          *       "message": null
@@ -2822,6 +2826,7 @@ export interface paths {
                                     platform?: string | null;
                                     platformId?: string | null;
                                     render: boolean;
+                                    position: number;
                                 };
                             };
                         };
@@ -2986,6 +2991,201 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/playlists/{id}/videos/positions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update video positions */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description The unique ID of the playlist */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        positions: {
+                            /** Format: uuid */
+                            id: string;
+                            position: number;
+                        }[];
+                    };
+                };
+            };
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": true,
+                         *       "data": {
+                         *         "videos": [
+                         *           {
+                         *             "id": "00000000-0000-0000-0000-000000000000",
+                         *             "playlistId": "00000000-0000-0000-0000-000000000000",
+                         *             "title": "Test Video",
+                         *             "description": "Test description",
+                         *             "thumbnail": "https://example.com/thumbnail.jpg",
+                         *             "url": "https://www.youtube.com/watch?v=zzzzzzzzzzz",
+                         *             "platform": "youtube",
+                         *             "platformId": "zzzzzzzzzzz",
+                         *             "render": false,
+                         *             "position": 0
+                         *           }
+                         *         ]
+                         *       },
+                         *       "message": null
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: true;
+                            /** @example null */
+                            message: string | null;
+                            data: {
+                                videos: {
+                                    /** Format: uuid */
+                                    id: string;
+                                    /** Format: uuid */
+                                    playlistId: string;
+                                    title: string;
+                                    description?: string;
+                                    thumbnail?: string;
+                                    url: string;
+                                    platform?: string | null;
+                                    platformId?: string | null;
+                                    render: boolean;
+                                    position: number;
+                                }[];
+                            };
+                        };
+                    };
+                };
+                /** @description Invalid Input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": false,
+                         *       "data": null,
+                         *       "message": "Invalid Input",
+                         *       "errors": {
+                         *         "id": [
+                         *           "Invalid UUID"
+                         *         ]
+                         *       }
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: false;
+                            /** @default Invalid Input */
+                            message: string;
+                            data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
+                            errors?: {
+                                [key: string]: string[];
+                            } | null;
+                        };
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": false,
+                         *       "data": null,
+                         *       "message": "Unauthorized",
+                         *       "errors": null
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: false;
+                            /** @default Unauthorized */
+                            message: string;
+                            data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
+                            errors?: {
+                                [key: string]: string[];
+                            } | null;
+                        };
+                    };
+                };
+                /** @description Playlist not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": false,
+                         *       "data": null,
+                         *       "message": "Playlist not found",
+                         *       "errors": null
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: false;
+                            /** @default Playlist not found */
+                            message: string;
+                            data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
+                            errors?: {
+                                [key: string]: string[];
+                            } | null;
+                        };
+                    };
+                };
+            };
+        };
         trace?: never;
     };
     "/api/playlists/{id}/videos/{playlistVideoId}": {
@@ -3177,7 +3377,8 @@ export interface paths {
                          *           "url": "https://www.youtube.com/watch?v=zzzzzzzzzzz",
                          *           "platform": "youtube",
                          *           "platformId": "zzzzzzzzzzz",
-                         *           "render": false
+                         *           "render": false,
+                         *           "position": 1
                          *         }
                          *       },
                          *       "message": null
@@ -3201,6 +3402,7 @@ export interface paths {
                                     platform?: string | null;
                                     platformId?: string | null;
                                     render: boolean;
+                                    position: number;
                                 };
                             };
                         };
