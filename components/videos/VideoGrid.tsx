@@ -86,7 +86,7 @@ export default function VideoGrid({
                                             interactive={true}
                                         >
                                             <ActionsDropDown
-                                                className="border border-white bg-black/40 text-white"
+                                                className="border border-white bg-black/40 text-white opacity-100"
                                                 onEdit={() => onEdit(video)}
                                                 onDelete={() => onDelete(video)}
                                             />

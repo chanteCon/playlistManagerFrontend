@@ -126,7 +126,6 @@ export default function PlaylistHeader({
                                     button={
                                         <Button
                                             type="button"
-                                            variant="outline"
                                             size="icon"
                                             onClick={() => {
                                                 setEditing(true);
@@ -134,6 +133,7 @@ export default function PlaylistHeader({
                                             }}
                                             aria-label="Edit playlist"
                                             title="Edit playlist"
+                                            className="border-2 border-foreground bg-background text-foreground hover:bg-muted"
                                         ></Button>
                                     }
                                     icon={<Pencil />}
@@ -144,14 +144,12 @@ export default function PlaylistHeader({
                                     button={
                                         <Button
                                             type="button"
-                                            variant="outline"
                                             size="icon"
                                             onClick={handleDoneEditing}
                                             aria-label="Done editing"
                                             title="Done editing"
-                                        >
-                                            {' '}
-                                        </Button>
+                                            className="border-2 border-foreground bg-background text-foreground hover:bg-muted"
+                                        ></Button>
                                     }
                                     icon={<PencilOff />}
                                     content="Close edit playlist"
