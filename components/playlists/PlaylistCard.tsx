@@ -10,17 +10,29 @@ type PlaylistCardProps = {
 };
 export function PlaylistCard({ PlaylistIcon, playlist, children }: PlaylistCardProps) {
     return (
-        <Card className="flex group relative h-[220px] w-[220px] overflow-hidden rounded-sm border bg-card transition-shadow hover:shadow-sm">
+        <Card className="group relative h-[220px] w-[220px] overflow-hidden rounded-sm border bg-card p-0 transition-shadow hover:shadow-sm">
             <Link href={`/playlist/${playlist.id}`} className="flex flex-1 flex-col">
-                <div className="flex flex-1 items-center justify-center border-b">
-                    <PlaylistIcon className="h-20 w-20 text-muted-foreground" />
+                <div className="relative flex flex-1 items-center justify-center border-b">
+                    {playlist.coverUrl ? (
+                        <img
+                            src={playlist.coverUrl}
+                            alt={`${playlist.name} cover`}
+                            className="absolute inset-0 h-full w-full rounded-t-sm object-cover"
+                        />
+                    ) : (
+                        <PlaylistIcon className="h-20 w-20 text-muted-foreground" />
+                    )}
                 </div>
                 <div className="h-[50px] shrink-0 px-3">
                     <h2 className="truncate font-semibold">{playlist.name}</h2>
 
-                    <p className="mt-1 truncate text-sm text-muted-foreground">
-                        {playlist.description || 'No description'}
-                    </p>
+                    <div className="flex items-center justify-between gap-2 text-sm text-muted-foreground">
+                        <p className="truncate">{playlist.description || 'No description'}</p>
+
+                        <span className="shrink-0">
+                            {playlist.numVideos} {playlist.numVideos === 1 ? 'video' : 'videos'}
+                        </span>
+                    </div>
                 </div>
             </Link>
             {children}

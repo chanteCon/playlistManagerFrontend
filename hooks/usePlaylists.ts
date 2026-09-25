@@ -9,13 +9,9 @@ import {
     getPlaylists,
 } from '@/requests/protectedRequests';
 
-import type { paths } from '@/api/schema';
 import { useAuth } from '@/contexts/AuthContext';
 import { hasErrorStatus, isHandledError, removePlaylistFromCache } from '@/lib/utils';
-import { GetPlaylistResponse } from '@/types';
-
-type GetPlaylistsResponse =
-    paths['/api/playlists/']['get']['responses'][200]['content']['application/json'];
+import { GetPlaylistResponse, GetPlaylistsResponse } from '@/types';
 
 export function usePlaylists() {
     const queryClient = useQueryClient();
@@ -100,6 +96,7 @@ export function usePlaylists() {
                                     ...current.data.playlist,
                                     name: playlist.name,
                                     description: playlist.description,
+                                    coverUrl: playlist.coverUrl,
                                 },
                             },
                         };

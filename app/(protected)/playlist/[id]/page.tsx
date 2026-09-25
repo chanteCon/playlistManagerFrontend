@@ -17,6 +17,10 @@ import { ErrorDialog } from '@/components/common/ErrorDialog';
 import PlaylistHeader from '@/components/videos/PlaylistHeader';
 import VideoGrid from '@/components/videos/VideoGrid';
 import { PlaylistHeaderSkeleton } from '@/components/skeletons/PlaylistHeaderSkeleton';
+import { usePlaylists } from '@/hooks/usePlaylists';
+import { toast } from 'sonner';
+import ToolTipButton from '@/components/common/ToolTipButton';
+import { ArrowDownUp } from 'lucide-react';
 
 type PageProps = {
     params: Promise<{
@@ -33,11 +37,17 @@ export default function Playlist({ params }: PageProps) {
 
     const { playlist, isLoading, addVideoMutation, editVideoMutation, deleteVideoMutation } =
         usePlaylist(id);
+    const { editPlaylistMutation } = usePlaylists();
     const [isAddVideoOpen, setIsAddVideoOpen] = useState(false);
     const [videoToDelete, setVideoToDelete] = useState<string | null>(null);
     const [videoToEdit, setVideoToEdit] = useState<Video | null>(null);
-    const [videoNotFound, setVideoNotFound] = useState(false);
-
+    const [editingPlaylist, seteditingPlaylist] = useState(false);
+    const [editingVideoOrder, setEditingVideoOrder] = useState(false);
+    const [errorDialog, setErrorDialog] = useState({
+        isOpen: false,
+        title: '',
+        message: '',
+    });
     const serverErrorState = useServerErrors();
 
     const onAddVideoSubmit = async (data: z.infer<typeof addVideoSchema>, playlistId: string) => {
@@ -84,7 +94,11 @@ export default function Playlist({ params }: PageProps) {
                     }
 
                     if (hasErrorStatus(error, 404) && !!error.fieldErrors['video']) {
-                        setVideoNotFound(true);
+                        setErrorDialog({
+                            isOpen: true,
+                            title: 'Video not found',
+                            message: 'This video no longer exists in this playlist',
+                        });
                         setVideoToEdit(null);
                     }
                 },
@@ -113,16 +127,79 @@ export default function Playlist({ params }: PageProps) {
         );
     };
 
+    const onSelectCover = (video: Video) => {
+        if (!playlist) {
+            return;
+        }
+        const updates = { cover: video.id };
+        editPlaylistMutation.mutate(
+            {
+                playlistId: playlist.id,
+                ...updates,
+            },
+            {
+                onSuccess: () => {
+                    toast.success('Playlist updated');
+                },
+                onError: (error) => {
+                    if (isHandledError(error, [400])) {
+                        setErrorDialog({
+                            isOpen: true,
+                            title: 'Unable to update playlist',
+                            message: 'The selected video could not be set as the playlist cover.',
+                        });
+                    }
+
+                    if (hasErrorStatus(error, 404)) {
+                        setErrorDialog({
+                            isOpen: true,
+                            title: 'Playlist not found',
+                            message: 'This playlist no longer exists.',
+                        });
+                    }
+                },
+            },
+        );
+    };
+
     return (
         <main className="mx-auto w-full max-w-5xl px-6 py-10">
             {isLoading || !playlist ? (
                 <PlaylistHeaderSkeleton />
             ) : (
-                <PlaylistHeader playlist={playlist} />
+                <PlaylistHeader
+                    playlist={playlist}
+                    onEdit={seteditingPlaylist}
+                    allowEdit={!editingVideoOrder}
+                />
             )}
 
-            <section className="py-8 flex flex-col gap-5">
-                <h2 className="text-lg font-semibold">Videos</h2>
+            <section className="py-8 w-fullflex flex-col gap-5">
+                <div className="flex items-center gap-2 justify-between py-3">
+                    {!editingVideoOrder && (
+                        <div className="flex items-center gap-2">
+                            <h2 className="text-lg font-semibold">Videos</h2>
+                            <span className="text-sm text-muted-foreground">
+                                ({playlist?.numVideos ?? 0})
+                            </span>
+                        </div>
+                    )}
+                    {!editingPlaylist && !editingVideoOrder && (
+                        <ToolTipButton
+                            button={
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="icon"
+                                    onClick={() => setEditingVideoOrder(true)}
+                                />
+                            }
+                            content="Re-order videos"
+                            icon={<ArrowDownUp />}
+                        />
+                    )}
+                </div>
+
                 <VideoGrid
                     isLoading={isLoading}
                     playlist={playlist}
@@ -134,6 +211,11 @@ export default function Playlist({ params }: PageProps) {
                         setVideoToDelete(video.id);
                     }}
                     setIsAddVideoOpen={setIsAddVideoOpen}
+                    editingPlaylist={editingPlaylist}
+                    onSelectCover={onSelectCover}
+                    coverPending={editPlaylistMutation.isPending}
+                    editingOrder={editingVideoOrder}
+                    handleSave={() => setEditingVideoOrder(false)}
                 />
             </section>
             <AddVideoDialog
@@ -173,10 +255,15 @@ export default function Playlist({ params }: PageProps) {
             />
 
             <ErrorDialog
-                isOpen={videoNotFound}
-                onOpenChange={setVideoNotFound}
-                title="Video not found"
-                message="This video no longer exists in this playlist"
+                isOpen={errorDialog.isOpen}
+                onOpenChange={() =>
+                    setErrorDialog((current) => ({
+                        ...current,
+                        isOpen: false,
+                    }))
+                }
+                title={errorDialog.title}
+                message={errorDialog.message}
             />
         </main>
     );

@@ -15,28 +15,45 @@ import {
 } from '@/lib/utils';
 import { ErrorDialog } from '../common/ErrorDialog';
 import { toast } from 'sonner';
-import { Trash } from 'lucide-react';
+import { Check, Pencil, PencilOff, Trash, X } from 'lucide-react';
 import { ConfirmationDialog } from '../common/ConfirmationDialog';
 import { useRouter } from 'next/navigation';
-export default function PlaylistHeader({ playlist }: { playlist: Playlist | undefined }) {
+import ToolTipButton from '../common/ToolTipButton';
+
+export default function PlaylistHeader({
+    playlist,
+    onEdit,
+    allowEdit,
+}: {
+    playlist: Playlist | undefined;
+    onEdit: (arg0: boolean) => void;
+    allowEdit: boolean;
+}) {
     const router = useRouter();
     const serverErrorState = useServerErrors();
     const validatedFormRef = useRef<ValidatedFormRef>(null);
+
     const [madeChange, setMadeChange] = useState(false);
     const [deleting, setDeleting] = useState(false);
-    const { editPlaylistMutation, deletePlaylistMutation } = usePlaylists();
     const [errorDialog, setErrorDialog] = useState({
         isOpen: false,
         title: '',
         message: '',
     });
+
     const [name, setName] = useState(playlist?.name);
     const [description, setDescription] = useState(playlist?.description);
+    const [editing, setEditing] = useState(false);
+
+    const { editPlaylistMutation, deletePlaylistMutation } = usePlaylists();
+
     const handleEdit = (data: EditInput) => {
         if (!playlist) {
             return;
         }
+
         const updates = buildPlaylistUpdates(data);
+
         editPlaylistMutation.mutate(
             {
                 playlistId: playlist.id,
@@ -80,62 +97,193 @@ export default function PlaylistHeader({ playlist }: { playlist: Playlist | unde
         validatedFormRef.current?.clearErrors();
     };
 
+    const handleDoneEditing = () => {
+        handleCancel();
+        setEditing(false);
+        onEdit(false);
+    };
+
     return (
-        <section className="relative border-b pb-8 flex justify-between">
-            <ValidatedForm
-                schema={editSchema}
-                onValidSubmit={handleEdit}
-                requiredFields={new Set([])}
-                serverErrors={serverErrorState?.errors}
-                onClearServerError={serverErrorState?.clearError}
-                key={playlist?.id}
-                ref={validatedFormRef}
-            >
-                <FormField
-                    type="text"
-                    label="title"
-                    id="title"
-                    hideLabel
-                    value={name}
-                    onChange={(data) => {
-                        setName(data);
-                        setMadeChange(true);
-                    }}
-                    inputClassName="border-0 p-1 text-3xl! font-bold focus-visible:ring-1 dark:bg-transparent"
-                    placeHolder="No name"
-                />
+        <section className="relative flex flex-col gap-6 border-b pb-8 md:flex-row">
+            <div className="flex w-full shrink-0 flex-col gap-2 md:w-50">
+                <div className="relative h-48 w-full overflow-hidden rounded-md bg-muted md:h-50 md:w-50">
+                    {playlist?.coverUrl ? (
+                        <img
+                            src={playlist.coverUrl}
+                            alt={`${playlist.name} cover`}
+                            className="h-full w-full object-cover"
+                        />
+                    ) : (
+                        <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+                            No cover
+                        </div>
+                    )}
 
-                <FormTextArea
-                    id="description"
-                    label="description"
-                    hideLabel
-                    value={description || ''}
-                    onChange={(data) => {
-                        setDescription(data);
-                        setMadeChange(true);
-                    }}
-                    placeHolder="No description"
+                    <div className="absolute right-2 top-2 md:hidden">
+                        {allowEdit &&
+                            (!editing ? (
+                                <ToolTipButton
+                                    button={
+                                        <Button
+                                            type="button"
+                                            size="icon"
+                                            onClick={() => {
+                                                setEditing(true);
+                                                onEdit(true);
+                                            }}
+                                            aria-label="Edit playlist"
+                                            title="Edit playlist"
+                                            className="border-2 border-foreground bg-background text-foreground hover:bg-muted"
+                                        ></Button>
+                                    }
+                                    icon={<Pencil />}
+                                    content="Edit playlist"
+                                />
+                            ) : (
+                                <ToolTipButton
+                                    button={
+                                        <Button
+                                            type="button"
+                                            size="icon"
+                                            onClick={handleDoneEditing}
+                                            aria-label="Done editing"
+                                            title="Done editing"
+                                            className="border-2 border-foreground bg-background text-foreground hover:bg-muted"
+                                        ></Button>
+                                    }
+                                    icon={<PencilOff />}
+                                    content="Close edit playlist"
+                                />
+                            ))}
+                    </div>
+                </div>
+            </div>
 
-                    textareaClassName="min-w-[400px] rounded-sm min-h-6 h-auto resize-none overflow-hidden field-sizing-content border-0 bg-transparent p-1 text-base text-muted-foreground shadow-none focus-visible:border-1 focus-visible:ring-0 dark:bg-transparent"
-                />
+            <div className="min-w-0 flex-1 md:pr-24">
+                <ValidatedForm
+                    schema={editSchema}
+                    onValidSubmit={handleEdit}
+                    requiredFields={new Set([])}
+                    serverErrors={serverErrorState?.errors}
+                    onClearServerError={serverErrorState?.clearError}
+                    key={playlist?.id}
+                    ref={validatedFormRef}
+                >
+                    <FormField
+                        type="text"
+                        label="title"
+                        id="title"
+                        hideLabel
+                        value={name}
+                        onChange={(data) => {
+                            setName(data);
+                            setMadeChange(true);
+                        }}
+                        inputClassName="w-full border-0 p-1 text-3xl! font-bold focus-visible:ring-1 dark:bg-transparent disabled:!bg-transparent disabled:!opacity-100 disabled:!cursor-default enabled:border"
+                        placeHolder="No name"
+                        disabled={!editing}
+                    />
 
-                {madeChange && (
-                    <div className="flex gap-2">
+                    <FormTextArea
+                        id="description"
+                        label="description"
+                        hideLabel
+                        value={description || ''}
+                        onChange={(data) => {
+                            setDescription(data);
+                            setMadeChange(true);
+                        }}
+                        placeHolder="No description"
+                        disabled={!editing}
+                        textareaClassName="min-h-6 h-auto w-full resize-none overflow-hidden field-sizing-content border-0 bg-transparent p-1 text-base text-muted-foreground shadow-none focus-visible:border-1 focus-visible:ring-0 dark:bg-transparent disabled:!bg-transparent disabled:!opacity-100 disabled:!cursor-default enabled:border"
+                    />
+
+                    {madeChange && (
+                        <div className="mt-3 flex gap-2">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={handleCancel}
+                                disabled={editPlaylistMutation.isPending}
+                            >
+                                <X />
+                                Cancel
+                            </Button>
+
+                            <Button type="submit" disabled={editPlaylistMutation.isPending}>
+                                <Check />
+                                {editPlaylistMutation.isPending ? 'Saving...' : 'Save'}
+                            </Button>
+                        </div>
+                    )}
+                </ValidatedForm>
+            </div>
+
+            <div className="hidden md:block">
+                {allowEdit &&
+                    (!editing ? (
                         <Button
                             type="button"
                             variant="outline"
-                            onClick={handleCancel}
-                            disabled={editPlaylistMutation.isPending}
+                            size="icon"
+                            onClick={() => {
+                                setEditing(true);
+                                onEdit(true);
+                            }}
+                            aria-label="Edit playlist"
+                            title="Edit playlist"
+                            className="absolute right-0 top-0"
                         >
-                            Cancel
+                            <Pencil />
                         </Button>
+                    ) : (
+                        <>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="icon"
+                                onClick={handleDoneEditing}
+                                aria-label="Done editing"
+                                title="Done editing"
+                                className="absolute right-0 top-0"
+                            >
+                                <PencilOff />
+                            </Button>
 
-                        <Button type="submit" disabled={editPlaylistMutation.isPending}>
-                            {editPlaylistMutation.isPending ? 'Saving...' : 'Save'}
-                        </Button>
-                    </div>
-                )}
-            </ValidatedForm>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => setDeleting(true)}
+                                aria-label="Delete playlist"
+                                title="Delete playlist"
+                                className="absolute bottom-10 right-0 flex w-fit gap-2"
+                            >
+                                <Trash className="text-destructive" />
+                                <p className="text-destructive">Delete playlist</p>
+                            </Button>
+                        </>
+                    ))}
+            </div>
+
+            {editing && (
+                <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setDeleting(true)}
+                    aria-label="Delete playlist"
+                    title="Delete playlist"
+                    className="flex w-fit gap-2 md:hidden"
+                >
+                    <Trash className="text-destructive" />
+                    <p className="text-destructive">Delete playlist</p>
+                </Button>
+            )}
+
+            {editing && (
+                <p className="absolute -bottom-6 left-0 text-sm text-muted-foreground">
+                    Select a video below to set its thumbnail as the playlist cover.
+                </p>
+            )}
 
             <ErrorDialog
                 title={errorDialog.title}
@@ -148,15 +296,10 @@ export default function PlaylistHeader({ playlist }: { playlist: Playlist | unde
                     }))
                 }
             />
-            <button
-                className="absolute right-0 top-0 rounded-lg p-2 hover:bg-muted"
-                onClick={() => setDeleting(true)}
-            >
-                <Trash className="cursor-pointer hover:text-destructive" />
-            </button>
+
             <ConfirmationDialog
-                title={'Delete playlist?'}
-                message={'Are you sure you want to delete this playlist?'}
+                title="Delete playlist?"
+                message="Are you sure you want to delete this playlist?"
                 isOpen={deleting}
                 onOpenChange={(open) => {
                     if (!open) {
@@ -175,7 +318,7 @@ export default function PlaylistHeader({ playlist }: { playlist: Playlist | unde
                         {deletePlaylistMutation.isPending ? 'Deleting...' : 'Delete'}
                     </Button>
                 }
-            ></ConfirmationDialog>
+            />
         </section>
     );
 }

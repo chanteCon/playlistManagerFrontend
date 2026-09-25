@@ -44,3 +44,6 @@ export type GetError = paths['/api/playlists/{id}']['patch']['responses'][404];
 export type ValidatedFormRef = {
     clearErrors: () => void;
 };
+
+export type GetPlaylistsResponse =
+    paths['/api/playlists/']['get']['responses'][200]['content']['application/json'];
