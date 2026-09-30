@@ -1,83 +1,156 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-import { EditInput, PlaylistSummary } from '@/types';
-
-import { CreatePlaylistDialog } from '@/components/playlists/CreatePlaylistDialog';
-import { PlaylistGrid } from '@/components/playlists/PlaylistGrid';
-import { PlaylistGridSkeleton } from '@/components/skeletons/PlaylistGridSkeleton';
 import AddCard from '@/components/common/AddCard';
-import { EditDialog } from '@/components/common/EditDialogue';
-import { DeleteDialog } from '@/components/common/DeleteDialog';
-import { ErrorDialog } from '@/components/common/ErrorDialog';
+import { CreatePlaylistDialog } from '@/components/playlists/CreatePlaylistDialog';
+import { PlaylistCard } from '@/components/playlists/PlaylistCard';
 
+import { useCollections } from '@/hooks/useCollections';
 import { usePlaylists } from '@/hooks/usePlaylists';
 import { useServerErrors } from '@/hooks/useServerErrors';
 
-import {
-    buildPlaylistUpdates,
-    hasErrorStatus,
-    isHandledError,
-    mapPlaylistFieldErrors,
-} from '@/lib/utils';
-import { uuidSchema } from '@/schemas/common';
+import { isHandledError } from '@/lib/utils';
 
-function CreatePlaylistSection({ onOpen }: { onOpen: () => void }) {
-    return (
-        <section className="mb-10">
-            <h2 className="mb-4 text-lg font-semibold">Create a playlist</h2>
+import { Folder, Music } from 'lucide-react';
 
-            <AddCard setDialogOpen={onOpen} message="New Playlist" />
-        </section>
-    );
-}
+import { CollectionSummary, PlaylistSummary } from '@/types';
 
 function PlaylistSection({
     isLoading,
     playlists,
-    onEdit,
-    onDelete,
+    onCreate,
 }: {
     isLoading: boolean;
     playlists: PlaylistSummary[];
-    onEdit: (playlist: PlaylistSummary) => void;
-    onDelete: (playlistId: string) => void;
+    onCreate: () => void;
 }) {
+    const router = useRouter();
+
     if (isLoading) {
-        return <PlaylistGridSkeleton />;
+        return null;
     }
 
     if (playlists.length === 0) {
         return (
-            <p className="text-muted-foreground">
-                No playlists yet. Create a playlist to start adding videos.
-            </p>
+            <section className="mb-12">
+                <div className="mb-4">
+                    <h2 className="text-lg font-semibold">Playlists</h2>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                        Organise your favourite videos into playlists.
+                    </p>
+                </div>
+
+                <AddCard setDialogOpen={onCreate} message="Create your first playlist" />
+            </section>
         );
     }
 
-    return <PlaylistGrid playlists={playlists} onEdit={onEdit} onDelete={onDelete} />;
+    return (
+        <section className="mb-12">
+            <div className="mb-5 flex items-end justify-between">
+                <div>
+                    <h2 className="text-lg font-semibold">Recent playlists</h2>
+                    <p className="mt-1 text-sm text-muted-foreground">Your latest playlists.</p>
+                </div>
+
+                <button
+                    type="button"
+                    className="text-sm font-medium hover:underline"
+                    onClick={() => router.push('/playlist')}
+                >
+                    See all
+                </button>
+            </div>
+
+            <div className="flex gap-4 overflow-hidden">
+                {playlists.slice(0, 5).map((playlist) => (
+                    <div key={playlist.id} className="w-[220px] shrink-0">
+                        <PlaylistCard playlist={playlist} PlaylistIcon={Music}>
+                            <p />
+                        </PlaylistCard>
+                    </div>
+                ))}
+
+                <div className="w-[220px] shrink-0">
+                    <AddCard setDialogOpen={onCreate} message="New Playlist" />
+                </div>
+            </div>
+        </section>
+    );
+}
+
+function CollectionSection({
+    isLoading,
+    collections,
+    onCreate,
+}: {
+    isLoading: boolean;
+    collections: CollectionSummary[];
+    onCreate: () => void;
+}) {
+    if (isLoading) {
+        return null;
+    }
+
+    if (collections.length === 0) {
+        return (
+            <section className="mb-12">
+                <div className="mb-4">
+                    <h2 className="text-lg font-semibold">Collections</h2>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                        Group your playlists together.
+                    </p>
+                </div>
+
+                <AddCard setDialogOpen={onCreate} message="Create your first collection" />
+            </section>
+        );
+    }
+
+    return (
+        <section className="mb-12">
+            <div className="mb-5 flex items-end justify-between">
+                <div>
+                    <h2 className="text-lg font-semibold">Recent collections</h2>
+                    <p className="mt-1 text-sm text-muted-foreground">Your latest collections.</p>
+                </div>
+
+                <button
+                    type="button"
+                    className="text-sm font-medium hover:underline"
+                    onClick={() => {}}
+                >
+                    See all
+                </button>
+            </div>
+
+            <div className="flex gap-4 overflow-hidden">
+                {collections.slice(0, 5).map((collection) => (
+                    <div
+                        key={collection.id}
+                        className="flex h-[220px] w-[220px] shrink-0 flex-col items-center justify-center rounded-lg border"
+                    >
+                        <Folder className="mb-4 h-10 w-10" />
+                        <p className="font-medium">{collection.name}</p>
+                    </div>
+                ))}
+
+                <div className="w-[220px] shrink-0">
+                    <AddCard setDialogOpen={onCreate} message="New Collection" />
+                </div>
+            </div>
+        </section>
+    );
 }
 
 export default function Dashboard() {
-    const {
-        playlists,
-        isLoading,
-        error,
-        createPlaylistMutation,
-        deletePlaylistMutation,
-        editPlaylistMutation,
-    } = usePlaylists();
+    const { playlists, isLoading: playlistsLoading, createPlaylistMutation } = usePlaylists();
+
+    const { collections, isLoading: collectionsLoading } = useCollections();
 
     const [isAddPlaylistOpen, setIsAddPlaylistOpen] = useState(false);
-    const [playlistToDelete, setPlaylistToDelete] = useState<string | null>(null);
-    const [playlistToEdit, setPlaylistToEdit] = useState<PlaylistSummary | null>(null);
-
-    const [errorDialog, setErrorDialog] = useState({
-        isOpen: false,
-        title: '',
-        message: '',
-    });
 
     const {
         errors: serverErrors,
@@ -85,65 +158,11 @@ export default function Dashboard() {
         clearError: clearServerErrors,
     } = useServerErrors();
 
-    const handleEditPlaylist = (data: EditInput) => {
-        if (!playlistToEdit) return;
-
-        if (!uuidSchema.safeParse(playlistToEdit.id).success) {
-            setErrorDialog({
-                isOpen: true,
-                title: 'Invalid playlist',
-                message: 'Playlist id must be a uuid',
-            });
-            return;
-        }
-
-        const updates = buildPlaylistUpdates(data);
-
-        editPlaylistMutation.mutate(
-            {
-                playlistId: playlistToEdit.id,
-                ...updates,
-            },
-            {
-                onSuccess: () => {
-                    setPlaylistToEdit(null);
-                },
-                onError: (error) => {
-                    if (isHandledError(error, [400, 409])) {
-                        setServerErrors(mapPlaylistFieldErrors(error.fieldErrors));
-                    }
-
-                    if (hasErrorStatus(error, 404)) {
-                        setErrorDialog({
-                            isOpen: true,
-                            title: 'Playlist not found',
-                            message: 'This playlist no longer exists.',
-                        });
-                        setPlaylistToEdit(null);
-                    }
-                },
-            },
-        );
+    type CreatePlaylistInput = {
+        name: string;
+        description?: string;
     };
 
-    const handleDeletePlaylist = (playlistId: string) => {
-        if (!uuidSchema.safeParse(playlistId).success) {
-            setErrorDialog({
-                isOpen: true,
-                title: 'Invalid playlist',
-                message: 'Unable to delete this playlist',
-            });
-            return;
-        }
-
-        deletePlaylistMutation.mutate(playlistId, {
-            onSuccess: () => {
-                setPlaylistToDelete(null);
-            },
-        });
-    };
-
-    type CreatePlaylistInput = { name: string; description?: string | undefined };
     const handleCreatePlaylist = (data: CreatePlaylistInput) => {
         createPlaylistMutation.mutate(data, {
             onSuccess: () => {
@@ -157,28 +176,24 @@ export default function Dashboard() {
         });
     };
 
-    if (error) {
-        return <p>Something went wrong.</p>;
-    }
-
     return (
         <div className="mx-auto flex w-full max-w-6xl flex-col px-6 py-10">
-            <CreatePlaylistSection
-                onOpen={() => {
+            <PlaylistSection
+                isLoading={playlistsLoading}
+                playlists={playlists}
+                onCreate={() => {
                     setIsAddPlaylistOpen(true);
                     setServerErrors({});
                 }}
             />
 
-            <PlaylistSection
-                isLoading={isLoading}
-                playlists={playlists}
-                onEdit={(playlist) => {
-                    setServerErrors({});
-                    setPlaylistToEdit(playlist);
-                }}
-                onDelete={setPlaylistToDelete}
-            />
+            {playlists && playlists.length > 0 && (
+                <CollectionSection
+                    isLoading={collectionsLoading}
+                    collections={collections}
+                    onCreate={() => {}}
+                />
+            )}
 
             <CreatePlaylistDialog
                 isOpen={isAddPlaylistOpen}
@@ -188,48 +203,7 @@ export default function Dashboard() {
                     clearError: clearServerErrors,
                 }}
                 isPending={createPlaylistMutation.isPending}
-                onSubmit={(data) => handleCreatePlaylist(data)}
-            />
-
-            {playlistToEdit && (
-                <EditDialog
-                    message="Edit playlist"
-                    isOpen={!!playlistToEdit}
-                    onOpenChange={(isOpen) => {
-                        if (!isOpen) {
-                            setPlaylistToEdit(null);
-                        }
-                    }}
-                    title={playlistToEdit.name}
-                    description={playlistToEdit.description ?? ''}
-                    onSubmit={handleEditPlaylist}
-                    serverErrorState={{
-                        errors: serverErrors,
-                        clearError: clearServerErrors,
-                    }}
-                    isPending={editPlaylistMutation.isPending}
-                />
-            )}
-
-            <DeleteDialog
-                isPending={deletePlaylistMutation.isPending}
-                title="Delete Playlist?"
-                message="Are you sure you want to delete this playlist? This action cannot be undone."
-                itemId={playlistToDelete}
-                onCancel={() => setPlaylistToDelete(null)}
-                onConfirm={handleDeletePlaylist}
-            />
-
-            <ErrorDialog
-                title={errorDialog.title}
-                message={errorDialog.message}
-                isOpen={errorDialog.isOpen}
-                onOpenChange={(isOpen) =>
-                    setErrorDialog((current) => ({
-                        ...current,
-                        isOpen,
-                    }))
-                }
+                onSubmit={handleCreatePlaylist}
             />
         </div>
     );

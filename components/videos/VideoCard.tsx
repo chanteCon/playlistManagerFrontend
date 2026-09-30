@@ -3,6 +3,7 @@ import { Video } from '@/types';
 import { PlaySquare } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState } from 'react';
 
 type VideoCardProps = {
     playlistId: string;
@@ -19,16 +20,18 @@ export default function VideoCard({
     className,
     interactive,
 }: VideoCardProps) {
+    const [imageError, setImageError] = useState(false);
     const content = (
         <>
             <div className="relative flex aspect-video w-full items-center justify-center overflow-hidden border-b bg-muted">
-                {video.thumbnail ? (
+                {video.thumbnail && !imageError ? (
                     <Image
                         src={video.thumbnail}
                         alt={video.title || 'External video'}
                         fill
                         unoptimized
                         className="object-cover transition-transform group-hover:scale-[1.02]"
+                        onError={() => setImageError(true)}
                     />
                 ) : (
                     <PlaySquare className="h-13 w-13 text-muted-foreground" />
