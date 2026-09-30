@@ -190,6 +190,15 @@ export const getCollections = () =>
         }),
     );
 
+export const getCollection = ({ id }: { id: string }) => {
+    authenticatedApiRequest(() =>
+        protectedApi.GET('/api/collections/{id}', {
+            params: { path: { id } },
+            credentials: 'include',
+        }),
+    );
+};
+
 export const createCollection = (data: { name: string }) =>
     authenticatedApiRequest(() =>
         protectedApi.POST('/api/collections/', {
@@ -198,13 +207,18 @@ export const createCollection = (data: { name: string }) =>
         }),
     );
 
-export const editCollection = async (data: { collectionId: string; name: string }) => {
-    const { collectionId, name } = data;
+export const editCollection = async (data: {
+    collectionId: string;
+    name?: string;
+    cover?: string;
+}) => {
+    const { collectionId, name, cover } = data;
 
     return authenticatedApiRequest(() =>
         protectedApi.PATCH('/api/collections/{id}', {
             body: {
                 name,
+                cover,
             },
             params: {
                 path: {
