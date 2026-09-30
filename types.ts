@@ -54,3 +54,6 @@ export type GetCollectionsResponse =
 export type Collections = GetCollectionsResponse['data']['collections'];
 
 export type CollectionSummary = Collections[number];
+
+export type GetCollectionResponse =
+    paths['/api/collections/{id}']['get']['responses'][200]['content']['application/json'];

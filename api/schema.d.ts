@@ -3522,20 +3522,6 @@ export interface paths {
                                         id: string;
                                         name: string;
                                         description?: string | null;
-                                        videos: {
-                                            /** Format: uuid */
-                                            id: string;
-                                            /** Format: uuid */
-                                            playlistId: string;
-                                            title: string;
-                                            description?: string;
-                                            thumbnail?: string;
-                                            url: string;
-                                            platform?: string | null;
-                                            platformId?: string | null;
-                                            render: boolean;
-                                            position: number;
-                                        }[];
                                         coverUrl: string | null;
                                         numVideos: number;
                                         updatedAt: string;
@@ -3737,20 +3723,6 @@ export interface paths {
                                         id: string;
                                         name: string;
                                         description?: string | null;
-                                        videos: {
-                                            /** Format: uuid */
-                                            id: string;
-                                            /** Format: uuid */
-                                            playlistId: string;
-                                            title: string;
-                                            description?: string;
-                                            thumbnail?: string;
-                                            url: string;
-                                            platform?: string | null;
-                                            platformId?: string | null;
-                                            render: boolean;
-                                            position: number;
-                                        }[];
                                         coverUrl: string | null;
                                         numVideos: number;
                                         updatedAt: string;
@@ -4060,20 +4032,6 @@ export interface paths {
                                         id: string;
                                         name: string;
                                         description?: string | null;
-                                        videos: {
-                                            /** Format: uuid */
-                                            id: string;
-                                            /** Format: uuid */
-                                            playlistId: string;
-                                            title: string;
-                                            description?: string;
-                                            thumbnail?: string;
-                                            url: string;
-                                            platform?: string | null;
-                                            platformId?: string | null;
-                                            render: boolean;
-                                            position: number;
-                                        }[];
                                         coverUrl: string | null;
                                         numVideos: number;
                                         updatedAt: string;
@@ -4266,20 +4224,6 @@ export interface paths {
                                     id: string;
                                     name: string;
                                     description?: string | null;
-                                    videos: {
-                                        /** Format: uuid */
-                                        id: string;
-                                        /** Format: uuid */
-                                        playlistId: string;
-                                        title: string;
-                                        description?: string;
-                                        thumbnail?: string;
-                                        url: string;
-                                        platform?: string | null;
-                                        platformId?: string | null;
-                                        render: boolean;
-                                        position: number;
-                                    }[];
                                     coverUrl: string | null;
                                     numVideos: number;
                                     updatedAt: string;

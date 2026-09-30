@@ -76,33 +76,36 @@ export function usePlaylists() {
                     data: {
                         ...current.data,
                         playlists: current.data.playlists.map((currentPlaylist) =>
-                            currentPlaylist.id === playlistId ? playlist : currentPlaylist,
+                            currentPlaylist.id === playlistId
+                                ? {
+                                      ...currentPlaylist,
+                                      name: playlist.name,
+                                      description: playlist.description,
+                                      coverUrl: playlist.coverUrl,
+                                  }
+                                : currentPlaylist,
                         ),
                     },
                 };
             });
 
-            if (queryClient.getQueryData<GetPlaylistResponse>(['playlist', playlistId])) {
-                queryClient.setQueryData<GetPlaylistResponse>(
-                    ['playlist', playlistId],
-                    (current) => {
-                        if (!current) return current;
+            queryClient.setQueryData<GetPlaylistResponse>(['playlist', playlistId], (current) => {
+                if (!current) return current;
 
-                        return {
-                            ...current,
-                            data: {
-                                ...current.data,
-                                playlist: {
-                                    ...current.data.playlist,
-                                    name: playlist.name,
-                                    description: playlist.description,
-                                    coverUrl: playlist.coverUrl,
-                                },
-                            },
-                        };
+                return {
+                    ...current,
+                    data: {
+                        ...current.data,
+                        playlist: {
+                            ...current.data.playlist,
+                            name: playlist.name,
+                            description: playlist.description,
+                            coverUrl: playlist.coverUrl,
+                            numVideos: playlist.numVideos,
+                        },
                     },
-                );
-            }
+                };
+            });
         },
 
         onError: (error, { playlistId }) => {

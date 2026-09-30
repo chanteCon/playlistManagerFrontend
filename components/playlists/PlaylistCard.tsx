@@ -21,6 +21,7 @@ export function PlaylistCard({ PlaylistIcon, playlist, children }: PlaylistCardP
                             src={playlist.coverUrl}
                             alt={`${playlist.name} cover`}
                             unoptimized
+                            fill
                             className="absolute inset-0 h-full w-full rounded-t-sm object-cover"
                             onError={() => setImageError(true)}
                         />

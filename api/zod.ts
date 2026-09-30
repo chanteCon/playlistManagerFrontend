@@ -494,30 +494,6 @@ const endpoints = makeApi([
                                 .uuid(),
                             name: z.string(),
                             description: z.union([z.string(), z.null()]).optional(),
-                            videos: z.array(
-                                z.object({
-                                    id: z
-                                        .string()
-                                        .regex(
-                                            /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
-                                        )
-                                        .uuid(),
-                                    playlistId: z
-                                        .string()
-                                        .regex(
-                                            /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
-                                        )
-                                        .uuid(),
-                                    title: z.string(),
-                                    description: z.string().optional(),
-                                    thumbnail: z.string().optional(),
-                                    url: z.string(),
-                                    platform: z.union([z.string(), z.null()]).optional(),
-                                    platformId: z.union([z.string(), z.null()]).optional(),
-                                    render: z.boolean(),
-                                    position: z.number(),
-                                }),
-                            ),
                             coverUrl: z.union([z.string(), z.null()]),
                             numVideos: z.number(),
                             updatedAt: z.string(),
@@ -608,30 +584,6 @@ const endpoints = makeApi([
                                 .uuid(),
                             name: z.string(),
                             description: z.union([z.string(), z.null()]).optional(),
-                            videos: z.array(
-                                z.object({
-                                    id: z
-                                        .string()
-                                        .regex(
-                                            /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
-                                        )
-                                        .uuid(),
-                                    playlistId: z
-                                        .string()
-                                        .regex(
-                                            /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
-                                        )
-                                        .uuid(),
-                                    title: z.string(),
-                                    description: z.string().optional(),
-                                    thumbnail: z.string().optional(),
-                                    url: z.string(),
-                                    platform: z.union([z.string(), z.null()]).optional(),
-                                    platformId: z.union([z.string(), z.null()]).optional(),
-                                    render: z.boolean(),
-                                    position: z.number(),
-                                }),
-                            ),
                             coverUrl: z.union([z.string(), z.null()]),
                             numVideos: z.number(),
                             updatedAt: z.string(),
@@ -728,30 +680,6 @@ const endpoints = makeApi([
                                 .uuid(),
                             name: z.string(),
                             description: z.union([z.string(), z.null()]).optional(),
-                            videos: z.array(
-                                z.object({
-                                    id: z
-                                        .string()
-                                        .regex(
-                                            /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
-                                        )
-                                        .uuid(),
-                                    playlistId: z
-                                        .string()
-                                        .regex(
-                                            /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
-                                        )
-                                        .uuid(),
-                                    title: z.string(),
-                                    description: z.string().optional(),
-                                    thumbnail: z.string().optional(),
-                                    url: z.string(),
-                                    platform: z.union([z.string(), z.null()]).optional(),
-                                    platformId: z.union([z.string(), z.null()]).optional(),
-                                    render: z.boolean(),
-                                    position: z.number(),
-                                }),
-                            ),
                             coverUrl: z.union([z.string(), z.null()]),
                             numVideos: z.number(),
                             updatedAt: z.string(),
@@ -894,30 +822,6 @@ const endpoints = makeApi([
                         .uuid(),
                     name: z.string(),
                     description: z.union([z.string(), z.null()]).optional(),
-                    videos: z.array(
-                        z.object({
-                            id: z
-                                .string()
-                                .regex(
-                                    /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
-                                )
-                                .uuid(),
-                            playlistId: z
-                                .string()
-                                .regex(
-                                    /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
-                                )
-                                .uuid(),
-                            title: z.string(),
-                            description: z.string().optional(),
-                            thumbnail: z.string().optional(),
-                            url: z.string(),
-                            platform: z.union([z.string(), z.null()]).optional(),
-                            platformId: z.union([z.string(), z.null()]).optional(),
-                            render: z.boolean(),
-                            position: z.number(),
-                        }),
-                    ),
                     coverUrl: z.union([z.string(), z.null()]),
                     numVideos: z.number(),
                     updatedAt: z.string(),

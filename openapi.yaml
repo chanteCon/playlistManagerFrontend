@@ -3993,47 +3993,6 @@ paths:
                                                                     anyOf:
                                                                         - type: string
                                                                         - type: 'null'
-                                                                videos:
-                                                                    type: array
-                                                                    items:
-                                                                        type: object
-                                                                        properties:
-                                                                            id:
-                                                                                type: string
-                                                                                format: uuid
-                                                                                pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
-                                                                            playlistId:
-                                                                                type: string
-                                                                                format: uuid
-                                                                                pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
-                                                                            title:
-                                                                                type: string
-                                                                            description:
-                                                                                type: string
-                                                                            thumbnail:
-                                                                                type: string
-                                                                            url:
-                                                                                type: string
-                                                                            platform:
-                                                                                anyOf:
-                                                                                    - type: string
-                                                                                    - type: 'null'
-                                                                            platformId:
-                                                                                anyOf:
-                                                                                    - type: string
-                                                                                    - type: 'null'
-                                                                            render:
-                                                                                type: boolean
-                                                                            position:
-                                                                                type: number
-                                                                        required:
-                                                                            - id
-                                                                            - playlistId
-                                                                            - title
-                                                                            - url
-                                                                            - render
-                                                                            - position
-                                                                        additionalProperties: false
                                                                 coverUrl:
                                                                     anyOf:
                                                                         - type: string
@@ -4045,7 +4004,6 @@ paths:
                                                             required:
                                                                 - id
                                                                 - name
-                                                                - videos
                                                                 - coverUrl
                                                                 - numVideos
                                                                 - updatedAt
@@ -4282,47 +4240,6 @@ paths:
                                                                     anyOf:
                                                                         - type: string
                                                                         - type: 'null'
-                                                                videos:
-                                                                    type: array
-                                                                    items:
-                                                                        type: object
-                                                                        properties:
-                                                                            id:
-                                                                                type: string
-                                                                                format: uuid
-                                                                                pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
-                                                                            playlistId:
-                                                                                type: string
-                                                                                format: uuid
-                                                                                pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
-                                                                            title:
-                                                                                type: string
-                                                                            description:
-                                                                                type: string
-                                                                            thumbnail:
-                                                                                type: string
-                                                                            url:
-                                                                                type: string
-                                                                            platform:
-                                                                                anyOf:
-                                                                                    - type: string
-                                                                                    - type: 'null'
-                                                                            platformId:
-                                                                                anyOf:
-                                                                                    - type: string
-                                                                                    - type: 'null'
-                                                                            render:
-                                                                                type: boolean
-                                                                            position:
-                                                                                type: number
-                                                                        required:
-                                                                            - id
-                                                                            - playlistId
-                                                                            - title
-                                                                            - url
-                                                                            - render
-                                                                            - position
-                                                                        additionalProperties: false
                                                                 coverUrl:
                                                                     anyOf:
                                                                         - type: string
@@ -4334,7 +4251,6 @@ paths:
                                                             required:
                                                                 - id
                                                                 - name
-                                                                - videos
                                                                 - coverUrl
                                                                 - numVideos
                                                                 - updatedAt
@@ -4593,47 +4509,6 @@ paths:
                                                                     anyOf:
                                                                         - type: string
                                                                         - type: 'null'
-                                                                videos:
-                                                                    type: array
-                                                                    items:
-                                                                        type: object
-                                                                        properties:
-                                                                            id:
-                                                                                type: string
-                                                                                format: uuid
-                                                                                pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
-                                                                            playlistId:
-                                                                                type: string
-                                                                                format: uuid
-                                                                                pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
-                                                                            title:
-                                                                                type: string
-                                                                            description:
-                                                                                type: string
-                                                                            thumbnail:
-                                                                                type: string
-                                                                            url:
-                                                                                type: string
-                                                                            platform:
-                                                                                anyOf:
-                                                                                    - type: string
-                                                                                    - type: 'null'
-                                                                            platformId:
-                                                                                anyOf:
-                                                                                    - type: string
-                                                                                    - type: 'null'
-                                                                            render:
-                                                                                type: boolean
-                                                                            position:
-                                                                                type: number
-                                                                        required:
-                                                                            - id
-                                                                            - playlistId
-                                                                            - title
-                                                                            - url
-                                                                            - render
-                                                                            - position
-                                                                        additionalProperties: false
                                                                 coverUrl:
                                                                     anyOf:
                                                                         - type: string
@@ -4645,7 +4520,6 @@ paths:
                                                             required:
                                                                 - id
                                                                 - name
-                                                                - videos
                                                                 - coverUrl
                                                                 - numVideos
                                                                 - updatedAt
@@ -5058,47 +4932,6 @@ paths:
                                                         anyOf:
                                                             - type: string
                                                             - type: 'null'
-                                                    videos:
-                                                        type: array
-                                                        items:
-                                                            type: object
-                                                            properties:
-                                                                id:
-                                                                    type: string
-                                                                    format: uuid
-                                                                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
-                                                                playlistId:
-                                                                    type: string
-                                                                    format: uuid
-                                                                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
-                                                                title:
-                                                                    type: string
-                                                                description:
-                                                                    type: string
-                                                                thumbnail:
-                                                                    type: string
-                                                                url:
-                                                                    type: string
-                                                                platform:
-                                                                    anyOf:
-                                                                        - type: string
-                                                                        - type: 'null'
-                                                                platformId:
-                                                                    anyOf:
-                                                                        - type: string
-                                                                        - type: 'null'
-                                                                render:
-                                                                    type: boolean
-                                                                position:
-                                                                    type: number
-                                                            required:
-                                                                - id
-                                                                - playlistId
-                                                                - title
-                                                                - url
-                                                                - render
-                                                                - position
-                                                            additionalProperties: false
                                                     coverUrl:
                                                         anyOf:
                                                             - type: string
@@ -5110,7 +4943,6 @@ paths:
                                                 required:
                                                     - id
                                                     - name
-                                                    - videos
                                                     - coverUrl
                                                     - numVideos
                                                     - updatedAt

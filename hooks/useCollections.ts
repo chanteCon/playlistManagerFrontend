@@ -8,7 +8,7 @@ import {
     editCollection,
     getCollections,
 } from '@/requests/protectedRequests';
-import { GetCollectionsResponse } from '@/types';
+import { GetCollectionResponse, GetCollectionsResponse } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export function useCollections() {
@@ -46,21 +46,49 @@ export function useCollections() {
     const editCollectionMutation = useMutation({
         mutationFn: editCollection,
         onSuccess: (data, variables) => {
+            if (!data) return;
+
+            const collection = data.data.collection;
+
+            // Update collections list
             queryClient.setQueryData<GetCollectionsResponse>(['collections'], (current) => {
-                if (!current || !data) return current;
+                if (!current) return current;
 
                 return {
                     ...current,
                     data: {
                         ...current.data,
-                        collections: current.data.collections.map((collection) =>
-                            collection.id === variables.collectionId
-                                ? data.data.collection
-                                : collection,
+                        collections: current.data.collections.map((currentCollection) =>
+                            currentCollection.id === variables.collectionId
+                                ? {
+                                      ...currentCollection,
+                                      name: collection.name,
+                                      coverUrl: collection.coverUrl,
+                                  }
+                                : currentCollection,
                         ),
                     },
                 };
             });
+
+            queryClient.setQueryData<GetCollectionResponse>(
+                ['collection', collection.id],
+                (current) => {
+                    if (!current) return current;
+
+                    return {
+                        ...current,
+                        data: {
+                            ...current.data,
+                            collection: {
+                                ...current.data.collection,
+                                name: collection.name,
+                                coverUrl: collection.coverUrl,
+                            },
+                        },
+                    };
+                },
+            );
         },
         onError: (error, variables) => {
             if (hasErrorStatus(error, 404)) {
@@ -99,6 +127,9 @@ export function useCollections() {
                         ),
                     },
                 };
+            });
+            queryClient.removeQueries({
+                queryKey: ['collection', collectionId],
             });
         },
         onError: (error, collectionId) => {

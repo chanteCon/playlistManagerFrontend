@@ -14,6 +14,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 export function usePlaylist(id: string) {
     const queryClient = useQueryClient();
 
+    const { isAuthPending } = useAuth();
+
     const updatePlaylistVideoCount = (playlistId: string, change: 1 | -1) => {
         queryClient.setQueryData<GetPlaylistsResponse>(['playlists'], (current) => {
             if (!current) return current;
@@ -55,8 +57,6 @@ export function usePlaylist(id: string) {
         });
         updatePlaylistVideoCount(playlistId, -1);
     };
-
-    const { isAuthPending } = useAuth();
 
     const { data, isLoading, error } = useQuery({
         queryKey: ['playlist', id],
