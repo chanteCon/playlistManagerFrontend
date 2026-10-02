@@ -38,7 +38,7 @@ export default function VideoGrid({
             ) : (
                 <>
                     {playlist?.videos?.length === 0 && (
-                        <p className="mt-2 text-sm text-muted-foreground">
+                        <p className="mt-2 text-sm text-muted-foreground mb-10">
                             No videos in this playlist yet.
                         </p>
                     )}

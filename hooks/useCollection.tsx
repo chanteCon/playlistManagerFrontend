@@ -1,6 +1,12 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
+import {
+    hasErrorStatus,
+    isHandledError,
+    removeCollectionFromCache,
+    removePlaylistFromCache,
+} from '@/lib/utils';
 
 import {
     addPlaylistToCollection,
@@ -23,7 +29,17 @@ export function useCollection({ id }: UseCollectionParams) {
 
     const { data, isLoading, error } = useQuery({
         queryKey: ['collection', id],
-        queryFn: () => getCollection({ id }),
+        queryFn: async () => {
+            try {
+                return await getCollection({ id });
+            } catch (error) {
+                if (hasErrorStatus(error, 404)) {
+                    //    TODO handle 404
+                }
+
+                throw error;
+            }
+        },
         enabled: !isAuthPending,
         retry: false,
         staleTime: 5 * 60 * 1000,
@@ -79,6 +95,23 @@ export function useCollection({ id }: UseCollectionParams) {
 
             updateCollectionCount(1);
         },
+        onError: (error, variables) => {
+            if (hasErrorStatus(error, 404)) {
+                if (error.fieldErrors['playlist']) {
+                    removePlaylistFromCache(queryClient, variables.playlistId);
+                }
+                if (error.fieldErrors['collection']) {
+                    removeCollectionFromCache(queryClient, variables.collectionId);
+                }
+            }
+        },
+        throwOnError: (error) => {
+            if (hasErrorStatus(error, 404)) {
+                return !error.fieldErrors['playlist'];
+            }
+
+            return !isHandledError(error, [400, 409]);
+        },
     });
 
     const deletePlaylistMutation = useMutation({
@@ -111,7 +144,7 @@ export function useCollection({ id }: UseCollectionParams) {
     });
 
     return {
-        data,
+        collection: data?.data.collection,
         isLoading,
         error,
         addPlaylistMutation,

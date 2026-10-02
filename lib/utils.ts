@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge';
 import { RequestError } from './apiRequest';
 import type { paths } from '@/api/schema';
 import type { QueryClient } from '@tanstack/react-query';
-import { EditInput } from '@/types';
+import { EditInput, GetCollectionsResponse } from '@/types';
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -74,6 +74,10 @@ export const removePlaylistFromCache = (queryClient: QueryClient, playlistId: st
             },
         };
     });
+
+    queryClient.removeQueries({
+        queryKey: ['playlist', playlistId],
+    });
 };
 
 export const buildPlaylistUpdates = (data: EditInput) => ({
@@ -93,3 +97,23 @@ export function mapPlaylistFieldErrors(
 
     return errors;
 }
+
+export const removeCollectionFromCache = (queryClient: QueryClient, collectionId: string) => {
+    queryClient.setQueryData<GetCollectionsResponse>(['collections'], (current) => {
+        if (!current) return current;
+
+        return {
+            ...current,
+            data: {
+                ...current.data,
+                collections: current.data.collections.filter(
+                    (collection) => collection.id !== collectionId,
+                ),
+            },
+        };
+    });
+
+    queryClient.removeQueries({
+        queryKey: ['collection', collectionId],
+    });
+};

@@ -64,6 +64,7 @@ export function useCollections() {
                                       ...currentCollection,
                                       name: collection.name,
                                       coverUrl: collection.coverUrl,
+                                      updatedAt: collection.updatedAt,
                                   }
                                 : currentCollection,
                         ),

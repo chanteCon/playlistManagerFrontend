@@ -82,6 +82,7 @@ export function usePlaylists() {
                                       name: playlist.name,
                                       description: playlist.description,
                                       coverUrl: playlist.coverUrl,
+                                      updatedAt: playlist.updatedAt,
                                   }
                                 : currentPlaylist,
                         ),
@@ -102,6 +103,7 @@ export function usePlaylists() {
                             description: playlist.description,
                             coverUrl: playlist.coverUrl,
                             numVideos: playlist.numVideos,
+                            updatedAt: playlist.updatedAt,
                         },
                     },
                 };

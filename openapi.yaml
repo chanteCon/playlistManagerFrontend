@@ -1803,6 +1803,7 @@ paths:
                                         description: null
                                         coverUrl: null
                                         numVideos: 10
+                                        updatedAt: 2026-01-01T00:00:00.000Z
                                 message: null
                             schema:
                                 type: object
@@ -1841,6 +1842,8 @@ paths:
                                                             - type: 'null'
                                                     numVideos:
                                                         type: number
+                                                    updatedAt:
+                                                        type: string
                                                 required:
                                                     - id
                                                     - userId
@@ -1848,6 +1851,7 @@ paths:
                                                     - description
                                                     - coverUrl
                                                     - numVideos
+                                                    - updatedAt
                                                 additionalProperties: false
                                         required:
                                             - playlist
@@ -1998,6 +2002,7 @@ paths:
                                           description: null
                                           coverUrl: null
                                           numVideos: 10
+                                          updatedAt: 2026-01-01T00:00:00.000Z
                                 message: null
                             schema:
                                 type: object
@@ -2038,6 +2043,8 @@ paths:
                                                                 - type: 'null'
                                                         numVideos:
                                                             type: number
+                                                        updatedAt:
+                                                            type: string
                                                     required:
                                                         - id
                                                         - userId
@@ -2045,6 +2052,7 @@ paths:
                                                         - description
                                                         - coverUrl
                                                         - numVideos
+                                                        - updatedAt
                                                     additionalProperties: false
                                         required:
                                             - playlists
@@ -2125,6 +2133,7 @@ paths:
                                         description: My playlist description
                                         coverUrl: null
                                         numVideos: 10
+                                        updatedAt: 2026-01-01T00:00:00.000Z
                                         videos:
                                             - id: 00000000-0000-0000-0000-000000000000
                                               title: Test Video
@@ -2401,6 +2410,7 @@ paths:
                                         description: Updated description
                                         coverUrl: example.image.com
                                         numVideos: 10
+                                        updatedAt: 2026-01-01T00:00:00.000Z
                                 message: null
                             schema:
                                 type: object
@@ -2439,6 +2449,8 @@ paths:
                                                             - type: 'null'
                                                     numVideos:
                                                         type: number
+                                                    updatedAt:
+                                                        type: string
                                                 required:
                                                     - id
                                                     - userId
@@ -2446,6 +2458,7 @@ paths:
                                                     - description
                                                     - coverUrl
                                                     - numVideos
+                                                    - updatedAt
                                                 additionalProperties: false
                                         required:
                                             - playlist

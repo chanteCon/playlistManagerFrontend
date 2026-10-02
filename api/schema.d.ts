@@ -1814,7 +1814,8 @@ export interface paths {
                          *             "name": "Playlist 1",
                          *             "description": null,
                          *             "coverUrl": null,
-                         *             "numVideos": 10
+                         *             "numVideos": 10,
+                         *             "updatedAt": "2026-01-01T00:00:00.000Z"
                          *           }
                          *         ]
                          *       },
@@ -1836,6 +1837,7 @@ export interface paths {
                                     description: string | null;
                                     coverUrl: string | null;
                                     numVideos: number;
+                                    updatedAt: string;
                                 }[];
                             };
                         };
@@ -1924,7 +1926,8 @@ export interface paths {
                          *           "name": "My Playlist",
                          *           "description": null,
                          *           "coverUrl": null,
-                         *           "numVideos": 10
+                         *           "numVideos": 10,
+                         *           "updatedAt": "2026-01-01T00:00:00.000Z"
                          *         }
                          *       },
                          *       "message": null
@@ -1945,6 +1948,7 @@ export interface paths {
                                     description: string | null;
                                     coverUrl: string | null;
                                     numVideos: number;
+                                    updatedAt: string;
                                 };
                             };
                         };
@@ -2104,6 +2108,7 @@ export interface paths {
                          *           "description": "My playlist description",
                          *           "coverUrl": null,
                          *           "numVideos": 10,
+                         *           "updatedAt": "2026-01-01T00:00:00.000Z",
                          *           "videos": [
                          *             {
                          *               "id": "00000000-0000-0000-0000-000000000000",
@@ -2443,7 +2448,8 @@ export interface paths {
                          *           "name": "Updated Playlist",
                          *           "description": "Updated description",
                          *           "coverUrl": "example.image.com",
-                         *           "numVideos": 10
+                         *           "numVideos": 10,
+                         *           "updatedAt": "2026-01-01T00:00:00.000Z"
                          *         }
                          *       },
                          *       "message": null
@@ -2464,6 +2470,7 @@ export interface paths {
                                     description: string | null;
                                     coverUrl: string | null;
                                     numVideos: number;
+                                    updatedAt: string;
                                 };
                             };
                         };

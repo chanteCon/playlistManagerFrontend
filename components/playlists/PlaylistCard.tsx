@@ -1,4 +1,3 @@
-import { PlaylistSummary } from '@/types';
 import { Card } from '../ui/card';
 import { LucideIcon } from 'lucide-react';
 import Link from 'next/link';
@@ -7,13 +6,19 @@ import Image from 'next/image';
 
 type PlaylistCardProps = {
     PlaylistIcon: LucideIcon;
-    playlist: PlaylistSummary;
+    playlist: {
+        id: string;
+        name: string;
+        description?: string | null;
+        coverUrl: string | null;
+        numVideos: number;
+    };
     children: React.ReactNode;
 };
 export function PlaylistCard({ PlaylistIcon, playlist, children }: PlaylistCardProps) {
     const [imageError, setImageError] = useState(false);
     return (
-        <Card className="group relative h-[220px] w-[220px] overflow-hidden rounded-sm border bg-card p-0 transition-shadow hover:shadow-sm">
+        <Card className="group relative h-[200px] w-full max-w-[200px] overflow-hidden rounded-sm border bg-card p-0 transition-shadow hover:shadow-sm">
             <Link href={`/playlist/${playlist.id}`} className="flex flex-1 flex-col">
                 <div className="relative flex flex-1 items-center justify-center border-b">
                     {playlist.coverUrl && !imageError ? (

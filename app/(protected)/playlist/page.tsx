@@ -22,27 +22,21 @@ import {
     mapPlaylistFieldErrors,
 } from '@/lib/utils';
 import { uuidSchema } from '@/schemas/common';
-
-function CreatePlaylistSection({ onOpen }: { onOpen: () => void }) {
-    return (
-        <section className="mb-10">
-            <h2 className="mb-4 text-lg font-semibold">Create a playlist</h2>
-
-            <AddCard setDialogOpen={onOpen} message="New Playlist" />
-        </section>
-    );
-}
+import { Plus } from 'lucide-react';
+import { Card } from '@/components/ui/card';
 
 function PlaylistSection({
     isLoading,
     playlists,
     onEdit,
     onDelete,
+    onCreate,
 }: {
     isLoading: boolean;
     playlists: PlaylistSummary[];
     onEdit: (playlist: PlaylistSummary) => void;
     onDelete: (playlistId: string) => void;
+    onCreate: () => void;
 }) {
     if (isLoading) {
         return <PlaylistGridSkeleton />;
@@ -50,13 +44,30 @@ function PlaylistSection({
 
     if (playlists.length === 0) {
         return (
-            <p className="text-muted-foreground">
-                No playlists yet. Create a playlist to start adding videos.
-            </p>
+            <section className="w-full ">
+                <h2 className="mb-6 text-lg font-semibold">Your playlists</h2>
+                <button onClick={onCreate} className="w-full cursor-pointer hover:text-primary">
+                    <div className="flex min-h-[240px] flex-col items-center justify-center rounded-lg border border-dashed bg-muted/20 px-6 py-10 text-center">
+                        <Plus />
+                        <p className="mt-4 max-w-sm text-sm text-muted-foreground">
+                            Create a playlist to start organising videos.
+                        </p>
+                    </div>
+                </button>
+            </section>
         );
     }
 
-    return <PlaylistGrid playlists={playlists} onEdit={onEdit} onDelete={onDelete} />;
+    return (
+        <Card className="min-h-0 flex-1 p-6">
+            <PlaylistGrid
+                playlists={playlists}
+                onEdit={onEdit}
+                onDelete={onDelete}
+                onCreate={onCreate}
+            />
+        </Card>
+    );
 }
 
 export default function Dashboard() {
@@ -162,14 +173,8 @@ export default function Dashboard() {
     }
 
     return (
-        <div className="mx-auto flex w-full max-w-6xl flex-col px-6 py-10">
-            <CreatePlaylistSection
-                onOpen={() => {
-                    setIsAddPlaylistOpen(true);
-                    setServerErrors({});
-                }}
-            />
-
+        <div className="mx-auto flex min-h-[calc(100dvh-4rem)] w-full max-w-6xl flex-col px-6 py-8">
+            <h2 className="mb-4 text-lg font-semibold">Your playlists</h2>
             <PlaylistSection
                 isLoading={isLoading}
                 playlists={playlists}
@@ -178,6 +183,7 @@ export default function Dashboard() {
                     setPlaylistToEdit(playlist);
                 }}
                 onDelete={setPlaylistToDelete}
+                onCreate={() => setIsAddPlaylistOpen(true)}
             />
 
             <CreatePlaylistDialog

@@ -1,11 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 
-import AddCard from '@/components/common/AddCard';
 import { CreatePlaylistDialog } from '@/components/playlists/CreatePlaylistDialog';
-import { PlaylistCard } from '@/components/playlists/PlaylistCard';
 
 import { useCollections } from '@/hooks/useCollections';
 import { usePlaylists } from '@/hooks/usePlaylists';
@@ -13,144 +10,27 @@ import { useServerErrors } from '@/hooks/useServerErrors';
 
 import { isHandledError } from '@/lib/utils';
 
-import { Folder, Music } from 'lucide-react';
-
-import { CollectionSummary, PlaylistSummary } from '@/types';
-
-function PlaylistSection({
-    isLoading,
-    playlists,
-    onCreate,
-}: {
-    isLoading: boolean;
-    playlists: PlaylistSummary[];
-    onCreate: () => void;
-}) {
-    const router = useRouter();
-
-    if (isLoading) {
-        return null;
-    }
-
-    if (playlists.length === 0) {
-        return (
-            <section className="mb-12">
-                <div className="mb-4">
-                    <h2 className="text-lg font-semibold">Playlists</h2>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                        Organise your favourite videos into playlists.
-                    </p>
-                </div>
-
-                <AddCard setDialogOpen={onCreate} message="Create your first playlist" />
-            </section>
-        );
-    }
-
-    return (
-        <section className="mb-12">
-            <div className="mb-5 flex items-end justify-between">
-                <div>
-                    <h2 className="text-lg font-semibold">Recent playlists</h2>
-                    <p className="mt-1 text-sm text-muted-foreground">Your latest playlists.</p>
-                </div>
-
-                <button
-                    type="button"
-                    className="text-sm font-medium hover:underline"
-                    onClick={() => router.push('/playlist')}
-                >
-                    See all
-                </button>
-            </div>
-
-            <div className="flex gap-4 overflow-hidden">
-                {playlists.slice(0, 5).map((playlist) => (
-                    <div key={playlist.id} className="w-[220px] shrink-0">
-                        <PlaylistCard playlist={playlist} PlaylistIcon={Music}>
-                            <p />
-                        </PlaylistCard>
-                    </div>
-                ))}
-
-                <div className="w-[220px] shrink-0">
-                    <AddCard setDialogOpen={onCreate} message="New Playlist" />
-                </div>
-            </div>
-        </section>
-    );
-}
-
-function CollectionSection({
-    isLoading,
-    collections,
-    onCreate,
-}: {
-    isLoading: boolean;
-    collections: CollectionSummary[];
-    onCreate: () => void;
-}) {
-    if (isLoading) {
-        return null;
-    }
-
-    if (collections.length === 0) {
-        return (
-            <section className="mb-12">
-                <div className="mb-4">
-                    <h2 className="text-lg font-semibold">Collections</h2>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                        Group your playlists together.
-                    </p>
-                </div>
-
-                <AddCard setDialogOpen={onCreate} message="Create your first collection" />
-            </section>
-        );
-    }
-
-    return (
-        <section className="mb-12">
-            <div className="mb-5 flex items-end justify-between">
-                <div>
-                    <h2 className="text-lg font-semibold">Recent collections</h2>
-                    <p className="mt-1 text-sm text-muted-foreground">Your latest collections.</p>
-                </div>
-
-                <button
-                    type="button"
-                    className="text-sm font-medium hover:underline"
-                    onClick={() => {}}
-                >
-                    See all
-                </button>
-            </div>
-
-            <div className="flex gap-4 overflow-hidden">
-                {collections.slice(0, 5).map((collection) => (
-                    <div
-                        key={collection.id}
-                        className="flex h-[220px] w-[220px] shrink-0 flex-col items-center justify-center rounded-lg border"
-                    >
-                        <Folder className="mb-4 h-10 w-10" />
-                        <p className="font-medium">{collection.name}</p>
-                    </div>
-                ))}
-
-                <div className="w-[220px] shrink-0">
-                    <AddCard setDialogOpen={onCreate} message="New Collection" />
-                </div>
-            </div>
-        </section>
-    );
-}
+import { CreateCollectionDialog } from '@/components/collections/CreateCollctionDialog';
+import PlaylistPreviewSection from '@/components/dashboard/PlaylistSection';
+import CollectionsPreviewSection from '@/components/dashboard/CollectionsPreviewSection';
 
 export default function Dashboard() {
     const { playlists, isLoading: playlistsLoading, createPlaylistMutation } = usePlaylists();
 
-    const { collections, isLoading: collectionsLoading } = useCollections();
+    const {
+        collections,
+        isLoading: collectionsLoading,
+        createCollectionMutation,
+    } = useCollections();
+
+    const sortedPlaylists = [...playlists].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+
+    const sortedCollections = [...collections].sort((a, b) =>
+        b.updatedAt.localeCompare(a.updatedAt),
+    );
 
     const [isAddPlaylistOpen, setIsAddPlaylistOpen] = useState(false);
+    const [isAddCollectionOpen, setIsAddCollectionOpen] = useState(false);
 
     const {
         errors: serverErrors,
@@ -176,25 +56,46 @@ export default function Dashboard() {
         });
     };
 
+    const handleCreateCollection = (data: { name: string }) => {
+        createCollectionMutation.mutate(data, {
+            onSuccess: () => {
+                setIsAddCollectionOpen(false);
+            },
+            onError: (error) => {
+                if (isHandledError(error, [400, 409])) {
+                    setServerErrors(error.fieldErrors);
+                }
+            },
+        });
+    };
+
     return (
         <div className="mx-auto flex w-full max-w-6xl flex-col px-6 py-10">
-            <PlaylistSection
+            <div className="border-b pb-5">
+                <h1 className="text-2xl font-semibold tracking-tight">Your library</h1>
+                <p className="mt-1 text-sm text-muted-foreground">
+                    Your playlists and collections to organise cross platform videos.
+                </p>
+            </div>
+            <PlaylistPreviewSection
                 isLoading={playlistsLoading}
-                playlists={playlists}
+                playlists={sortedPlaylists}
                 onCreate={() => {
                     setIsAddPlaylistOpen(true);
                     setServerErrors({});
                 }}
             />
 
-            {playlists && playlists.length > 0 && (
-                <CollectionSection
+            {((playlists && playlists.length > 0) || collections.length > 0) && (
+                <CollectionsPreviewSection
                     isLoading={collectionsLoading}
-                    collections={collections}
-                    onCreate={() => {}}
+                    collections={sortedCollections}
+                    onCreate={() => {
+                        setIsAddCollectionOpen(true);
+                        setServerErrors({});
+                    }}
                 />
             )}
-
             <CreatePlaylistDialog
                 isOpen={isAddPlaylistOpen}
                 onOpenChange={setIsAddPlaylistOpen}
@@ -204,6 +105,16 @@ export default function Dashboard() {
                 }}
                 isPending={createPlaylistMutation.isPending}
                 onSubmit={handleCreatePlaylist}
+            />
+            <CreateCollectionDialog
+                isOpen={isAddCollectionOpen}
+                onOpenChange={setIsAddCollectionOpen}
+                serverErrorState={{
+                    errors: serverErrors,
+                    clearError: clearServerErrors,
+                }}
+                isPending={createCollectionMutation.isPending}
+                onSubmit={handleCreateCollection}
             />
         </div>
     );
