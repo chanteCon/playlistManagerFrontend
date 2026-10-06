@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge';
 import { RequestError } from './apiRequest';
 import type { paths } from '@/api/schema';
 import type { QueryClient } from '@tanstack/react-query';
-import { EditInput, GetCollectionResponse, GetCollectionsResponse } from '@/types';
+import { EditInput, GetCollectionsResponse } from '@/types';
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));

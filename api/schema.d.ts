@@ -1949,6 +1949,7 @@ export interface paths {
                                     coverUrl: string | null;
                                     numVideos: number;
                                     updatedAt: string;
+                                    collections: string[];
                                 };
                             };
                         };
@@ -2109,6 +2110,11 @@ export interface paths {
                          *           "coverUrl": null,
                          *           "numVideos": 10,
                          *           "updatedAt": "2026-01-01T00:00:00.000Z",
+                         *           "collections": [
+                         *             "00000000-0000-0000-0000-000000000000",
+                         *             "00000000-0000-0000-0000-000000000000",
+                         *             "00000000-0000-0000-0000-000000000000"
+                         *           ],
                          *           "videos": [
                          *             {
                          *               "id": "00000000-0000-0000-0000-000000000000",
@@ -2471,6 +2477,7 @@ export interface paths {
                                     coverUrl: string | null;
                                     numVideos: number;
                                     updatedAt: string;
+                                    collections: string[];
                                 };
                             };
                         };

@@ -6,9 +6,10 @@ import { useState } from 'react';
 
 import { Playlist } from '@/types';
 import SortableVideoCard from './SortableVideoCard';
-import { Check, X } from 'lucide-react';
+import { Check, Loader, X } from 'lucide-react';
 import { Button } from '../ui/button';
 import { usePlaylist } from '@/hooks/usePlaylist';
+import { toast } from 'sonner';
 
 export default function SortableVideoGrid({
     playlist,
@@ -51,6 +52,7 @@ export default function SortableVideoGrid({
             {
                 onSuccess: () => {
                     handleSave();
+                    toast('Video order saved!');
                 },
             },
         );
@@ -67,7 +69,7 @@ export default function SortableVideoGrid({
                         size="icon"
                         aria-label="Save order"
                     >
-                        <Check />
+                        {updatePositionsMutation.isPending ? <Loader /> : <Check />}
                     </Button>
 
                     <Button

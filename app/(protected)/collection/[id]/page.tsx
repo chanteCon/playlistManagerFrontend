@@ -4,7 +4,7 @@ import { use, useState } from 'react';
 
 import { useCollection } from '@/hooks/useCollection';
 import { PlaylistCard } from '@/components/playlists/PlaylistCard';
-import { Music, Plus, Trash, X } from 'lucide-react';
+import { Music, Plus, Trash } from 'lucide-react';
 import AddCard from '@/components/common/AddCard';
 import { usePlaylists } from '@/hooks/usePlaylists';
 import { hasErrorStatus, isHandledError, markCollectionOpened } from '@/lib/utils';

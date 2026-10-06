@@ -34,7 +34,7 @@ export default function SearchBar({ className }: { className?: string }) {
     const playlists = data?.data.playlists ?? [];
     const videos = data?.data.videos ?? [];
     const collections = data?.data.collections ?? [];
-    const hasResults = playlists.length > 0 || videos.length > 0;
+    const hasResults = playlists.length > 0 || videos.length > 0 || collections.length > 0;
     const handleResultClick = (path: string) => {
         setSearch('');
         setDebouncedSearch('');
@@ -112,7 +112,9 @@ export default function SearchBar({ className }: { className?: string }) {
                                             key={collection.id}
                                             type="button"
                                             className="flex w-full cursor-pointer items-center rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent"
-                                            onClick={() => handleResultClick(`/`)}
+                                            onClick={() =>
+                                                handleResultClick(`/collection/${collection.id}`)
+                                            }
                                         >
                                             {collection.name}
                                         </button>

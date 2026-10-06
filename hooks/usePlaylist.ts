@@ -18,12 +18,10 @@ export function usePlaylist(id: string) {
     const { isAuthPending } = useAuth();
 
     const invalidatePlaylist = (playlistId: string) => {
+        queryClient.invalidateQueries({ queryKey: ['playlist', playlistId] });
+        queryClient.invalidateQueries({ queryKey: ['playlists'] });
         queryClient.invalidateQueries({
-            queryKey: ['playlist', playlistId],
-        });
-
-        queryClient.invalidateQueries({
-            queryKey: ['playlists'],
+            queryKey: ['collection'],
         });
     };
 

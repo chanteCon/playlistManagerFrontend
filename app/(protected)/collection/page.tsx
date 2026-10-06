@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { CollectionSummary } from '@/types';
 import { CreateCollectionDialog } from '@/components/collections/CreateCollctionDialog';
-import AddCard from '@/components/common/AddCard';
 import { DeleteDialog } from '@/components/common/DeleteDialog';
 import { ErrorDialog } from '@/components/common/ErrorDialog';
 import { useCollections } from '@/hooks/useCollections';

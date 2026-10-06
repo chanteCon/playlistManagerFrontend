@@ -8,10 +8,7 @@ info:
             It provides authentication, playlist management, and video integration features.
             Requests are rate limited .
 servers:
-    - url: http://localhost:4000
-      description: Local development server
-    - url: https://playlist.api.chantellecs.com
-      description: Deployed server
+    - url: playlist.api.chantellecs.com
 paths:
     /api/auth/register:
         post:
@@ -1844,6 +1841,10 @@ paths:
                                                         type: number
                                                     updatedAt:
                                                         type: string
+                                                    collections:
+                                                        type: array
+                                                        items:
+                                                            type: string
                                                 required:
                                                     - id
                                                     - userId
@@ -1852,6 +1853,7 @@ paths:
                                                     - coverUrl
                                                     - numVideos
                                                     - updatedAt
+                                                    - collections
                                                 additionalProperties: false
                                         required:
                                             - playlist
@@ -2134,6 +2136,10 @@ paths:
                                         coverUrl: null
                                         numVideos: 10
                                         updatedAt: 2026-01-01T00:00:00.000Z
+                                        collections:
+                                            - 00000000-0000-0000-0000-000000000000
+                                            - 00000000-0000-0000-0000-000000000000
+                                            - 00000000-0000-0000-0000-000000000000
                                         videos:
                                             - id: 00000000-0000-0000-0000-000000000000
                                               title: Test Video
@@ -2451,6 +2457,10 @@ paths:
                                                         type: number
                                                     updatedAt:
                                                         type: string
+                                                    collections:
+                                                        type: array
+                                                        items:
+                                                            type: string
                                                 required:
                                                     - id
                                                     - userId
@@ -2459,6 +2469,7 @@ paths:
                                                     - coverUrl
                                                     - numVideos
                                                     - updatedAt
+                                                    - collections
                                                 additionalProperties: false
                                         required:
                                             - playlist

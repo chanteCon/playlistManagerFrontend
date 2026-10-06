@@ -55,6 +55,8 @@ export function usePlaylists() {
             queryClient.invalidateQueries({
                 queryKey: ['playlists'],
             });
+
+            queryClient.invalidateQueries({ queryKey: ['collection'] });
         },
     });
 
@@ -69,6 +71,7 @@ export function usePlaylists() {
             queryClient.invalidateQueries({
                 queryKey: ['playlist', playlistId],
             });
+            queryClient.invalidateQueries({ queryKey: ['collection'] });
         },
 
         onError: (error, { playlistId }) => {

@@ -45,7 +45,7 @@ export default function VideoGrid({
                         </p>
                     )}
 
-                    {editingOrder && playlist ? (
+                    {editingOrder && playlist && playlist?.videos?.length > 0 ? (
                         <SortableVideoGrid
                             playlist={playlist}
                             handleSave={handleSave}
