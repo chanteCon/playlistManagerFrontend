@@ -10,7 +10,7 @@ import { EditDialog } from '@/components/common/EditDialogue';
 import { EditInput, Video } from '@/types';
 import { DeleteDialog } from '@/components/common/DeleteDialog';
 import { useServerErrors } from '@/hooks/useServerErrors';
-import { hasErrorStatus, isHandledError } from '@/lib/utils';
+import { hasErrorStatus, isHandledError, markPlaylistOpened } from '@/lib/utils';
 import { notFound } from 'next/navigation';
 import { uuidSchema } from '@/schemas/common';
 import { ErrorDialog } from '@/components/common/ErrorDialog';
@@ -36,6 +36,8 @@ export default function Playlist({ params }: PageProps) {
 
     const { playlist, isLoading, addVideoMutation, editVideoMutation, deleteVideoMutation } =
         usePlaylist(id);
+    markPlaylistOpened(id);
+
     const { editPlaylistMutation } = usePlaylists();
     const [isAddVideoOpen, setIsAddVideoOpen] = useState(false);
     const [videoToDelete, setVideoToDelete] = useState<string | null>(null);

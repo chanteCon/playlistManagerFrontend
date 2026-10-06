@@ -8,7 +8,7 @@ import { useCollections } from '@/hooks/useCollections';
 import { usePlaylists } from '@/hooks/usePlaylists';
 import { useServerErrors } from '@/hooks/useServerErrors';
 
-import { isHandledError } from '@/lib/utils';
+import { isHandledError, sortByRecentActivity } from '@/lib/utils';
 
 import { CreateCollectionDialog } from '@/components/collections/CreateCollctionDialog';
 import PlaylistPreviewSection from '@/components/dashboard/PlaylistSection';
@@ -23,11 +23,9 @@ export default function Dashboard() {
         createCollectionMutation,
     } = useCollections();
 
-    const sortedPlaylists = [...playlists].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+    const sortedPlaylists = sortByRecentActivity(playlists, 'playlist-last-opened');
 
-    const sortedCollections = [...collections].sort((a, b) =>
-        b.updatedAt.localeCompare(a.updatedAt),
-    );
+    const sortedCollections = sortByRecentActivity(collections, 'collection-last-opened');
 
     const [isAddPlaylistOpen, setIsAddPlaylistOpen] = useState(false);
     const [isAddCollectionOpen, setIsAddCollectionOpen] = useState(false);

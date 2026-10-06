@@ -117,3 +117,62 @@ export const removeCollectionFromCache = (queryClient: QueryClient, collectionId
         queryKey: ['collection', collectionId],
     });
 };
+
+const PLAYLIST_LAST_OPENED_KEY = 'playlist-last-opened';
+const COLLECTION_LAST_OPENED_KEY = 'collection-last-opened';
+
+type LastOpenedMap = Record<string, string>;
+
+function getLastOpened(key: string): LastOpenedMap {
+    try {
+        return JSON.parse(localStorage.getItem(key) ?? '{}');
+    } catch {
+        return {};
+    }
+}
+
+export function markPlaylistOpened(id: string) {
+    const opened = getLastOpened(PLAYLIST_LAST_OPENED_KEY);
+
+    localStorage.setItem(
+        PLAYLIST_LAST_OPENED_KEY,
+        JSON.stringify({
+            ...opened,
+            [id]: new Date().toISOString(),
+        }),
+    );
+}
+
+export function markCollectionOpened(id: string) {
+    const opened = getLastOpened(COLLECTION_LAST_OPENED_KEY);
+
+    localStorage.setItem(
+        COLLECTION_LAST_OPENED_KEY,
+        JSON.stringify({
+            ...opened,
+            [id]: new Date().toISOString(),
+        }),
+    );
+}
+
+export function sortByRecentActivity<T extends { id: string; updatedAt: string }>(
+    items: T[],
+    storageKey: string,
+) {
+    const lastOpened = getLastOpened(storageKey);
+
+    return [...items].sort((a, b) => {
+        const aOpened = lastOpened[a.id];
+        const bOpened = lastOpened[b.id];
+
+        if (aOpened && bOpened) {
+            return bOpened.localeCompare(aOpened);
+        }
+
+        if (aOpened) return -1;
+
+        if (bOpened) return 1;
+
+        return b.updatedAt.localeCompare(a.updatedAt);
+    });
+}
