@@ -19,7 +19,6 @@ import VideoGrid from '@/components/videos/VideoGrid';
 import { PlaylistHeaderSkeleton } from '@/components/skeletons/PlaylistHeaderSkeleton';
 import { usePlaylists } from '@/hooks/usePlaylists';
 import { toast } from 'sonner';
-import ToolTipButton from '@/components/common/ToolTipButton';
 import { ArrowDownUp } from 'lucide-react';
 
 type PageProps = {
@@ -185,18 +184,15 @@ export default function Playlist({ params }: PageProps) {
                         </div>
                     )}
                     {!editingPlaylist && !editingVideoOrder && (
-                        <ToolTipButton
-                            button={
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="icon"
-                                    onClick={() => setEditingVideoOrder(true)}
-                                />
-                            }
-                            content="Re-order videos"
-                            icon={<ArrowDownUp />}
-                        />
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            aria-label="Re-order videos"
+                            onClick={() => setEditingVideoOrder(true)}
+                        >
+                            <ArrowDownUp />
+                        </Button>
                     )}
                 </div>
 
@@ -216,6 +212,7 @@ export default function Playlist({ params }: PageProps) {
                     coverPending={editPlaylistMutation.isPending}
                     editingOrder={editingVideoOrder}
                     handleSave={() => setEditingVideoOrder(false)}
+                    handleCancel={() => setEditingVideoOrder(false)}
                 />
             </section>
             <AddVideoDialog

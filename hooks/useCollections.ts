@@ -1,19 +1,28 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { hasErrorStatus, isHandledError } from '@/lib/utils';
+import { hasErrorStatus, isHandledError, removeCollectionFromCache } from '@/lib/utils';
 import {
     createCollection,
     deleteCollection,
     editCollection,
     getCollections,
 } from '@/requests/protectedRequests';
-import { GetCollectionResponse, GetCollectionsResponse } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export function useCollections() {
     const queryClient = useQueryClient();
     const { isAuthPending } = useAuth();
+
+    const invalidateCollection = (collectionId: string) => {
+        queryClient.invalidateQueries({
+            queryKey: ['collections'],
+        });
+
+        queryClient.invalidateQueries({
+            queryKey: ['collection', collectionId],
+        });
+    };
 
     const { data, isLoading, error } = useQuery({
         queryKey: ['collections'],
@@ -25,19 +34,13 @@ export function useCollections() {
 
     const createCollectionMutation = useMutation({
         mutationFn: createCollection,
-        onSuccess: (data) => {
-            queryClient.setQueryData<GetCollectionsResponse>(['collections'], (current) => {
-                if (!current || !data) return current;
 
-                return {
-                    ...current,
-                    data: {
-                        ...current.data,
-                        collections: [...current.data.collections, data.data.collection],
-                    },
-                };
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['collections'],
             });
         },
+
         throwOnError: (error) => {
             return !isHandledError(error, [400, 409]);
         },
@@ -45,69 +48,21 @@ export function useCollections() {
 
     const editCollectionMutation = useMutation({
         mutationFn: editCollection,
-        onSuccess: (data, variables) => {
-            if (!data) return;
 
-            const collection = data.data.collection;
-
-            // Update collections list
-            queryClient.setQueryData<GetCollectionsResponse>(['collections'], (current) => {
-                if (!current) return current;
-
-                return {
-                    ...current,
-                    data: {
-                        ...current.data,
-                        collections: current.data.collections.map((currentCollection) =>
-                            currentCollection.id === variables.collectionId
-                                ? {
-                                      ...currentCollection,
-                                      name: collection.name,
-                                      coverUrl: collection.coverUrl,
-                                      updatedAt: collection.updatedAt,
-                                  }
-                                : currentCollection,
-                        ),
-                    },
-                };
-            });
-
-            queryClient.setQueryData<GetCollectionResponse>(
-                ['collection', collection.id],
-                (current) => {
-                    if (!current) return current;
-
-                    return {
-                        ...current,
-                        data: {
-                            ...current.data,
-                            collection: {
-                                ...current.data.collection,
-                                name: collection.name,
-                                coverUrl: collection.coverUrl,
-                            },
-                        },
-                    };
-                },
-            );
+        onSuccess: (_, variables) => {
+            invalidateCollection(variables.collectionId);
         },
+
         onError: (error, variables) => {
             if (hasErrorStatus(error, 404)) {
-                queryClient.setQueryData<GetCollectionsResponse>(['collections'], (current) => {
-                    if (!current) return current;
-
-                    return {
-                        ...current,
-                        data: {
-                            ...current.data,
-                            collections: current.data.collections.filter(
-                                (collection) => collection.id !== variables.collectionId,
-                            ),
-                        },
-                    };
+                queryClient.removeQueries({
+                    queryKey: ['collection', variables.collectionId],
                 });
+
+                removeCollectionFromCache(queryClient, variables.collectionId);
             }
         },
+
         throwOnError: (error) => {
             return !isHandledError(error, [400, 404, 409]);
         },
@@ -115,41 +70,27 @@ export function useCollections() {
 
     const deleteCollectionMutation = useMutation({
         mutationFn: deleteCollection,
-        onSuccess: (_, collectionId) => {
-            queryClient.setQueryData<GetCollectionsResponse>(['collections'], (current) => {
-                if (!current) return current;
 
-                return {
-                    ...current,
-                    data: {
-                        ...current.data,
-                        collections: current.data.collections.filter(
-                            (collection) => collection.id !== collectionId,
-                        ),
-                    },
-                };
-            });
+        onSuccess: (_, collectionId) => {
             queryClient.removeQueries({
                 queryKey: ['collection', collectionId],
             });
+
+            queryClient.invalidateQueries({
+                queryKey: ['collections'],
+            });
         },
+
         onError: (error, collectionId) => {
             if (hasErrorStatus(error, 404)) {
-                queryClient.setQueryData<GetCollectionsResponse>(['collections'], (current) => {
-                    if (!current) return current;
-
-                    return {
-                        ...current,
-                        data: {
-                            ...current.data,
-                            collections: current.data.collections.filter(
-                                (collection) => collection.id !== collectionId,
-                            ),
-                        },
-                    };
+                queryClient.removeQueries({
+                    queryKey: ['collection', collectionId],
                 });
+
+                removeCollectionFromCache(queryClient, collectionId);
             }
         },
+
         throwOnError: (error) => {
             return !isHandledError(error, [400, 404]);
         },

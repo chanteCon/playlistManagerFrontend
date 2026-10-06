@@ -36,7 +36,7 @@ function CollectionSection({
     }
 
     return (
-        <Card className="min-h-0 flex-1 p-6">
+        <Card className="min-h-0 flex-1 p-6 w-full">
             <CollectionGrid
                 collections={collections}
                 onEdit={onEdit}

@@ -7,7 +7,6 @@ import { EditInput, PlaylistSummary } from '@/types';
 import { CreatePlaylistDialog } from '@/components/playlists/CreatePlaylistDialog';
 import { PlaylistGrid } from '@/components/playlists/PlaylistGrid';
 import { PlaylistGridSkeleton } from '@/components/skeletons/PlaylistGridSkeleton';
-import AddCard from '@/components/common/AddCard';
 import { EditDialog } from '@/components/common/EditDialogue';
 import { DeleteDialog } from '@/components/common/DeleteDialog';
 import { ErrorDialog } from '@/components/common/ErrorDialog';
@@ -59,7 +58,7 @@ function PlaylistSection({
     }
 
     return (
-        <Card className="min-h-0 flex-1 p-6">
+        <Card className="min-h-0 flex-1 py-15">
             <PlaylistGrid
                 playlists={playlists}
                 onEdit={onEdit}

@@ -34,7 +34,19 @@ export function useCollection({ id }: UseCollectionParams) {
                 return await getCollection({ id });
             } catch (error) {
                 if (hasErrorStatus(error, 404)) {
-                    //    TODO handle 404
+                    queryClient.setQueryData<GetCollectionsResponse>(['collections'], (current) => {
+                        if (!current) return current;
+
+                        return {
+                            ...current,
+                            data: {
+                                ...current.data,
+                                collections: current.data.collections.filter(
+                                    (collection) => collection.id !== id,
+                                ),
+                            },
+                        };
+                    });
                 }
 
                 throw error;
@@ -43,6 +55,8 @@ export function useCollection({ id }: UseCollectionParams) {
         enabled: !isAuthPending,
         retry: false,
         staleTime: 5 * 60 * 1000,
+
+        throwOnError: true,
     });
 
     const updateCollectionCount = (change: 1 | -1) => {

@@ -16,6 +16,7 @@ type VideoGridProps = {
     coverPending: boolean;
     editingOrder: boolean;
     handleSave: () => void;
+    handleCancel: () => void;
 };
 
 export default function VideoGrid({
@@ -29,6 +30,7 @@ export default function VideoGrid({
     coverPending,
     editingOrder,
     handleSave,
+    handleCancel,
 }: VideoGridProps) {
     const sortedVideos = [...(playlist?.videos ?? [])].sort((a, b) => a.position - b.position);
     return (
@@ -44,7 +46,11 @@ export default function VideoGrid({
                     )}
 
                     {editingOrder && playlist ? (
-                        <SortableVideoGrid playlist={playlist} handleSave={handleSave} />
+                        <SortableVideoGrid
+                            playlist={playlist}
+                            handleSave={handleSave}
+                            handleCancel={handleCancel}
+                        />
                     ) : (
                         <div className="grid w-fit w-full grid-cols-[repeat(auto-fill,220px)] justify-center gap-6">
                             {!editingPlaylist && (

@@ -52,7 +52,7 @@ export default function CollectionsPreviewSection({
                 </button>
             </div>
 
-            <div className="grid max-h-[360px] md:max-h-[150px] grid-cols-[repeat(auto-fill,220px)] justify-center md:gap-y-15 overflow-hidden">
+            <div className="grid max-h-[360px] md:max-h-[150px] grid-cols-[repeat(auto-fill,185px)] justify-center md:gap-y-15 gap-2 overflow-hidden">
                 <CreateCollection onCreate={onCreate} />
                 {collections.map((collection) => (
                     <CollectionCard key={collection.id} collection={collection}>

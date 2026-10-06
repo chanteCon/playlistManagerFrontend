@@ -4,14 +4,21 @@ import { use, useState } from 'react';
 
 import { useCollection } from '@/hooks/useCollection';
 import { PlaylistCard } from '@/components/playlists/PlaylistCard';
-import { Music, Plus } from 'lucide-react';
+import { Music, Plus, Trash, X } from 'lucide-react';
 import AddCard from '@/components/common/AddCard';
 import { usePlaylists } from '@/hooks/usePlaylists';
 import { hasErrorStatus, isHandledError } from '@/lib/utils';
 import { toast } from 'sonner';
 import { ErrorDialog } from '@/components/common/ErrorDialog';
 import AddPlaylistDialog from '@/components/collections/AddPlaylistDialog';
-import CreateCollection from '@/components/collections/CreateCollection';
+import { DeleteDialog } from '@/components/common/DeleteDialog';
+import { useCollections } from '@/hooks/useCollections';
+import { notFound, useRouter } from 'next/navigation';
+import { uuidSchema } from '@/schemas/common';
+import { PlaylistHeaderSkeleton } from '@/components/skeletons/PlaylistHeaderSkeleton';
+import CollectionHeader from '@/components/collections/CollectionHeader';
+import { PlaylistGridSkeleton } from '@/components/skeletons/PlaylistGridSkeleton';
+import { Button } from '@/components/ui/button';
 
 type PageProps = {
     params: Promise<{
@@ -21,26 +28,36 @@ type PageProps = {
 
 export default function CollectionPage({ params }: PageProps) {
     const { id } = use(params);
-    const { collection, addPlaylistMutation } = useCollection({ id });
+    if (!uuidSchema.safeParse(id).success) {
+        notFound();
+    }
+
+    const { collection, isLoading, addPlaylistMutation, deletePlaylistMutation } = useCollection({
+        id,
+    });
+
+    const { deleteCollectionMutation } = useCollections();
     const { playlists } = usePlaylists();
     const [isAddPlaylistOpen, setIsAddPlaylistOpen] = useState(false);
+    const [editing, setEditing] = useState(false);
+    const [collectionToDelete, setCollectionToDelete] = useState<string | null>(null);
     const [errorDialog, setErrorDialog] = useState({
         isOpen: false,
         title: '',
         message: '',
     });
+    const router = useRouter();
     const [selectedPlaylists, setSelectedPlaylists] = useState<string[]>([]);
-    if (!collection) {
-        return null;
-    }
+    const [selectedPlaylistToDelete, setSelectedPlaylistToDelete] = useState<string | null>(null);
+
     const availablePlaylists = playlists?.filter(
-        (playlist) =>
-            !collection.playlists.some(
-                (collectionPlaylist) => collectionPlaylist.id === playlist.id,
-            ),
+        (playlist) => !collection?.playlists.some((p) => p.id === playlist.id),
     );
 
     const handleAddPlaylists = async () => {
+        if (!collection) {
+            return;
+        }
         try {
             await Promise.all(
                 selectedPlaylists.map((playlist) =>
@@ -73,38 +90,96 @@ export default function CollectionPage({ params }: PageProps) {
         }
     };
 
+    const handleDeleteCollection = async () => {
+        if (!collection) {
+            return;
+        }
+        deleteCollectionMutation.mutate(collection.id, {
+            onSettled: () => {
+                setCollectionToDelete(null);
+                router.push('/dashboard');
+            },
+        });
+    };
+    const handleDeletePlaylist = () => {
+        if (!collection || !selectedPlaylistToDelete) {
+            return;
+        }
+
+        deletePlaylistMutation.mutate(
+            {
+                collectionId: collection.id,
+                playlistId: selectedPlaylistToDelete,
+            },
+            {
+                onSuccess: () => {
+                    toast('Playlist removed from collection');
+                    setSelectedPlaylistToDelete(null);
+                },
+                onError: (error) => {
+                    if (isHandledError(error, [400, 404])) {
+                        setErrorDialog({
+                            isOpen: true,
+                            title: 'Could not remove playlist from collection',
+                            message: error.message,
+                        });
+                    }
+                },
+            },
+        );
+    };
+
     return (
         <main className="mx-auto w-full max-w-5xl px-6 py-10 flex flex-col gap-10">
-            <section className="flex items-center gap-6">
-                <div>
-                    <h1 className="text-3xl font-bold">{collection.name}</h1>
-                </div>
-            </section>
+            {isLoading || !collection ? (
+                <PlaylistHeaderSkeleton />
+            ) : (
+                <CollectionHeader
+                    collection={collection}
+                    isLoading={isLoading}
+                    editing={editing}
+                    onEdit={() => setEditing(true)}
+                    onDone={() => setEditing(false)}
+                    onDelete={() => collection && setCollectionToDelete(collection.id)}
+                />
+            )}
             <hr />
-            <section>
+            <section className="w-full">
                 <h2 className="mb-4 text-xl font-semibold">
-                    {`Playlists (${collection.playlists.length})`}
+                    {`Playlists (${collection?.playlists.length ?? 0})`}
                 </h2>
 
-                {collection.playlists.length > 0 ? (
-                    <div className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-5">
+                {isLoading ? (
+                    <PlaylistGridSkeleton />
+                ) : collection && collection.playlists.length > 0 ? (
+                    <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] justify-items-center gap-5">
                         <AddCard
                             className="h-[200px] w-[200px] rounded-sm border"
                             setDialogOpen={setIsAddPlaylistOpen}
                             message="Add playlist"
                         />
+
                         {collection.playlists.map((playlist) => (
                             <PlaylistCard
                                 key={playlist.id}
                                 playlist={playlist}
                                 PlaylistIcon={Music}
                             >
-                                <p></p>
+                                {editing && (
+                                    <Button
+                                        type="button"
+                                        variant="destructive"
+                                        onClick={() => setSelectedPlaylistToDelete(playlist.id)}
+                                    >
+                                        <Trash />
+                                        Remove playlist
+                                    </Button>
+                                )}
                             </PlaylistCard>
                         ))}
                     </div>
                 ) : (
-                    <section className="w-full mt-5 ">
+                    <section className="mt-5 w-full">
                         <button
                             onClick={() => setIsAddPlaylistOpen(true)}
                             className="w-full cursor-pointer hover:text-primary"
@@ -119,6 +194,7 @@ export default function CollectionPage({ params }: PageProps) {
                     </section>
                 )}
             </section>
+
             {isAddPlaylistOpen && (
                 <AddPlaylistDialog
                     isOpen={isAddPlaylistOpen}
@@ -144,6 +220,22 @@ export default function CollectionPage({ params }: PageProps) {
                 }
                 message={errorDialog.message}
                 title={errorDialog.title}
+            />
+            <DeleteDialog
+                itemId={collectionToDelete}
+                onCancel={() => setCollectionToDelete(null)}
+                onConfirm={handleDeleteCollection}
+                title="Delete Collection"
+                message={'Are you sure you want to delete this collection?'}
+                isPending={false}
+            />
+            <DeleteDialog
+                itemId={selectedPlaylistToDelete}
+                onCancel={() => setCollectionToDelete(null)}
+                onConfirm={handleDeletePlaylist}
+                title="Remove playlist"
+                message={'Are you sure you want to remove this playlist from this collection?'}
+                isPending={false}
             />
         </main>
     );
