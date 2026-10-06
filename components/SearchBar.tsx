@@ -31,9 +31,10 @@ export default function SearchBar({ className }: { className?: string }) {
     }, []);
     const { data } = useSearch(debouncedSearch);
     const showResults = search.trim().length > 0 && debouncedSearch.length > 0;
-    const playlists = data?.data.results.playlists ?? [];
-    const videos = data?.data.results.videos ?? [];
-    const hasResults = playlists.length > 0 || videos.length > 0;
+    const playlists = data?.data.playlists ?? [];
+    const videos = data?.data.videos ?? [];
+    const collections = data?.data.collections ?? [];
+    const hasResults = playlists.length > 0 || videos.length > 0 || collections.length > 0;
     const handleResultClick = (path: string) => {
         setSearch('');
         setDebouncedSearch('');
@@ -97,6 +98,25 @@ export default function SearchBar({ className }: { className?: string }) {
                                             }
                                         >
                                             {video.title}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                            {collections.length > 0 && (
+                                <div>
+                                    <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
+                                        Collections
+                                    </div>
+                                    {collections.slice(0, 10).map((collection) => (
+                                        <button
+                                            key={collection.id}
+                                            type="button"
+                                            className="flex w-full cursor-pointer items-center rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent"
+                                            onClick={() =>
+                                                handleResultClick(`/collection/${collection.id}`)
+                                            }
+                                        >
+                                            {collection.name}
                                         </button>
                                     ))}
                                 </div>

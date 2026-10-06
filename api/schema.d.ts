@@ -1790,9 +1790,7 @@ export interface paths {
         /** Get all user playlists */
         get: {
             parameters: {
-                query?: {
-                    search?: string;
-                };
+                query?: never;
                 header?: never;
                 path?: never;
                 cookie?: never;
@@ -1816,7 +1814,8 @@ export interface paths {
                          *             "name": "Playlist 1",
                          *             "description": null,
                          *             "coverUrl": null,
-                         *             "numVideos": 10
+                         *             "numVideos": 10,
+                         *             "updatedAt": "2026-01-01T00:00:00.000Z"
                          *           }
                          *         ]
                          *       },
@@ -1838,6 +1837,7 @@ export interface paths {
                                     description: string | null;
                                     coverUrl: string | null;
                                     numVideos: number;
+                                    updatedAt: string;
                                 }[];
                             };
                         };
@@ -1926,7 +1926,8 @@ export interface paths {
                          *           "name": "My Playlist",
                          *           "description": null,
                          *           "coverUrl": null,
-                         *           "numVideos": 10
+                         *           "numVideos": 10,
+                         *           "updatedAt": "2026-01-01T00:00:00.000Z"
                          *         }
                          *       },
                          *       "message": null
@@ -1947,6 +1948,8 @@ export interface paths {
                                     description: string | null;
                                     coverUrl: string | null;
                                     numVideos: number;
+                                    updatedAt: string;
+                                    collections: string[];
                                 };
                             };
                         };
@@ -2070,141 +2073,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/playlists/search": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Search user library */
-        get: {
-            parameters: {
-                query?: {
-                    search?: string;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Successful response */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "success": true,
-                         *       "data": {
-                         *         "results": {
-                         *           "playlists": [
-                         *             {
-                         *               "id": "00000000-0000-0000-0000-000000000000",
-                         *               "userId": "00000000-0000-0000-0000-000000000000",
-                         *               "name": "Music Favourites",
-                         *               "description": "My favourite songs",
-                         *               "coverUrl": null
-                         *             }
-                         *           ],
-                         *           "videos": [
-                         *             {
-                         *               "id": "00000000-0000-0000-0000-000000000000",
-                         *               "playlistId": "00000000-0000-0000-0000-000000000000",
-                         *               "title": "Best Music Videos",
-                         *               "description": "My favourite music",
-                         *               "thumbnail": "https://example.com/thumbnail.jpg",
-                         *               "url": "https://www.youtube.com/watch?v=zzzzzzzzzzz",
-                         *               "platform": "youtube",
-                         *               "platformId": "zzzzzzzzzzz",
-                         *               "render": true
-                         *             }
-                         *           ]
-                         *         }
-                         *       },
-                         *       "message": null
-                         *     }
-                         */
-                        "application/json": {
-                            /** @constant */
-                            success: true;
-                            /** @example null */
-                            message: string | null;
-                            data: {
-                                results: {
-                                    playlists: {
-                                        /** Format: uuid */
-                                        id: string;
-                                        /** Format: uuid */
-                                        userId: string;
-                                        name: string;
-                                        description: string | null;
-                                        coverUrl: string | null;
-                                    }[];
-                                    videos: {
-                                        /** Format: uuid */
-                                        id: string;
-                                        /** Format: uuid */
-                                        playlistId: string;
-                                        title: string;
-                                        description?: string;
-                                        thumbnail?: string;
-                                        url: string;
-                                        platform?: string | null;
-                                        platformId?: string | null;
-                                        render: boolean;
-                                        position: number;
-                                    }[];
-                                };
-                            };
-                        };
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "success": false,
-                         *       "data": null,
-                         *       "message": "Unauthorized",
-                         *       "errors": null
-                         *     }
-                         */
-                        "application/json": {
-                            /** @constant */
-                            success: false;
-                            /** @default Unauthorized */
-                            message: string;
-                            data: null;
-                            /**
-                             * @example {
-                             *       "field": [
-                             *         "Validation error"
-                             *       ]
-                             *     }
-                             */
-                            errors?: {
-                                [key: string]: string[];
-                            } | null;
-                        };
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/playlists/{id}": {
         parameters: {
             query?: never;
@@ -2215,9 +2083,7 @@ export interface paths {
         /** Get playlist */
         get: {
             parameters: {
-                query?: {
-                    search?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description The unique ID of the playlist */
@@ -2243,6 +2109,12 @@ export interface paths {
                          *           "description": "My playlist description",
                          *           "coverUrl": null,
                          *           "numVideos": 10,
+                         *           "updatedAt": "2026-01-01T00:00:00.000Z",
+                         *           "collections": [
+                         *             "00000000-0000-0000-0000-000000000000",
+                         *             "00000000-0000-0000-0000-000000000000",
+                         *             "00000000-0000-0000-0000-000000000000"
+                         *           ],
                          *           "videos": [
                          *             {
                          *               "id": "00000000-0000-0000-0000-000000000000",
@@ -2272,7 +2144,6 @@ export interface paths {
                                     id: string;
                                     name: string;
                                     description?: string | null;
-                                    coverUrl?: string | null;
                                     videos: {
                                         /** Format: uuid */
                                         id: string;
@@ -2287,7 +2158,9 @@ export interface paths {
                                         render: boolean;
                                         position: number;
                                     }[];
+                                    coverUrl: string | null;
                                     numVideos: number;
+                                    updatedAt: string;
                                 };
                             };
                         };
@@ -2581,7 +2454,8 @@ export interface paths {
                          *           "name": "Updated Playlist",
                          *           "description": "Updated description",
                          *           "coverUrl": "example.image.com",
-                         *           "numVideos": 10
+                         *           "numVideos": 10,
+                         *           "updatedAt": "2026-01-01T00:00:00.000Z"
                          *         }
                          *       },
                          *       "message": null
@@ -2602,6 +2476,8 @@ export interface paths {
                                     description: string | null;
                                     coverUrl: string | null;
                                     numVideos: number;
+                                    updatedAt: string;
+                                    collections: string[];
                                 };
                             };
                         };
@@ -3493,6 +3369,1366 @@ export interface paths {
                 };
             };
         };
+        trace?: never;
+    };
+    "/api/collections/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get user collections */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": true,
+                         *       "data": {
+                         *         "collections": [
+                         *           {
+                         *             "id": "00000000-0000-0000-0000-000000000000",
+                         *             "userId": "00000000-0000-0000-0000-000000000000",
+                         *             "name": "Music",
+                         *             "createdAt": "2026-01-01T00:00:00.000Z",
+                         *             "updatedAt": "2026-01-01T00:00:00.000Z",
+                         *             "numPlaylists": 3,
+                         *             "coverUrl": "https://example.com/cover.jpg"
+                         *           }
+                         *         ]
+                         *       },
+                         *       "message": null
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: true;
+                            /** @example null */
+                            message: string | null;
+                            data: {
+                                collections: {
+                                    /** Format: uuid */
+                                    id: string;
+                                    /** Format: uuid */
+                                    userId: string;
+                                    name: string;
+                                    createdAt: string;
+                                    updatedAt: string;
+                                    numPlaylists: number;
+                                    coverUrl: string | null;
+                                }[];
+                            };
+                        };
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": false,
+                         *       "data": null,
+                         *       "message": "Unauthorized",
+                         *       "errors": null
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: false;
+                            /** @default Unauthorized */
+                            message: string;
+                            data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
+                            errors?: {
+                                [key: string]: string[];
+                            } | null;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Create collection */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    /**
+                     * @example {
+                     *       "name": "Music"
+                     *     }
+                     */
+                    "application/json": {
+                        name: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Successful response */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": true,
+                         *       "data": {
+                         *         "collection": {
+                         *           "id": "00000000-0000-0000-0000-000000000000",
+                         *           "userId": "00000000-0000-0000-0000-000000000000",
+                         *           "name": "Music",
+                         *           "createdAt": "2026-01-01T00:00:00.000Z",
+                         *           "updatedAt": "2026-01-01T00:00:00.000Z",
+                         *           "numPlaylists": 0,
+                         *           "coverUrl": null,
+                         *           "playlists": []
+                         *         }
+                         *       },
+                         *       "message": null
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: true;
+                            /** @example null */
+                            message: string | null;
+                            data: {
+                                collection: {
+                                    /** Format: uuid */
+                                    id: string;
+                                    /** Format: uuid */
+                                    userId: string;
+                                    name: string;
+                                    createdAt: string;
+                                    updatedAt: string;
+                                    numPlaylists: number;
+                                    coverUrl: string | null;
+                                    playlists: {
+                                        /** Format: uuid */
+                                        id: string;
+                                        name: string;
+                                        description?: string | null;
+                                        coverUrl: string | null;
+                                        numVideos: number;
+                                        updatedAt: string;
+                                    }[];
+                                };
+                            };
+                        };
+                    };
+                };
+                /** @description Invalid input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": false,
+                         *       "data": null,
+                         *       "message": "Invalid input",
+                         *       "errors": {
+                         *         "name": [
+                         *           "Collection name must be 100 characters or less"
+                         *         ]
+                         *       }
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: false;
+                            /** @default Invalid input */
+                            message: string;
+                            data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
+                            errors?: {
+                                [key: string]: string[];
+                            } | null;
+                        };
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": false,
+                         *       "data": null,
+                         *       "message": "Unauthorized",
+                         *       "errors": null
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: false;
+                            /** @default Unauthorized */
+                            message: string;
+                            data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
+                            errors?: {
+                                [key: string]: string[];
+                            } | null;
+                        };
+                    };
+                };
+                /** @description Cannot add collection */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": false,
+                         *       "data": null,
+                         *       "message": "Cannot add collection",
+                         *       "errors": {
+                         *         "name": [
+                         *           "You already have a collection with this name"
+                         *         ]
+                         *       }
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: false;
+                            /** @default Cannot add collection */
+                            message: string;
+                            data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
+                            errors?: {
+                                [key: string]: string[];
+                            } | null;
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/collections/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get collection */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": true,
+                         *       "data": {
+                         *         "collection": {
+                         *           "id": "00000000-0000-0000-0000-000000000000",
+                         *           "userId": "00000000-0000-0000-0000-000000000000",
+                         *           "name": "Music",
+                         *           "createdAt": "2026-01-01T00:00:00.000Z",
+                         *           "updatedAt": "2026-01-01T00:00:00.000Z",
+                         *           "numPlaylists": 2,
+                         *           "coverUrl": "https://example.com/cover.jpg",
+                         *           "playlists": [
+                         *             {
+                         *               "id": "00000000-0000-0000-0000-000000000000",
+                         *               "userId": "00000000-0000-0000-0000-000000000000",
+                         *               "title": "My Playlist",
+                         *               "description": null,
+                         *               "platform": "youtube",
+                         *               "platformId": "abc123",
+                         *               "thumbnailUrl": "https://example.com/thumbnail.jpg",
+                         *               "position": 0,
+                         *               "customTitle": null,
+                         *               "customDescription": null
+                         *             }
+                         *           ]
+                         *         }
+                         *       },
+                         *       "message": null
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: true;
+                            /** @example null */
+                            message: string | null;
+                            data: {
+                                collection: {
+                                    /** Format: uuid */
+                                    id: string;
+                                    /** Format: uuid */
+                                    userId: string;
+                                    name: string;
+                                    createdAt: string;
+                                    updatedAt: string;
+                                    numPlaylists: number;
+                                    coverUrl: string | null;
+                                    playlists: {
+                                        /** Format: uuid */
+                                        id: string;
+                                        name: string;
+                                        description?: string | null;
+                                        coverUrl: string | null;
+                                        numVideos: number;
+                                        updatedAt: string;
+                                    }[];
+                                };
+                            };
+                        };
+                    };
+                };
+                /** @description Invalid Input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": false,
+                         *       "data": null,
+                         *       "message": "Invalid Input",
+                         *       "errors": {
+                         *         "id": [
+                         *           "Invalid UUID"
+                         *         ]
+                         *       }
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: false;
+                            /** @default Invalid Input */
+                            message: string;
+                            data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
+                            errors?: {
+                                [key: string]: string[];
+                            } | null;
+                        };
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": false,
+                         *       "data": null,
+                         *       "message": "Unauthorized",
+                         *       "errors": null
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: false;
+                            /** @default Unauthorized */
+                            message: string;
+                            data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
+                            errors?: {
+                                [key: string]: string[];
+                            } | null;
+                        };
+                    };
+                };
+                /** @description Collection not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": false,
+                         *       "data": null,
+                         *       "message": "Collection not found",
+                         *       "errors": null
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: false;
+                            /** @default Collection not found */
+                            message: string;
+                            data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
+                            errors?: {
+                                [key: string]: string[];
+                            } | null;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        /** Delete collection */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Collection deleted successfully */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Invalid Input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": false,
+                         *       "data": null,
+                         *       "message": "Invalid Input",
+                         *       "errors": {
+                         *         "id": [
+                         *           "Invalid UUID"
+                         *         ]
+                         *       }
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: false;
+                            /** @default Invalid Input */
+                            message: string;
+                            data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
+                            errors?: {
+                                [key: string]: string[];
+                            } | null;
+                        };
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": false,
+                         *       "data": null,
+                         *       "message": "Unauthorized",
+                         *       "errors": null
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: false;
+                            /** @default Unauthorized */
+                            message: string;
+                            data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
+                            errors?: {
+                                [key: string]: string[];
+                            } | null;
+                        };
+                    };
+                };
+                /** @description Collection not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": false,
+                         *       "data": null,
+                         *       "message": "Collection not found",
+                         *       "errors": null
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: false;
+                            /** @default Collection not found */
+                            message: string;
+                            data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
+                            errors?: {
+                                [key: string]: string[];
+                            } | null;
+                        };
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        /**
+         * Update collection
+         * @description Updates a collection name and/or cover. To set the cover, provide the ID of a playlist already in the collection. The selected playlist must have a cover image. Provide null to remove the current cover. If cover is omitted, the existing cover is preserved.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        name?: string;
+                        cover?: string | null;
+                    };
+                };
+            };
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": true,
+                         *       "data": {
+                         *         "collection": {
+                         *           "id": "00000000-0000-0000-0000-000000000000",
+                         *           "userId": "00000000-0000-0000-0000-000000000000",
+                         *           "name": "Updated Collection",
+                         *           "createdAt": "2026-01-01T00:00:00.000Z",
+                         *           "updatedAt": "2026-01-01T00:00:00.000Z",
+                         *           "numPlaylists": 2,
+                         *           "coverUrl": "https://example.com/cover.jpg",
+                         *           "playlists": []
+                         *         }
+                         *       },
+                         *       "message": null
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: true;
+                            /** @example null */
+                            message: string | null;
+                            data: {
+                                collection: {
+                                    /** Format: uuid */
+                                    id: string;
+                                    /** Format: uuid */
+                                    userId: string;
+                                    name: string;
+                                    createdAt: string;
+                                    updatedAt: string;
+                                    numPlaylists: number;
+                                    coverUrl: string | null;
+                                    playlists: {
+                                        /** Format: uuid */
+                                        id: string;
+                                        name: string;
+                                        description?: string | null;
+                                        coverUrl: string | null;
+                                        numVideos: number;
+                                        updatedAt: string;
+                                    }[];
+                                };
+                            };
+                        };
+                    };
+                };
+                /** @description Invalid input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @constant */
+                            success: false;
+                            /** @default Invalid input */
+                            message: string;
+                            data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
+                            errors?: {
+                                [key: string]: string[];
+                            } | null;
+                        };
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": false,
+                         *       "data": null,
+                         *       "message": "Unauthorized",
+                         *       "errors": null
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: false;
+                            /** @default Unauthorized */
+                            message: string;
+                            data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
+                            errors?: {
+                                [key: string]: string[];
+                            } | null;
+                        };
+                    };
+                };
+                /** @description Collection not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @constant */
+                            success: false;
+                            /** @default Collection not found */
+                            message: string;
+                            data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
+                            errors?: {
+                                [key: string]: string[];
+                            } | null;
+                        };
+                    };
+                };
+                /** @description Cannot update collection */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": false,
+                         *       "data": null,
+                         *       "message": "Cannot update collection",
+                         *       "errors": {
+                         *         "name": [
+                         *           "You already have a collection with this name"
+                         *         ]
+                         *       }
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: false;
+                            /** @default Cannot update collection */
+                            message: string;
+                            data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
+                            errors?: {
+                                [key: string]: string[];
+                            } | null;
+                        };
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/collections/{id}/playlists/{playlistId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add playlist to collection */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                    playlistId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": true,
+                         *       "data": {
+                         *         "playlist": {
+                         *           "id": "00000000-0000-0000-0000-000000000000",
+                         *           "userId": "00000000-0000-0000-0000-000000000000",
+                         *           "title": "My Playlist",
+                         *           "description": null,
+                         *           "platform": "youtube",
+                         *           "platformId": "abc123",
+                         *           "thumbnailUrl": "https://example.com/thumbnail.jpg",
+                         *           "position": 0,
+                         *           "customTitle": null,
+                         *           "customDescription": null
+                         *         }
+                         *       },
+                         *       "message": null
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: true;
+                            /** @example null */
+                            message: string | null;
+                            data: {
+                                playlist: {
+                                    /** Format: uuid */
+                                    id: string;
+                                    name: string;
+                                    description?: string | null;
+                                    coverUrl: string | null;
+                                    numVideos: number;
+                                    updatedAt: string;
+                                };
+                            };
+                        };
+                    };
+                };
+                /** @description Invalid Input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": false,
+                         *       "data": null,
+                         *       "message": "Invalid Input",
+                         *       "errors": {
+                         *         "id": [
+                         *           "Invalid UUID"
+                         *         ],
+                         *         "playlistId": [
+                         *           "Invalid UUID"
+                         *         ]
+                         *       }
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: false;
+                            /** @default Invalid Input */
+                            message: string;
+                            data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
+                            errors?: {
+                                [key: string]: string[];
+                            } | null;
+                        };
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": false,
+                         *       "data": null,
+                         *       "message": "Unauthorized",
+                         *       "errors": null
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: false;
+                            /** @default Unauthorized */
+                            message: string;
+                            data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
+                            errors?: {
+                                [key: string]: string[];
+                            } | null;
+                        };
+                    };
+                };
+                /** @description Collection or playlist not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @constant */
+                            success: false;
+                            /** @default Collection or playlist not found */
+                            message: string;
+                            data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
+                            errors?: {
+                                [key: string]: string[];
+                            } | null;
+                        };
+                    };
+                };
+                /** @description Cannot add playlist to collection */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": false,
+                         *       "data": null,
+                         *       "message": "Cannot add playlist to collection",
+                         *       "errors": {
+                         *         "playlist": [
+                         *           "You have already added this playlist to this collection"
+                         *         ]
+                         *       }
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: false;
+                            /** @default Cannot add playlist to collection */
+                            message: string;
+                            data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
+                            errors?: {
+                                [key: string]: string[];
+                            } | null;
+                        };
+                    };
+                };
+            };
+        };
+        /** Remove playlist from collection */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                    playlistId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Playlist removed from collection successfully */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Invalid Input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": false,
+                         *       "data": null,
+                         *       "message": "Invalid Input",
+                         *       "errors": {
+                         *         "id": [
+                         *           "Invalid UUID"
+                         *         ],
+                         *         "playlistId": [
+                         *           "Invalid UUID"
+                         *         ]
+                         *       }
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: false;
+                            /** @default Invalid Input */
+                            message: string;
+                            data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
+                            errors?: {
+                                [key: string]: string[];
+                            } | null;
+                        };
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": false,
+                         *       "data": null,
+                         *       "message": "Unauthorized",
+                         *       "errors": null
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: false;
+                            /** @default Unauthorized */
+                            message: string;
+                            data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
+                            errors?: {
+                                [key: string]: string[];
+                            } | null;
+                        };
+                    };
+                };
+                /** @description Collection or playlist not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @constant */
+                            success: false;
+                            /** @default Collection or playlist not found */
+                            message: string;
+                            data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
+                            errors?: {
+                                [key: string]: string[];
+                            } | null;
+                        };
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search user library
+         * @description Searches the authenticated user’s collections, playlists, and videos.
+         */
+        get: {
+            parameters: {
+                query: {
+                    search: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Successful response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": true,
+                         *       "data": {
+                         *         "collections": [
+                         *           {
+                         *             "id": "00000000-0000-0000-0000-000000000000",
+                         *             "userId": "00000000-0000-0000-0000-000000000000",
+                         *             "name": "Music Collection",
+                         *             "createdAt": "2026-01-01T00:00:00.000Z",
+                         *             "updatedAt": "2026-01-01T00:00:00.000Z",
+                         *             "numPlaylists": 2,
+                         *             "coverUrl": "https://example.com/cover.jpg"
+                         *           }
+                         *         ],
+                         *         "playlists": [
+                         *           {
+                         *             "id": "00000000-0000-0000-0000-000000000000",
+                         *             "name": "Music Favourites",
+                         *             "description": "My favourite music",
+                         *             "videos": [
+                         *               {
+                         *                 "id": "00000000-0000-0000-0000-000000000000",
+                         *                 "playlistId": "00000000-0000-0000-0000-000000000000",
+                         *                 "title": "Best Music Videos",
+                         *                 "description": "My favourite music videos",
+                         *                 "thumbnail": "https://example.com/thumbnail.jpg",
+                         *                 "url": "https://youtube.com/watch?v=abc123",
+                         *                 "platform": "youtube",
+                         *                 "platformId": "abc123",
+                         *                 "render": true,
+                         *                 "position": 0
+                         *               }
+                         *             ],
+                         *             "coverUrl": "https://example.com/cover.jpg",
+                         *             "numVideos": 1,
+                         *             "updatedAt": "2026-01-01T00:00:00.000Z"
+                         *           }
+                         *         ],
+                         *         "videos": [
+                         *           {
+                         *             "id": "00000000-0000-0000-0000-000000000000",
+                         *             "playlistId": "00000000-0000-0000-0000-000000000000",
+                         *             "title": "Best Music Videos",
+                         *             "description": "My favourite music videos",
+                         *             "thumbnail": "https://example.com/thumbnail.jpg",
+                         *             "url": "https://youtube.com/watch?v=abc123",
+                         *             "platform": "youtube",
+                         *             "platformId": "abc123",
+                         *             "render": true,
+                         *             "position": 0
+                         *           }
+                         *         ]
+                         *       },
+                         *       "message": null
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: true;
+                            /** @example null */
+                            message: string | null;
+                            data: {
+                                collections: {
+                                    /** Format: uuid */
+                                    id: string;
+                                    /** Format: uuid */
+                                    userId: string;
+                                    name: string;
+                                    createdAt: string;
+                                    updatedAt: string;
+                                    numPlaylists: number;
+                                    coverUrl: string | null;
+                                }[];
+                                playlists: {
+                                    /** Format: uuid */
+                                    id: string;
+                                    name: string;
+                                    description?: string | null;
+                                    videos: {
+                                        /** Format: uuid */
+                                        id: string;
+                                        /** Format: uuid */
+                                        playlistId: string;
+                                        title: string;
+                                        description?: string;
+                                        thumbnail?: string;
+                                        url: string;
+                                        platform?: string | null;
+                                        platformId?: string | null;
+                                        render: boolean;
+                                        position: number;
+                                    }[];
+                                    coverUrl: string | null;
+                                    numVideos: number;
+                                    updatedAt: string;
+                                }[];
+                                videos: {
+                                    /** Format: uuid */
+                                    id: string;
+                                    /** Format: uuid */
+                                    playlistId: string;
+                                    title: string;
+                                    description?: string;
+                                    thumbnail?: string;
+                                    url: string;
+                                    platform?: string | null;
+                                    platformId?: string | null;
+                                    render: boolean;
+                                    position: number;
+                                }[];
+                            };
+                        };
+                    };
+                };
+                /** @description Invalid input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": false,
+                         *       "data": null,
+                         *       "message": "Invalid input",
+                         *       "errors": {
+                         *         "search": [
+                         *           "Invalid input"
+                         *         ]
+                         *       }
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: false;
+                            /** @default Invalid input */
+                            message: string;
+                            data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
+                            errors?: {
+                                [key: string]: string[];
+                            } | null;
+                        };
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "success": false,
+                         *       "data": null,
+                         *       "message": "Unauthorized",
+                         *       "errors": null
+                         *     }
+                         */
+                        "application/json": {
+                            /** @constant */
+                            success: false;
+                            /** @default Unauthorized */
+                            message: string;
+                            data: null;
+                            /**
+                             * @example {
+                             *       "field": [
+                             *         "Validation error"
+                             *       ]
+                             *     }
+                             */
+                            errors?: {
+                                [key: string]: string[];
+                            } | null;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
 }

@@ -15,10 +15,10 @@ import {
 } from '@/lib/utils';
 import { ErrorDialog } from '../common/ErrorDialog';
 import { toast } from 'sonner';
-import { Check, Pencil, PencilOff, Trash, X } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 import { ConfirmationDialog } from '../common/ConfirmationDialog';
 import { useRouter } from 'next/navigation';
-import ToolTipButton from '../common/ToolTipButton';
+import EditControls from '../common/EditControls';
 
 export default function PlaylistHeader({
     playlist,
@@ -119,42 +119,24 @@ export default function PlaylistHeader({
                         </div>
                     )}
 
-                    <div className="absolute right-2 top-2 md:hidden">
-                        {allowEdit &&
-                            (!editing ? (
-                                <ToolTipButton
-                                    button={
-                                        <Button
-                                            type="button"
-                                            size="icon"
-                                            onClick={() => {
-                                                setEditing(true);
-                                                onEdit(true);
-                                            }}
-                                            aria-label="Edit playlist"
-                                            title="Edit playlist"
-                                            className="border-2 border-foreground bg-background text-foreground hover:bg-muted"
-                                        ></Button>
-                                    }
-                                    icon={<Pencil />}
-                                    content="Edit playlist"
-                                />
-                            ) : (
-                                <ToolTipButton
-                                    button={
-                                        <Button
-                                            type="button"
-                                            size="icon"
-                                            onClick={handleDoneEditing}
-                                            aria-label="Done editing"
-                                            title="Done editing"
-                                            className="border-2 border-foreground bg-background text-foreground hover:bg-muted"
-                                        ></Button>
-                                    }
-                                    icon={<PencilOff />}
-                                    content="Close edit playlist"
-                                />
-                            ))}
+                    <div className="md:hidden">
+                        {allowEdit && (
+                            <EditControls
+                                editing={editing}
+                                onEdit={() => {
+                                    setEditing(true);
+                                    onEdit(true);
+                                }}
+                                onDone={handleDoneEditing}
+                                onDelete={() => setDeleting(true)}
+                                editContent="Edit playlist"
+                                doneContent="Close edit playlist"
+                                deleteContent="Delete playlist"
+                                editClassName="absolute right-5 top-5 border-2 !border-white !bg-black/70 text-white hover:bg-black/90"
+
+                                deleteClassName="absolute bottom-5 right-5 border-2 !border-white"
+                            />
+                        )}
                     </div>
                 </div>
             </div>
@@ -220,65 +202,23 @@ export default function PlaylistHeader({
             </div>
 
             <div className="hidden md:block">
-                {allowEdit &&
-                    (!editing ? (
-                        <Button
-                            type="button"
-                            variant="outline"
-                            size="icon"
-                            onClick={() => {
-                                setEditing(true);
-                                onEdit(true);
-                            }}
-                            aria-label="Edit playlist"
-                            title="Edit playlist"
-                            className="absolute right-0 top-0"
-                        >
-                            <Pencil />
-                        </Button>
-                    ) : (
-                        <>
-                            <Button
-                                type="button"
-                                variant="outline"
-                                size="icon"
-                                onClick={handleDoneEditing}
-                                aria-label="Done editing"
-                                title="Done editing"
-                                className="absolute right-0 top-0"
-                            >
-                                <PencilOff />
-                            </Button>
-
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() => setDeleting(true)}
-                                aria-label="Delete playlist"
-                                title="Delete playlist"
-                                className="absolute bottom-10 right-0 flex w-fit gap-2"
-                            >
-                                <Trash className="text-destructive" />
-                                <p className="text-destructive">Delete playlist</p>
-                            </Button>
-                        </>
-                    ))}
+                {allowEdit && (
+                    <EditControls
+                        editing={editing}
+                        onEdit={() => {
+                            setEditing(true);
+                            onEdit(true);
+                        }}
+                        onDone={handleDoneEditing}
+                        onDelete={() => setDeleting(true)}
+                        editContent="Edit playlist"
+                        doneContent="Close edit playlist"
+                        deleteContent="Delete playlist"
+                        editClassName="absolute right-0 top-0"
+                        deleteClassName="absolute bottom-10 right-0 text-destructive"
+                    />
+                )}
             </div>
-
-            {editing && (
-                <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setDeleting(true)}
-                    aria-label="Delete playlist"
-                    title="Delete playlist"
-                    className="flex w-fit gap-2 md:hidden"
-                >
-                    <Trash className="text-destructive" />
-                    <p className="text-destructive">Delete playlist</p>
-                </Button>
-            )}
-
             {editing && (
                 <p className="absolute -bottom-6 left-0 text-sm text-muted-foreground">
                     Select a video below to set its thumbnail as the playlist cover.

@@ -173,10 +173,90 @@ export const deleteUser = () =>
 
 export const searchUserLibrary = (search: string) =>
     authenticatedApiRequest(() =>
-        protectedApi.GET('/api/playlists/search', {
+        protectedApi.GET('/api/search', {
             params: {
                 query: {
                     search,
+                },
+            },
+            credentials: 'include',
+        }),
+    );
+
+export const getCollections = () =>
+    authenticatedApiRequest(() =>
+        protectedApi.GET('/api/collections/', {
+            credentials: 'include',
+        }),
+    );
+
+export const getCollection = ({ id }: { id: string }) =>
+    authenticatedApiRequest(() =>
+        protectedApi.GET('/api/collections/{id}', {
+            params: { path: { id } },
+            credentials: 'include',
+        }),
+    );
+
+export const createCollection = (data: { name: string }) =>
+    authenticatedApiRequest(() =>
+        protectedApi.POST('/api/collections/', {
+            body: data,
+            credentials: 'include',
+        }),
+    );
+
+export const editCollection = (data: { collectionId: string; name?: string; cover?: string }) => {
+    const { collectionId, name, cover } = data;
+
+    return authenticatedApiRequest(() =>
+        protectedApi.PATCH('/api/collections/{id}', {
+            body: {
+                name,
+                cover,
+            },
+            params: {
+                path: {
+                    id: collectionId,
+                },
+            },
+            credentials: 'include',
+        }),
+    );
+};
+
+export const deleteCollection = (collectionId: string) =>
+    authenticatedApiRequest(() =>
+        protectedApi.DELETE('/api/collections/{id}', {
+            params: {
+                path: {
+                    id: collectionId,
+                },
+            },
+            credentials: 'include',
+        }),
+    );
+
+export const addPlaylistToCollection = (data: { collectionId: string; playlistId: string }) =>
+    authenticatedApiRequest(() =>
+        protectedApi.POST('/api/collections/{id}/playlists/{playlistId}', {
+            params: {
+                path: {
+                    id: data.collectionId,
+                    playlistId: data.playlistId,
+                },
+            },
+            credentials: 'include',
+        }),
+    );
+
+export const deletePlaylistFromCollection = (data: { collectionId: string; playlistId: string }) =>
+    authenticatedApiRequest(() =>
+        protectedApi.DELETE('/api/collections/{id}/playlists/{playlistId}', {
+            params: {
+                path: {
+                    id: data.collectionId,
+                    playlistId: data.playlistId,
                 },
             },
             credentials: 'include',

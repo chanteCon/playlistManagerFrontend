@@ -13,6 +13,7 @@ import {
     Shapes,
 } from 'lucide-react';
 import ActionsDropDown from '../common/ActionsDropDown';
+import AddCard from '../common/AddCard';
 
 const playlistIcons = [
     Music,
@@ -29,24 +30,21 @@ const playlistIcons = [
 
 type PlaylistGridProps = {
     playlists: PlaylistSummary[];
-    onEdit: (playlist: PlaylistSummary) => void;
-    onDelete: (playlistId: string) => void;
+    onEdit?: (playlist: PlaylistSummary) => void;
+    onDelete?: (playlistId: string) => void;
+    onCreate: () => void;
 };
 
-export function PlaylistGrid({ playlists, onEdit, onDelete }: PlaylistGridProps) {
-    if (playlists.length === 0) {
-        return (
-            <p className="text-muted-foreground">
-                No playlists yet. Create a playlist to start adding videos.
-            </p>
-        );
-    }
-
+export function PlaylistGrid({ playlists, onEdit, onDelete, onCreate }: PlaylistGridProps) {
     return (
-        <section className="w-full max-w-[960px]">
-            <h2 className="mb-4 text-lg font-semibold">Your playlists</h2>
+        <section className="mx-auto w-full max-w-[960px]">
+            <div className="grid grid-cols-[repeat(auto-fill,220px)] justify-center gap-5 gap-x-1">
+                <AddCard
+                    className="h-[200px] w-[200px] rounded-sm border"
+                    setDialogOpen={onCreate}
+                    message="New Playlist"
+                />
 
-            <div className="mx-auto grid w-fit max-w-full grid-cols-[repeat(auto-fill,220px)] justify-start gap-6">
                 {playlists.map((playlist, index) => {
                     const PlaylistIcon = playlistIcons[index % playlistIcons.length];
 
@@ -56,10 +54,12 @@ export function PlaylistGrid({ playlists, onEdit, onDelete }: PlaylistGridProps)
                             PlaylistIcon={PlaylistIcon}
                             playlist={playlist}
                         >
-                            <ActionsDropDown
-                                onEdit={() => onEdit(playlist)}
-                                onDelete={() => onDelete(playlist.id)}
-                            />
+                            {onEdit && onDelete && (
+                                <ActionsDropDown
+                                    onEdit={() => onEdit(playlist)}
+                                    onDelete={() => onDelete(playlist.id)}
+                                />
+                            )}
                         </PlaylistCard>
                     );
                 })}

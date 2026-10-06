@@ -6,17 +6,19 @@ import { useState } from 'react';
 
 import { Playlist } from '@/types';
 import SortableVideoCard from './SortableVideoCard';
-import ToolTipButton from '../common/ToolTipButton';
-import { Check } from 'lucide-react';
+import { Check, Loader, X } from 'lucide-react';
 import { Button } from '../ui/button';
 import { usePlaylist } from '@/hooks/usePlaylist';
+import { toast } from 'sonner';
 
 export default function SortableVideoGrid({
     playlist,
     handleSave,
+    handleCancel,
 }: {
     playlist: Playlist;
     handleSave: () => void;
+    handleCancel: () => void;
 }) {
     const { updatePositionsMutation } = usePlaylist(playlist.id);
 
@@ -50,6 +52,7 @@ export default function SortableVideoGrid({
             {
                 onSuccess: () => {
                     handleSave();
+                    toast('Video order saved!');
                 },
             },
         );
@@ -59,11 +62,26 @@ export default function SortableVideoGrid({
         <section>
             <div className="mt-[-5px] mb-3 flex w-full justify-between gap-y-3">
                 <h2 className="text-lg font-semibold">Re-order videos</h2>
-                <ToolTipButton
-                    button={<Button type="button" onClick={handleUpdatePositions} size="icon" />}
-                    content="Save order"
-                    icon={<Check />}
-                />
+                <div className="flex gap-5">
+                    <Button
+                        type="button"
+                        onClick={handleUpdatePositions}
+                        size="icon"
+                        aria-label="Save order"
+                    >
+                        {updatePositionsMutation.isPending ? <Loader /> : <Check />}
+                    </Button>
+
+                    <Button
+                        type="button"
+                        variant="destructive"
+                        onClick={handleCancel}
+                        size="icon"
+                        aria-label="Cancel"
+                    >
+                        <X />
+                    </Button>
+                </div>
             </div>
             <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                 <SortableContext

@@ -17,7 +17,7 @@ export default function AppLoading() {
     useEffect(() => {
         const messageTimer = setInterval(() => {
             setMessageIndex((current) => (current + 1) % messages.length);
-        }, 4000);
+        }, 5000);
 
         const dotsTimer = setInterval(() => {
             setDots((current) => {

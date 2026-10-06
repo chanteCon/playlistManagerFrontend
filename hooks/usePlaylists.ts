@@ -11,7 +11,6 @@ import {
 
 import { useAuth } from '@/contexts/AuthContext';
 import { hasErrorStatus, isHandledError, removePlaylistFromCache } from '@/lib/utils';
-import { GetPlaylistResponse, GetPlaylistsResponse } from '@/types';
 
 export function usePlaylists() {
     const queryClient = useQueryClient();
@@ -28,19 +27,12 @@ export function usePlaylists() {
     const createPlaylistMutation = useMutation({
         mutationFn: createPlaylist,
 
-        onSuccess: (data) => {
-            queryClient.setQueryData<GetPlaylistsResponse>(['playlists'], (current) => {
-                if (!current || !data) return current;
-
-                return {
-                    ...current,
-                    data: {
-                        ...current.data,
-                        playlists: [...current.data.playlists, data.data.playlist],
-                    },
-                };
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['playlists'],
             });
         },
+
         throwOnError: (error) => {
             return !isHandledError(error, [400, 409]);
         },
@@ -56,60 +48,42 @@ export function usePlaylists() {
         },
 
         onSuccess: (_, playlistId) => {
-            removePlaylistFromCache(queryClient, playlistId);
+            queryClient.removeQueries({
+                queryKey: ['playlist', playlistId],
+            });
+
+            queryClient.invalidateQueries({
+                queryKey: ['playlists'],
+            });
+
+            queryClient.invalidateQueries({ queryKey: ['collection'] });
         },
     });
 
     const editPlaylistMutation = useMutation({
         mutationFn: editPlaylist,
 
-        onSuccess: (data, { playlistId }) => {
-            if (!data) return;
-
-            const playlist = data.data.playlist;
-
-            queryClient.setQueryData<GetPlaylistsResponse>(['playlists'], (current) => {
-                if (!current) return current;
-
-                return {
-                    ...current,
-                    data: {
-                        ...current.data,
-                        playlists: current.data.playlists.map((currentPlaylist) =>
-                            currentPlaylist.id === playlistId ? playlist : currentPlaylist,
-                        ),
-                    },
-                };
+        onSuccess: (_, { playlistId }) => {
+            queryClient.invalidateQueries({
+                queryKey: ['playlists'],
             });
 
-            if (queryClient.getQueryData<GetPlaylistResponse>(['playlist', playlistId])) {
-                queryClient.setQueryData<GetPlaylistResponse>(
-                    ['playlist', playlistId],
-                    (current) => {
-                        if (!current) return current;
-
-                        return {
-                            ...current,
-                            data: {
-                                ...current.data,
-                                playlist: {
-                                    ...current.data.playlist,
-                                    name: playlist.name,
-                                    description: playlist.description,
-                                    coverUrl: playlist.coverUrl,
-                                },
-                            },
-                        };
-                    },
-                );
-            }
+            queryClient.invalidateQueries({
+                queryKey: ['playlist', playlistId],
+            });
+            queryClient.invalidateQueries({ queryKey: ['collection'] });
         },
 
         onError: (error, { playlistId }) => {
             if (hasErrorStatus(error, 404)) {
+                queryClient.removeQueries({
+                    queryKey: ['playlist', playlistId],
+                });
+
                 removePlaylistFromCache(queryClient, playlistId);
             }
         },
+
         throwOnError: (error) => {
             return !isHandledError(error, [400, 409]);
         },

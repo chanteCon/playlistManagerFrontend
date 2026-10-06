@@ -10,7 +10,7 @@ import { EditDialog } from '@/components/common/EditDialogue';
 import { EditInput, Video } from '@/types';
 import { DeleteDialog } from '@/components/common/DeleteDialog';
 import { useServerErrors } from '@/hooks/useServerErrors';
-import { hasErrorStatus, isHandledError } from '@/lib/utils';
+import { hasErrorStatus, isHandledError, markPlaylistOpened } from '@/lib/utils';
 import { notFound } from 'next/navigation';
 import { uuidSchema } from '@/schemas/common';
 import { ErrorDialog } from '@/components/common/ErrorDialog';
@@ -19,7 +19,6 @@ import VideoGrid from '@/components/videos/VideoGrid';
 import { PlaylistHeaderSkeleton } from '@/components/skeletons/PlaylistHeaderSkeleton';
 import { usePlaylists } from '@/hooks/usePlaylists';
 import { toast } from 'sonner';
-import ToolTipButton from '@/components/common/ToolTipButton';
 import { ArrowDownUp } from 'lucide-react';
 
 type PageProps = {
@@ -37,6 +36,8 @@ export default function Playlist({ params }: PageProps) {
 
     const { playlist, isLoading, addVideoMutation, editVideoMutation, deleteVideoMutation } =
         usePlaylist(id);
+    markPlaylistOpened(id);
+
     const { editPlaylistMutation } = usePlaylists();
     const [isAddVideoOpen, setIsAddVideoOpen] = useState(false);
     const [videoToDelete, setVideoToDelete] = useState<string | null>(null);
@@ -185,18 +186,15 @@ export default function Playlist({ params }: PageProps) {
                         </div>
                     )}
                     {!editingPlaylist && !editingVideoOrder && (
-                        <ToolTipButton
-                            button={
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="icon"
-                                    onClick={() => setEditingVideoOrder(true)}
-                                />
-                            }
-                            content="Re-order videos"
-                            icon={<ArrowDownUp />}
-                        />
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            aria-label="Re-order videos"
+                            onClick={() => setEditingVideoOrder(true)}
+                        >
+                            <ArrowDownUp />
+                        </Button>
                     )}
                 </div>
 
@@ -216,6 +214,7 @@ export default function Playlist({ params }: PageProps) {
                     coverPending={editPlaylistMutation.isPending}
                     editingOrder={editingVideoOrder}
                     handleSave={() => setEditingVideoOrder(false)}
+                    handleCancel={() => setEditingVideoOrder(false)}
                 />
             </section>
             <AddVideoDialog

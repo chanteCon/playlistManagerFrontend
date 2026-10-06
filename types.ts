@@ -47,3 +47,13 @@ export type ValidatedFormRef = {
 
 export type GetPlaylistsResponse =
     paths['/api/playlists/']['get']['responses'][200]['content']['application/json'];
+
+export type GetCollectionsResponse =
+    paths['/api/collections/']['get']['responses'][200]['content']['application/json'];
+
+export type Collections = GetCollectionsResponse['data']['collections'];
+
+export type CollectionSummary = Collections[number];
+
+export type GetCollectionResponse =
+    paths['/api/collections/{id}']['get']['responses'][200]['content']['application/json'];

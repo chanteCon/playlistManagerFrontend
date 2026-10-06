@@ -80,6 +80,10 @@ const patchApiplaylistsIdvideosPlaylistVideoId_Body = z
     .object({ title: z.string().min(1).max(50), description: z.string().max(500) })
     .partial()
     .passthrough();
+const patchApicollectionsId_Body = z
+    .object({ name: z.string().min(1).max(100), cover: z.union([z.string(), z.null()]) })
+    .partial()
+    .passthrough();
 
 export const schemas = {
     postApiauthregister_Body,
@@ -89,6 +93,7 @@ export const schemas = {
     patchApiplaylistsId_Body,
     patchApiplaylistsIdvideospositions_Body,
     patchApiplaylistsIdvideosPlaylistVideoId_Body,
+    patchApicollectionsId_Body,
 };
 
 const endpoints = makeApi([
@@ -401,6 +406,533 @@ const endpoints = makeApi([
         ],
     },
     {
+        method: 'get',
+        path: '/api/collections/',
+        alias: 'getApicollections',
+        requestFormat: 'json',
+        response: z.object({
+            success: z.boolean(),
+            message: z.union([z.string(), z.null()]),
+            data: z.object({
+                collections: z.array(
+                    z.object({
+                        id: z
+                            .string()
+                            .regex(
+                                /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                            )
+                            .uuid(),
+                        userId: z
+                            .string()
+                            .regex(
+                                /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                            )
+                            .uuid(),
+                        name: z.string(),
+                        createdAt: z.string(),
+                        updatedAt: z.string(),
+                        numPlaylists: z.number(),
+                        coverUrl: z.union([z.string(), z.null()]),
+                    }),
+                ),
+            }),
+        }),
+        errors: [
+            {
+                status: 401,
+                description: `Unauthorized`,
+                schema: z.object({
+                    success: z.boolean(),
+                    message: z.string().default('Unauthorized'),
+                    data: z.null(),
+                    errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
+                }),
+            },
+        ],
+    },
+    {
+        method: 'post',
+        path: '/api/collections/',
+        alias: 'postApicollections',
+        requestFormat: 'json',
+        parameters: [
+            {
+                name: 'body',
+                type: 'Body',
+                schema: z.object({ name: z.string().min(1).max(100) }).passthrough(),
+            },
+        ],
+        response: z.object({
+            success: z.boolean(),
+            message: z.union([z.string(), z.null()]),
+            data: z.object({
+                collection: z.object({
+                    id: z
+                        .string()
+                        .regex(
+                            /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                        )
+                        .uuid(),
+                    userId: z
+                        .string()
+                        .regex(
+                            /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                        )
+                        .uuid(),
+                    name: z.string(),
+                    createdAt: z.string(),
+                    updatedAt: z.string(),
+                    numPlaylists: z.number(),
+                    coverUrl: z.union([z.string(), z.null()]),
+                    playlists: z.array(
+                        z.object({
+                            id: z
+                                .string()
+                                .regex(
+                                    /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                                )
+                                .uuid(),
+                            name: z.string(),
+                            description: z.union([z.string(), z.null()]).optional(),
+                            coverUrl: z.union([z.string(), z.null()]),
+                            numVideos: z.number(),
+                            updatedAt: z.string(),
+                        }),
+                    ),
+                }),
+            }),
+        }),
+        errors: [
+            {
+                status: 400,
+                description: `Invalid input`,
+                schema: z.object({
+                    success: z.boolean(),
+                    message: z.string().default('Invalid input'),
+                    data: z.null(),
+                    errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
+                }),
+            },
+            {
+                status: 401,
+                description: `Unauthorized`,
+                schema: z.object({
+                    success: z.boolean(),
+                    message: z.string().default('Unauthorized'),
+                    data: z.null(),
+                    errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
+                }),
+            },
+            {
+                status: 409,
+                description: `Cannot add collection`,
+                schema: z.object({
+                    success: z.boolean(),
+                    message: z.string().default('Cannot add collection'),
+                    data: z.null(),
+                    errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
+                }),
+            },
+        ],
+    },
+    {
+        method: 'get',
+        path: '/api/collections/:id',
+        alias: 'getApicollectionsId',
+        requestFormat: 'json',
+        parameters: [
+            {
+                name: 'id',
+                type: 'Path',
+                schema: z
+                    .string()
+                    .regex(
+                        /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                    )
+                    .uuid(),
+            },
+        ],
+        response: z.object({
+            success: z.boolean(),
+            message: z.union([z.string(), z.null()]),
+            data: z.object({
+                collection: z.object({
+                    id: z
+                        .string()
+                        .regex(
+                            /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                        )
+                        .uuid(),
+                    userId: z
+                        .string()
+                        .regex(
+                            /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                        )
+                        .uuid(),
+                    name: z.string(),
+                    createdAt: z.string(),
+                    updatedAt: z.string(),
+                    numPlaylists: z.number(),
+                    coverUrl: z.union([z.string(), z.null()]),
+                    playlists: z.array(
+                        z.object({
+                            id: z
+                                .string()
+                                .regex(
+                                    /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                                )
+                                .uuid(),
+                            name: z.string(),
+                            description: z.union([z.string(), z.null()]).optional(),
+                            coverUrl: z.union([z.string(), z.null()]),
+                            numVideos: z.number(),
+                            updatedAt: z.string(),
+                        }),
+                    ),
+                }),
+            }),
+        }),
+        errors: [
+            {
+                status: 400,
+                description: `Invalid Input`,
+                schema: z.object({
+                    success: z.boolean(),
+                    message: z.string().default('Invalid Input'),
+                    data: z.null(),
+                    errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
+                }),
+            },
+            {
+                status: 401,
+                description: `Unauthorized`,
+                schema: z.object({
+                    success: z.boolean(),
+                    message: z.string().default('Unauthorized'),
+                    data: z.null(),
+                    errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
+                }),
+            },
+            {
+                status: 404,
+                description: `Collection not found`,
+                schema: z.object({
+                    success: z.boolean(),
+                    message: z.string().default('Collection not found'),
+                    data: z.null(),
+                    errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
+                }),
+            },
+        ],
+    },
+    {
+        method: 'patch',
+        path: '/api/collections/:id',
+        alias: 'patchApicollectionsId',
+        description: `Updates a collection name and/or cover. To set the cover, provide the ID of a playlist already in the collection. The selected playlist must have a cover image. Provide null to remove the current cover. If cover is omitted, the existing cover is preserved.`,
+        requestFormat: 'json',
+        parameters: [
+            {
+                name: 'body',
+                type: 'Body',
+                schema: patchApicollectionsId_Body,
+            },
+            {
+                name: 'id',
+                type: 'Path',
+                schema: z
+                    .string()
+                    .regex(
+                        /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                    )
+                    .uuid(),
+            },
+        ],
+        response: z.object({
+            success: z.boolean(),
+            message: z.union([z.string(), z.null()]),
+            data: z.object({
+                collection: z.object({
+                    id: z
+                        .string()
+                        .regex(
+                            /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                        )
+                        .uuid(),
+                    userId: z
+                        .string()
+                        .regex(
+                            /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                        )
+                        .uuid(),
+                    name: z.string(),
+                    createdAt: z.string(),
+                    updatedAt: z.string(),
+                    numPlaylists: z.number(),
+                    coverUrl: z.union([z.string(), z.null()]),
+                    playlists: z.array(
+                        z.object({
+                            id: z
+                                .string()
+                                .regex(
+                                    /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                                )
+                                .uuid(),
+                            name: z.string(),
+                            description: z.union([z.string(), z.null()]).optional(),
+                            coverUrl: z.union([z.string(), z.null()]),
+                            numVideos: z.number(),
+                            updatedAt: z.string(),
+                        }),
+                    ),
+                }),
+            }),
+        }),
+        errors: [
+            {
+                status: 400,
+                description: `Invalid input`,
+                schema: z.object({
+                    success: z.boolean(),
+                    message: z.string().default('Invalid input'),
+                    data: z.null(),
+                    errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
+                }),
+            },
+            {
+                status: 401,
+                description: `Unauthorized`,
+                schema: z.object({
+                    success: z.boolean(),
+                    message: z.string().default('Unauthorized'),
+                    data: z.null(),
+                    errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
+                }),
+            },
+            {
+                status: 404,
+                description: `Collection not found`,
+                schema: z.object({
+                    success: z.boolean(),
+                    message: z.string().default('Collection not found'),
+                    data: z.null(),
+                    errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
+                }),
+            },
+            {
+                status: 409,
+                description: `Cannot update collection`,
+                schema: z.object({
+                    success: z.boolean(),
+                    message: z.string().default('Cannot update collection'),
+                    data: z.null(),
+                    errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
+                }),
+            },
+        ],
+    },
+    {
+        method: 'delete',
+        path: '/api/collections/:id',
+        alias: 'deleteApicollectionsId',
+        requestFormat: 'json',
+        parameters: [
+            {
+                name: 'id',
+                type: 'Path',
+                schema: z
+                    .string()
+                    .regex(
+                        /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                    )
+                    .uuid(),
+            },
+        ],
+        response: z.void(),
+        errors: [
+            {
+                status: 400,
+                description: `Invalid Input`,
+                schema: z.object({
+                    success: z.boolean(),
+                    message: z.string().default('Invalid Input'),
+                    data: z.null(),
+                    errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
+                }),
+            },
+            {
+                status: 401,
+                description: `Unauthorized`,
+                schema: z.object({
+                    success: z.boolean(),
+                    message: z.string().default('Unauthorized'),
+                    data: z.null(),
+                    errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
+                }),
+            },
+            {
+                status: 404,
+                description: `Collection not found`,
+                schema: z.object({
+                    success: z.boolean(),
+                    message: z.string().default('Collection not found'),
+                    data: z.null(),
+                    errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
+                }),
+            },
+        ],
+    },
+    {
+        method: 'post',
+        path: '/api/collections/:id/playlists/:playlistId',
+        alias: 'postApicollectionsIdplaylistsPlaylistId',
+        requestFormat: 'json',
+        parameters: [
+            {
+                name: 'id',
+                type: 'Path',
+                schema: z
+                    .string()
+                    .regex(
+                        /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                    )
+                    .uuid(),
+            },
+            {
+                name: 'playlistId',
+                type: 'Path',
+                schema: z
+                    .string()
+                    .regex(
+                        /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                    )
+                    .uuid(),
+            },
+        ],
+        response: z.object({
+            success: z.boolean(),
+            message: z.union([z.string(), z.null()]),
+            data: z.object({
+                playlist: z.object({
+                    id: z
+                        .string()
+                        .regex(
+                            /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                        )
+                        .uuid(),
+                    name: z.string(),
+                    description: z.union([z.string(), z.null()]).optional(),
+                    coverUrl: z.union([z.string(), z.null()]),
+                    numVideos: z.number(),
+                    updatedAt: z.string(),
+                }),
+            }),
+        }),
+        errors: [
+            {
+                status: 400,
+                description: `Invalid Input`,
+                schema: z.object({
+                    success: z.boolean(),
+                    message: z.string().default('Invalid Input'),
+                    data: z.null(),
+                    errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
+                }),
+            },
+            {
+                status: 401,
+                description: `Unauthorized`,
+                schema: z.object({
+                    success: z.boolean(),
+                    message: z.string().default('Unauthorized'),
+                    data: z.null(),
+                    errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
+                }),
+            },
+            {
+                status: 404,
+                description: `Collection or playlist not found`,
+                schema: z.object({
+                    success: z.boolean(),
+                    message: z.string().default('Collection or playlist not found'),
+                    data: z.null(),
+                    errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
+                }),
+            },
+            {
+                status: 409,
+                description: `Cannot add playlist to collection`,
+                schema: z.object({
+                    success: z.boolean(),
+                    message: z.string().default('Cannot add playlist to collection'),
+                    data: z.null(),
+                    errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
+                }),
+            },
+        ],
+    },
+    {
+        method: 'delete',
+        path: '/api/collections/:id/playlists/:playlistId',
+        alias: 'deleteApicollectionsIdplaylistsPlaylistId',
+        requestFormat: 'json',
+        parameters: [
+            {
+                name: 'id',
+                type: 'Path',
+                schema: z
+                    .string()
+                    .regex(
+                        /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                    )
+                    .uuid(),
+            },
+            {
+                name: 'playlistId',
+                type: 'Path',
+                schema: z
+                    .string()
+                    .regex(
+                        /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                    )
+                    .uuid(),
+            },
+        ],
+        response: z.void(),
+        errors: [
+            {
+                status: 400,
+                description: `Invalid Input`,
+                schema: z.object({
+                    success: z.boolean(),
+                    message: z.string().default('Invalid Input'),
+                    data: z.null(),
+                    errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
+                }),
+            },
+            {
+                status: 401,
+                description: `Unauthorized`,
+                schema: z.object({
+                    success: z.boolean(),
+                    message: z.string().default('Unauthorized'),
+                    data: z.null(),
+                    errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
+                }),
+            },
+            {
+                status: 404,
+                description: `Collection or playlist not found`,
+                schema: z.object({
+                    success: z.boolean(),
+                    message: z.string().default('Collection or playlist not found'),
+                    data: z.null(),
+                    errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
+                }),
+            },
+        ],
+    },
+    {
         method: 'post',
         path: '/api/playlists/',
         alias: 'postApiplaylists',
@@ -433,6 +965,8 @@ const endpoints = makeApi([
                     description: z.union([z.string(), z.null()]),
                     coverUrl: z.union([z.string(), z.null()]),
                     numVideos: z.number(),
+                    updatedAt: z.string(),
+                    collections: z.array(z.string()),
                 }),
             }),
         }),
@@ -474,13 +1008,6 @@ const endpoints = makeApi([
         path: '/api/playlists/',
         alias: 'getApiplaylists',
         requestFormat: 'json',
-        parameters: [
-            {
-                name: 'search',
-                type: 'Query',
-                schema: z.string().optional(),
-            },
-        ],
         response: z.object({
             success: z.boolean(),
             message: z.union([z.string(), z.null()]),
@@ -503,6 +1030,7 @@ const endpoints = makeApi([
                         description: z.union([z.string(), z.null()]),
                         coverUrl: z.union([z.string(), z.null()]),
                         numVideos: z.number(),
+                        updatedAt: z.string(),
                     }),
                 ),
             }),
@@ -536,11 +1064,6 @@ const endpoints = makeApi([
                     )
                     .uuid(),
             },
-            {
-                name: 'search',
-                type: 'Query',
-                schema: z.string().optional(),
-            },
         ],
         response: z.object({
             success: z.boolean(),
@@ -555,7 +1078,6 @@ const endpoints = makeApi([
                         .uuid(),
                     name: z.string(),
                     description: z.union([z.string(), z.null()]).optional(),
-                    coverUrl: z.union([z.string(), z.null()]).optional(),
                     videos: z.array(
                         z.object({
                             id: z
@@ -580,7 +1102,9 @@ const endpoints = makeApi([
                             position: z.number(),
                         }),
                     ),
+                    coverUrl: z.union([z.string(), z.null()]),
                     numVideos: z.number(),
+                    updatedAt: z.string(),
                 }),
             }),
         }),
@@ -660,6 +1184,8 @@ const endpoints = makeApi([
                     description: z.union([z.string(), z.null()]),
                     coverUrl: z.union([z.string(), z.null()]),
                     numVideos: z.number(),
+                    updatedAt: z.string(),
+                    collections: z.array(z.string()),
                 }),
             }),
         }),
@@ -1103,68 +1629,118 @@ const endpoints = makeApi([
     },
     {
         method: 'get',
-        path: '/api/playlists/search',
-        alias: 'getApiplaylistssearch',
+        path: '/api/search',
+        alias: 'getApisearch',
+        description: `Searches the authenticated user’s collections, playlists, and videos.`,
         requestFormat: 'json',
         parameters: [
             {
                 name: 'search',
                 type: 'Query',
-                schema: z.string().optional(),
+                schema: z.string().min(1),
             },
         ],
         response: z.object({
             success: z.boolean(),
             message: z.union([z.string(), z.null()]),
             data: z.object({
-                results: z.object({
-                    playlists: z.array(
-                        z.object({
-                            id: z
-                                .string()
-                                .regex(
-                                    /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
-                                )
-                                .uuid(),
-                            userId: z
-                                .string()
-                                .regex(
-                                    /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
-                                )
-                                .uuid(),
-                            name: z.string(),
-                            description: z.union([z.string(), z.null()]),
-                            coverUrl: z.union([z.string(), z.null()]),
-                        }),
-                    ),
-                    videos: z.array(
-                        z.object({
-                            id: z
-                                .string()
-                                .regex(
-                                    /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
-                                )
-                                .uuid(),
-                            playlistId: z
-                                .string()
-                                .regex(
-                                    /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
-                                )
-                                .uuid(),
-                            title: z.string(),
-                            description: z.string().optional(),
-                            thumbnail: z.string().optional(),
-                            url: z.string(),
-                            platform: z.union([z.string(), z.null()]).optional(),
-                            platformId: z.union([z.string(), z.null()]).optional(),
-                            render: z.boolean(),
-                            position: z.number(),
-                        }),
-                    ),
-                }),
+                collections: z.array(
+                    z.object({
+                        id: z
+                            .string()
+                            .regex(
+                                /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                            )
+                            .uuid(),
+                        userId: z
+                            .string()
+                            .regex(
+                                /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                            )
+                            .uuid(),
+                        name: z.string(),
+                        createdAt: z.string(),
+                        updatedAt: z.string(),
+                        numPlaylists: z.number(),
+                        coverUrl: z.union([z.string(), z.null()]),
+                    }),
+                ),
+                playlists: z.array(
+                    z.object({
+                        id: z
+                            .string()
+                            .regex(
+                                /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                            )
+                            .uuid(),
+                        name: z.string(),
+                        description: z.union([z.string(), z.null()]).optional(),
+                        videos: z.array(
+                            z.object({
+                                id: z
+                                    .string()
+                                    .regex(
+                                        /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                                    )
+                                    .uuid(),
+                                playlistId: z
+                                    .string()
+                                    .regex(
+                                        /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                                    )
+                                    .uuid(),
+                                title: z.string(),
+                                description: z.string().optional(),
+                                thumbnail: z.string().optional(),
+                                url: z.string(),
+                                platform: z.union([z.string(), z.null()]).optional(),
+                                platformId: z.union([z.string(), z.null()]).optional(),
+                                render: z.boolean(),
+                                position: z.number(),
+                            }),
+                        ),
+                        coverUrl: z.union([z.string(), z.null()]),
+                        numVideos: z.number(),
+                        updatedAt: z.string(),
+                    }),
+                ),
+                videos: z.array(
+                    z.object({
+                        id: z
+                            .string()
+                            .regex(
+                                /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                            )
+                            .uuid(),
+                        playlistId: z
+                            .string()
+                            .regex(
+                                /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+                            )
+                            .uuid(),
+                        title: z.string(),
+                        description: z.string().optional(),
+                        thumbnail: z.string().optional(),
+                        url: z.string(),
+                        platform: z.union([z.string(), z.null()]).optional(),
+                        platformId: z.union([z.string(), z.null()]).optional(),
+                        render: z.boolean(),
+                        position: z.number(),
+                    }),
+                ),
             }),
         }),
         errors: [
+            {
+                status: 400,
+                description: `Invalid input`,
+                schema: z.object({
+                    success: z.boolean(),
+                    message: z.string().default('Invalid input'),
+                    data: z.null(),
+                    errors: z.union([z.record(z.array(z.string())), z.null()]).optional(),
+                }),
+            },
             {
                 status: 401,
                 description: `Unauthorized`,

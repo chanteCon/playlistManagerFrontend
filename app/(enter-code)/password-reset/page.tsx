@@ -93,7 +93,8 @@ function PasswordReset() {
                         <div>
                             <h1 className="text-xl font-semibold">Reset your password</h1>
                             <p className="text-sm text-muted-foreground">
-                                Enter the 6-digit code we sent to your email.
+                                If the email address you entered belongs to an account you will
+                                receive a code. Please enter the code below.
                             </p>
                         </div>
                         <InputOTP name="code" maxLength={6}>

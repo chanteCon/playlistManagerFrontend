@@ -50,7 +50,8 @@ function Verify() {
     return (
         <CodeForm
             title="Verification code"
-            instructions="Enter the 6-digit code sent to your email"
+            instructions="   If the email address you entered belongs to an account you will
+                                receive a code. Please enter the code below."
             schema={codeSchema}
             onValidSubmit={(data) => verifyMutation.mutate(data)}
             type="VERIFICATION"
@@ -62,7 +63,7 @@ function Verify() {
 }
 
 export default function VerifyPage() {
-      return (
+    return (
         <Suspense>
             <Verify />
         </Suspense>
