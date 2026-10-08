@@ -2,6 +2,7 @@ import { Dispatch, useState } from 'react';
 import AppDialogue from '../common/AppDialogue';
 import { Input } from '@base-ui/react';
 import { Button } from '../ui/button';
+import { Spinner } from '../ui/spinner';
 type AddPlaylistDialogParams = {
     isOpen: boolean;
     onOpenChange: (isOpen: boolean) => void;
@@ -9,6 +10,7 @@ type AddPlaylistDialogParams = {
     selectedPlaylists: string[];
     setSelectedPlaylists: Dispatch<React.SetStateAction<string[]>>;
     onClick: () => void;
+    isPending: boolean;
 };
 export default function AddPlaylistDialog({
     isOpen,
@@ -17,6 +19,7 @@ export default function AddPlaylistDialog({
     selectedPlaylists,
     setSelectedPlaylists,
     onClick,
+    isPending,
 }: AddPlaylistDialogParams) {
     const [playlistSearch, setPlaylistSearch] = useState('');
     const search = playlistSearch.trim().toLowerCase();
@@ -66,7 +69,18 @@ export default function AddPlaylistDialog({
                         </p>
                     )}
                 </div>
-                {selectedPlaylists.length > 0 && <Button onClick={onClick}>Add playlists</Button>}
+                {selectedPlaylists.length > 0 && (
+                    <Button onClick={onClick}>
+                        {isPending ? (
+                            <>
+                                <Spinner />
+                                Adding playlists...
+                            </>
+                        ) : (
+                            'Add playlists'
+                        )}
+                    </Button>
+                )}
             </div>
         </AppDialogue>
     );

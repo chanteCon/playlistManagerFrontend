@@ -8,7 +8,7 @@ import { useCollections } from '@/hooks/useCollections';
 import { useServerErrors } from '@/hooks/useServerErrors';
 import { hasErrorStatus, isHandledError } from '@/lib/utils';
 import { uuidSchema } from '@/schemas/common';
-import { PlaylistGridSkeleton } from '@/components/skeletons/PlaylistGridSkeleton';
+import { ItemGridSkeleton } from '@/components/skeletons/ItemGridSkeleton';
 import { CollectionGrid } from '@/components/collections/CollectionGrid';
 import { createCollectionSchema } from '@/schemas/collectionsSchemas';
 import AppDialogue from '@/components/common/AppDialogue';
@@ -31,7 +31,7 @@ function CollectionSection({
     onCreate: () => void;
 }) {
     if (isLoading) {
-        return <PlaylistGridSkeleton />;
+        return <ItemGridSkeleton />;
     }
 
     return (

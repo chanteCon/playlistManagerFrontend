@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import CreateCollection from '../collections/CreateCollection';
 import { Card } from '../ui/card';
 import { CollectionCard } from '../collections/CollectionsCard';
+import { ItemGridSkeleton } from '../skeletons/ItemGridSkeleton';
 
 export default function CollectionsPreviewSection({
     isLoading,
@@ -15,11 +16,7 @@ export default function CollectionsPreviewSection({
 }) {
     const router = useRouter();
 
-    if (isLoading) {
-        return null;
-    }
-
-    if (collections.length === 0) {
+    if (!isLoading && collections.length === 0) {
         return (
             <section className="w-full">
                 <h2 className="mb-6 text-lg font-semibold">Your collections</h2>
@@ -52,14 +49,18 @@ export default function CollectionsPreviewSection({
                 </button>
             </div>
 
-            <div className="grid max-h-[360px] md:max-h-[150px] grid-cols-[repeat(auto-fill,185px)] justify-center md:gap-y-15 gap-2 overflow-hidden">
-                <CreateCollection onCreate={onCreate} />
-                {collections.map((collection) => (
-                    <CollectionCard key={collection.id} collection={collection}>
-                        <p />
-                    </CollectionCard>
-                ))}
-            </div>
+            {isLoading ? (
+                <ItemGridSkeleton length={4} />
+            ) : (
+                <div className="grid max-h-[360px] md:max-h-[150px] grid-cols-[repeat(auto-fill,185px)] justify-center md:gap-y-15 gap-2 overflow-hidden">
+                    <CreateCollection onCreate={onCreate} />
+                    {collections.map((collection) => (
+                        <CollectionCard key={collection.id} collection={collection}>
+                            <p />
+                        </CollectionCard>
+                    ))}
+                </div>
+            )}
         </Card>
     );
 }

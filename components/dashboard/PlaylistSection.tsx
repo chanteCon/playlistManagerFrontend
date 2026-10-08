@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Card } from '../ui/card';
 import AddCard from '../common/AddCard';
 import { PlaylistCard } from '../playlists/PlaylistCard';
+import { ItemGridSkeleton } from '../skeletons/ItemGridSkeleton';
 
 export default function PlaylistPreviewSection({
     isLoading,
@@ -16,11 +17,7 @@ export default function PlaylistPreviewSection({
 }) {
     const router = useRouter();
 
-    if (isLoading) {
-        return null;
-    }
-
-    if (playlists.length === 0) {
+    if (!isLoading && playlists.length === 0) {
         return (
             <section className="w-full m-5 ">
                 <h2 className="mb-6 text-lg font-semibold">Your playlists</h2>
@@ -53,23 +50,27 @@ export default function PlaylistPreviewSection({
                 </button>
             </div>
 
-            <div className="grid max-h-[650px] md:max-h-[440px] grid-cols-[repeat(auto-fill,220px)] gap-6 gap-x-3 overflow-hidden justify-center">
-                <div className="w-[220px]">
-                    <AddCard
-                        className="h-[200px] w-[200px] rounded-sm border"
-                        setDialogOpen={onCreate}
-                        message="New Playlist"
-                    />
-                </div>
-
-                {playlists.map((playlist) => (
-                    <div key={playlist.id}>
-                        <PlaylistCard playlist={playlist} PlaylistIcon={Music}>
-                            <p />
-                        </PlaylistCard>
+            {isLoading ? (
+                <ItemGridSkeleton length={4} />
+            ) : (
+                <div className="grid max-h-[650px] md:max-h-[440px] grid-cols-[repeat(auto-fill,220px)] gap-6 gap-x-3 overflow-hidden justify-center">
+                    <div className="w-[220px]">
+                        <AddCard
+                            className="h-[200px] w-[200px] rounded-sm border"
+                            setDialogOpen={onCreate}
+                            message="New Playlist"
+                        />
                     </div>
-                ))}
-            </div>
+
+                    {playlists.map((playlist) => (
+                        <div key={playlist.id}>
+                            <PlaylistCard playlist={playlist} PlaylistIcon={Music}>
+                                <p />
+                            </PlaylistCard>
+                        </div>
+                    ))}
+                </div>
+            )}
         </Card>
     );
 }

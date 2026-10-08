@@ -6,7 +6,7 @@ import { EditInput, PlaylistSummary } from '@/types';
 
 import { CreatePlaylistDialog } from '@/components/playlists/CreatePlaylistDialog';
 import { PlaylistGrid } from '@/components/playlists/PlaylistGrid';
-import { PlaylistGridSkeleton } from '@/components/skeletons/PlaylistGridSkeleton';
+import { ItemGridSkeleton } from '@/components/skeletons/ItemGridSkeleton';
 import { EditDialog } from '@/components/common/EditDialogue';
 import { DeleteDialog } from '@/components/common/DeleteDialog';
 import { ErrorDialog } from '@/components/common/ErrorDialog';
@@ -38,7 +38,7 @@ function PlaylistSection({
     onCreate: () => void;
 }) {
     if (isLoading) {
-        return <PlaylistGridSkeleton />;
+        return <ItemGridSkeleton />;
     }
 
     if (playlists.length === 0) {

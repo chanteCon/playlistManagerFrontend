@@ -34,7 +34,7 @@ export const deletePlaylist = (playlistId: string) =>
         }),
     );
 
-export const editPlaylist = async (data: {
+export const editPlaylist = (data: {
     playlistId: string;
     name?: string;
     description?: string;
