@@ -1,7 +1,12 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { hasErrorStatus, isHandledError, removeCollectionFromCache } from '@/lib/utils';
+import {
+    hasErrorStatus,
+    isHandledError,
+    markCollectionInteracted,
+    removeCollectionFromCache,
+} from '@/lib/utils';
 import {
     createCollection,
     deleteCollection,
@@ -35,10 +40,11 @@ export function useCollections() {
     const createCollectionMutation = useMutation({
         mutationFn: createCollection,
 
-        onSuccess: () => {
+        onSuccess: (data) => {
             queryClient.invalidateQueries({
                 queryKey: ['collections'],
             });
+            markCollectionInteracted(data!.data.collection.id);
         },
 
         throwOnError: (error) => {
@@ -51,6 +57,7 @@ export function useCollections() {
 
         onSuccess: (_, variables) => {
             invalidateCollection(variables.collectionId);
+            markCollectionInteracted(variables.collectionId);
         },
 
         onError: (error, variables) => {

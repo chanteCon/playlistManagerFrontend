@@ -23,9 +23,9 @@ export default function Dashboard() {
         createCollectionMutation,
     } = useCollections();
 
-    const sortedPlaylists = sortByRecentActivity(playlists, 'playlist-last-opened');
+    const sortedPlaylists = sortByRecentActivity(playlists, 'playlist-last-interacted');
 
-    const sortedCollections = sortByRecentActivity(collections, 'collection-last-opened');
+    const sortedCollections = sortByRecentActivity(collections, 'collection-last-interacted');
 
     const [isAddPlaylistOpen, setIsAddPlaylistOpen] = useState(false);
     const [isAddCollectionOpen, setIsAddCollectionOpen] = useState(false);

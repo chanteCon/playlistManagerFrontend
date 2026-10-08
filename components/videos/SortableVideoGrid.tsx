@@ -6,10 +6,11 @@ import { useState } from 'react';
 
 import { Playlist } from '@/types';
 import SortableVideoCard from './SortableVideoCard';
-import { Check, Loader, X } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 import { Button } from '../ui/button';
 import { usePlaylist } from '@/hooks/usePlaylist';
 import { toast } from 'sonner';
+import { Spinner } from '../ui/spinner';
 
 export default function SortableVideoGrid({
     playlist,
@@ -69,7 +70,7 @@ export default function SortableVideoGrid({
                         size="icon"
                         aria-label="Save order"
                     >
-                        {updatePositionsMutation.isPending ? <Loader /> : <Check />}
+                        {updatePositionsMutation.isPending ? <Spinner /> : <Check />}
                     </Button>
 
                     <Button

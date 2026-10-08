@@ -7,7 +7,7 @@ import { PlaylistCard } from '@/components/playlists/PlaylistCard';
 import { Music, Plus, Trash } from 'lucide-react';
 import AddCard from '@/components/common/AddCard';
 import { usePlaylists } from '@/hooks/usePlaylists';
-import { hasErrorStatus, isHandledError, markCollectionOpened } from '@/lib/utils';
+import { hasErrorStatus, isHandledError, markCollectionInteracted } from '@/lib/utils';
 import { toast } from 'sonner';
 import { ErrorDialog } from '@/components/common/ErrorDialog';
 import AddPlaylistDialog from '@/components/collections/AddPlaylistDialog';
@@ -17,7 +17,7 @@ import { notFound, useRouter } from 'next/navigation';
 import { uuidSchema } from '@/schemas/common';
 import { PlaylistHeaderSkeleton } from '@/components/skeletons/PlaylistHeaderSkeleton';
 import CollectionHeader from '@/components/collections/CollectionHeader';
-import { PlaylistGridSkeleton } from '@/components/skeletons/PlaylistGridSkeleton';
+import { ItemGridSkeleton } from '@/components/skeletons/ItemGridSkeleton';
 import { Button } from '@/components/ui/button';
 
 type PageProps = {
@@ -34,7 +34,7 @@ export default function CollectionPage({ params }: PageProps) {
     const { collection, isLoading, addPlaylistMutation, deletePlaylistMutation } = useCollection({
         id,
     });
-    markCollectionOpened(id);
+    markCollectionInteracted(id);
 
     const { deleteCollectionMutation } = useCollections();
     const { playlists } = usePlaylists();
@@ -150,7 +150,7 @@ export default function CollectionPage({ params }: PageProps) {
                 </h2>
 
                 {isLoading ? (
-                    <PlaylistGridSkeleton />
+                    <ItemGridSkeleton />
                 ) : collection && collection.playlists.length > 0 ? (
                     <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] justify-items-center gap-5">
                         <AddCard
@@ -208,6 +208,7 @@ export default function CollectionPage({ params }: PageProps) {
                     selectedPlaylists={selectedPlaylists}
                     setSelectedPlaylists={setSelectedPlaylists}
                     onClick={handleAddPlaylists}
+                    isPending={addPlaylistMutation.isPending}
                 />
             )}
             <ErrorDialog
