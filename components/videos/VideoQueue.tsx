@@ -34,7 +34,7 @@ export default function VideoQueue({
     const nextVideos = videos.slice(currentVideoIndex + 1);
 
     return (
-        <section className="flex w-full flex-col h-[700px] @[850px]:h-[500px] @[850px]:w-[320px] @[850px]:shrink-0">
+        <section className="flex w-full flex-col h-[700px] @[850px]:h-[675px] @[850px]:w-[320px] @[850px]:shrink-0">
             <p className=" block w-full pb-1 text-md font-bold @[850px]:hidden ">Videos</p>
             <hr className=" block @[850px]:hidden mb-5 " />
             <div className="min-h-0 flex-1  ">
