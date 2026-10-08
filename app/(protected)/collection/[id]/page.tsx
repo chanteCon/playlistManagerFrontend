@@ -232,7 +232,7 @@ export default function CollectionPage({ params }: PageProps) {
             />
             <DeleteDialog
                 itemId={selectedPlaylistToDelete}
-                onCancel={() => setCollectionToDelete(null)}
+                onCancel={() => setSelectedPlaylistToDelete(null)}
                 onConfirm={handleDeletePlaylist}
                 title="Remove playlist"
                 message={'Are you sure you want to remove this playlist from this collection?'}
