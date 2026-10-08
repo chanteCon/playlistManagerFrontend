@@ -2414,7 +2414,6 @@ export interface paths {
             requestBody: {
                 content: {
                     /**
-                     * @description At least one or name or description must be provided.
                      * @example {
                      *       "name": "Updated Playlist",
                      *       "description": "Updated description",
@@ -2896,6 +2895,7 @@ export interface paths {
             requestBody: {
                 content: {
                     "application/json": {
+                        /** @description Positions for all videos must be provided, and must be unqiue */
                         positions: {
                             /** Format: uuid */
                             id: string;
@@ -3214,7 +3214,6 @@ export interface paths {
             requestBody: {
                 content: {
                     /**
-                     * @description At least one of title or description must be provided.
                      * @example {
                      *       "title": "Updated title",
                      *       "description": "Updated description"
@@ -3535,10 +3534,12 @@ export interface paths {
                                         /** Format: uuid */
                                         id: string;
                                         name: string;
+                                        userId: string;
                                         description?: string | null;
                                         coverUrl: string | null;
                                         numVideos: number;
                                         updatedAt: string;
+                                        createdAt: string;
                                     }[];
                                 };
                             };
@@ -3699,16 +3700,14 @@ export interface paths {
                          *           "coverUrl": "https://example.com/cover.jpg",
                          *           "playlists": [
                          *             {
+                         *               "name": "My playlist",
                          *               "id": "00000000-0000-0000-0000-000000000000",
                          *               "userId": "00000000-0000-0000-0000-000000000000",
-                         *               "title": "My Playlist",
                          *               "description": null,
-                         *               "platform": "youtube",
-                         *               "platformId": "abc123",
-                         *               "thumbnailUrl": "https://example.com/thumbnail.jpg",
-                         *               "position": 0,
-                         *               "customTitle": null,
-                         *               "customDescription": null
+                         *               "coverUrl": "example.com",
+                         *               "numVideos": 1,
+                         *               "createdAt": "2026-01-01T00:00:00.000Z",
+                         *               "updatedAt": "2026-01-01T00:00:00.000Z"
                          *             }
                          *           ]
                          *         }
@@ -3736,10 +3735,12 @@ export interface paths {
                                         /** Format: uuid */
                                         id: string;
                                         name: string;
+                                        userId: string;
                                         description?: string | null;
                                         coverUrl: string | null;
                                         numVideos: number;
                                         updatedAt: string;
+                                        createdAt: string;
                                     }[];
                                 };
                             };
@@ -4045,10 +4046,12 @@ export interface paths {
                                         /** Format: uuid */
                                         id: string;
                                         name: string;
+                                        userId: string;
                                         description?: string | null;
                                         coverUrl: string | null;
                                         numVideos: number;
                                         updatedAt: string;
+                                        createdAt: string;
                                     }[];
                                 };
                             };
@@ -4237,10 +4240,12 @@ export interface paths {
                                     /** Format: uuid */
                                     id: string;
                                     name: string;
+                                    userId: string;
                                     description?: string | null;
                                     coverUrl: string | null;
                                     numVideos: number;
                                     updatedAt: string;
+                                    createdAt: string;
                                 };
                             };
                         };
