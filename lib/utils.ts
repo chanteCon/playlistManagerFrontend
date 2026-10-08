@@ -118,12 +118,12 @@ export const removeCollectionFromCache = (queryClient: QueryClient, collectionId
     });
 };
 
-const PLAYLIST_LAST_OPENED_KEY = 'playlist-last-opened';
-const COLLECTION_LAST_OPENED_KEY = 'collection-last-opened';
+const PLAYLIST_LAST_OPENED_KEY = 'playlist-last-interacted';
+const COLLECTION_LAST_OPENED_KEY = 'collection-last-interacted';
 
 type LastOpenedMap = Record<string, string>;
 
-function getLastOpened(key: string): LastOpenedMap {
+function getLastInteracted(key: string): LastOpenedMap {
     try {
         return JSON.parse(localStorage.getItem(key) ?? '{}');
     } catch {
@@ -131,20 +131,23 @@ function getLastOpened(key: string): LastOpenedMap {
     }
 }
 
-export function markPlaylistOpened(id: string) {
-    const opened = getLastOpened(PLAYLIST_LAST_OPENED_KEY);
+export function markPlaylistInteracted(id: string) {
+    const interacted = getLastInteracted(PLAYLIST_LAST_OPENED_KEY);
 
-    localStorage.setItem(
-        PLAYLIST_LAST_OPENED_KEY,
-        JSON.stringify({
-            ...opened,
-            [id]: new Date().toISOString(),
-        }),
-    );
+    const updated = {
+        ...interacted,
+        [id]: new Date().toISOString(),
+    };
+
+    const entries = Object.entries(updated)
+        .sort(([, a], [, b]) => b.localeCompare(a))
+        .slice(0, 100);
+
+    localStorage.setItem(PLAYLIST_LAST_OPENED_KEY, JSON.stringify(Object.fromEntries(entries)));
 }
 
-export function markCollectionOpened(id: string) {
-    const opened = getLastOpened(COLLECTION_LAST_OPENED_KEY);
+export function markCollectionInteracted(id: string) {
+    const opened = getLastInteracted(COLLECTION_LAST_OPENED_KEY);
 
     localStorage.setItem(
         COLLECTION_LAST_OPENED_KEY,
@@ -159,19 +162,19 @@ export function sortByRecentActivity<T extends { id: string; updatedAt: string }
     items: T[],
     storageKey: string,
 ) {
-    const lastOpened = getLastOpened(storageKey);
+    const lastIneracted = getLastInteracted(storageKey);
 
     return [...items].sort((a, b) => {
-        const aOpened = lastOpened[a.id];
-        const bOpened = lastOpened[b.id];
+        const aInteracted = lastIneracted[a.id];
+        const bInteracted = lastIneracted[b.id];
 
-        if (aOpened && bOpened) {
-            return bOpened.localeCompare(aOpened);
+        if (aInteracted && bInteracted) {
+            return bInteracted.localeCompare(aInteracted);
         }
 
-        if (aOpened) return -1;
+        if (aInteracted) return -1;
 
-        if (bOpened) return 1;
+        if (bInteracted) return 1;
 
         return b.updatedAt.localeCompare(a.updatedAt);
     });

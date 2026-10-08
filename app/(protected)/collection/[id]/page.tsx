@@ -7,7 +7,7 @@ import { PlaylistCard } from '@/components/playlists/PlaylistCard';
 import { Music, Plus, Trash } from 'lucide-react';
 import AddCard from '@/components/common/AddCard';
 import { usePlaylists } from '@/hooks/usePlaylists';
-import { hasErrorStatus, isHandledError, markCollectionOpened } from '@/lib/utils';
+import { hasErrorStatus, isHandledError, markCollectionInteracted } from '@/lib/utils';
 import { toast } from 'sonner';
 import { ErrorDialog } from '@/components/common/ErrorDialog';
 import AddPlaylistDialog from '@/components/collections/AddPlaylistDialog';
@@ -34,7 +34,7 @@ export default function CollectionPage({ params }: PageProps) {
     const { collection, isLoading, addPlaylistMutation, deletePlaylistMutation } = useCollection({
         id,
     });
-    markCollectionOpened(id);
+    markCollectionInteracted(id);
 
     const { deleteCollectionMutation } = useCollections();
     const { playlists } = usePlaylists();

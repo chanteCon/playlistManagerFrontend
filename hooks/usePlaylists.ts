@@ -10,7 +10,12 @@ import {
 } from '@/requests/protectedRequests';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { hasErrorStatus, isHandledError, removePlaylistFromCache } from '@/lib/utils';
+import {
+    hasErrorStatus,
+    isHandledError,
+    markPlaylistInteracted,
+    removePlaylistFromCache,
+} from '@/lib/utils';
 
 export function usePlaylists() {
     const queryClient = useQueryClient();
@@ -27,10 +32,11 @@ export function usePlaylists() {
     const createPlaylistMutation = useMutation({
         mutationFn: createPlaylist,
 
-        onSuccess: () => {
+        onSuccess: (data) => {
             queryClient.invalidateQueries({
                 queryKey: ['playlists'],
             });
+            markPlaylistInteracted(data!.data.playlist.id);
         },
 
         throwOnError: (error) => {
@@ -72,6 +78,7 @@ export function usePlaylists() {
                 queryKey: ['playlist', playlistId],
             });
             queryClient.invalidateQueries({ queryKey: ['collection'] });
+            markPlaylistInteracted(playlistId);
         },
 
         onError: (error, { playlistId }) => {
