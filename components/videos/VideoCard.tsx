@@ -24,7 +24,17 @@ export default function VideoCard({
     const content = (
         <>
             <div className="relative flex aspect-video w-full items-center justify-center overflow-hidden border-b bg-muted">
-                {video.thumbnail && !imageError ? (
+                {video.platform === 'tiktok' ? (
+                    <Image
+                        src="/icons/TikTok-logo-RGB-Stacked-white.png"
+                        alt="TikTok"
+                        width={80}
+                        height={80}
+                        unoptimized
+                        className="object-contain"
+                        loading="eager"
+                    />
+                ) : video.thumbnail && !imageError ? (
                     <Image
                         src={video.thumbnail}
                         alt={video.title || 'External video'}

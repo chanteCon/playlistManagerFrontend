@@ -131,8 +131,9 @@ export default function WatchVideoPage({ params }: PageProps) {
                     ) : (
                         <div className="w-full">
                             <iframe
+                                key={embedUrl}
                                 src={embedUrl}
-                                title="YouTube video"
+                                title="External video"
                                 allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
                                 allowFullScreen
                                 className="w-full aspect-video rounded-lg border"
